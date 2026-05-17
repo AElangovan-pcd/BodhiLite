@@ -26,16 +26,24 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Apply migrations
         run: supabase db reset --linked=false
+      - name: Capture local Supabase keys
+        id: keys
+        run: |
+          ANON=$(npx --yes supabase status --output json | jq -r '.ANON_KEY')
+          SVC=$(npx --yes supabase status --output json | jq -r '.SERVICE_ROLE_KEY')
+          echo "anon=$ANON" >> $GITHUB_OUTPUT
+          echo "service=$SVC" >> $GITHUB_OUTPUT
       - name: Build app
         env:
           NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: replace-me-in-task-27
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ steps.keys.outputs.anon }}
           NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
         run: npm run build
       - name: Run Playwright tests
         env:
           NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: replace-me-in-task-27
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ steps.keys.outputs.anon }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ steps.keys.outputs.service }}
           NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
           PLAYWRIGHT_BASE_URL: http://127.0.0.1:3000
         run: |
