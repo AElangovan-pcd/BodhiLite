@@ -2,11 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Establish a deployable Next.js 15 app shell with Supabase magic-link auth, a complete Postgres data model under bulletproof RLS, and WCAG CI infrastructure — the foundation every subsequent BodhiLite Wave 1 plan builds on.
+**Goal:** Establish a deployable Next.js 16 app shell with Supabase magic-link auth, a complete Postgres data model under bulletproof RLS, and WCAG CI infrastructure — the foundation every subsequent BodhiLite Wave 1 plan builds on.
 
-**Architecture:** Single Next.js 15 App Router project at the repo root, deployed to Vercel (Fluid Compute). Supabase manages Postgres + Auth + Storage in US-East. RLS policies enforce FERPA at the database layer; coverage is verified by a Playwright test suite that authenticates as two different students and asserts cross-user data invisibility. All UI surfaces shipped here are smoke-tested with `@axe-core/playwright` in CI.
+**Architecture:** Single Next.js 16 App Router project at the repo root, deployed to Vercel (Fluid Compute). Supabase manages Postgres + Auth + Storage in US-East. RLS policies enforce FERPA at the database layer; coverage is verified by a Playwright test suite that authenticates as two different students and asserts cross-user data invisibility. All UI surfaces shipped here are smoke-tested with `@axe-core/playwright` in CI.
 
-**Tech Stack:** Next.js 15 (App Router, Server Actions, Node 24 LTS), TypeScript (strict), Tailwind CSS, shadcn/ui (Radix), Supabase Postgres + Auth + Storage, `@supabase/ssr`, Vitest (unit), Playwright (E2E + a11y + RLS), `@axe-core/playwright`, GitHub Actions CI, Vercel deploy.
+**Tech Stack:** Next.js 16 (App Router, Server Actions, Node 24 LTS), TypeScript (strict), Tailwind CSS, shadcn/ui (Radix), Supabase Postgres + Auth + Storage, `@supabase/ssr`, Vitest (unit), Playwright (E2E + a11y + RLS), `@axe-core/playwright`, GitHub Actions CI, Vercel deploy.
 
 **Status when done:** A signed-in user lands on a stub home page. RLS-tested data model is in place but no LMS surfaces are built yet — those are Plans 2-4. The restore-drill, gradebook, and quiz features are NOT in this plan.
 
@@ -85,7 +85,7 @@ These are out-of-scope for the agent; user actions:
 
 ---
 
-## Task 1: Initialize Next.js 15 + TypeScript + Tailwind project
+## Task 1: Initialize Next.js 16 + TypeScript + Tailwind project
 
 **Files:**
 - Create: `package.json`, `tsconfig.json`, `next.config.ts`, `tailwind.config.ts`, `postcss.config.mjs`, `app/layout.tsx`, `app/page.tsx`, `app/globals.css`, `eslint.config.mjs`
@@ -152,7 +152,7 @@ Expected: no errors.
 
 ```bash
 git add .
-git commit -m "feat: scaffold Next.js 15 + TypeScript strict + Tailwind"
+git commit -m "feat: scaffold Next.js 16 + TypeScript strict + Tailwind"
 ```
 
 ---
@@ -2511,7 +2511,7 @@ git commit -m "docs: production deploy + smoke test instructions for Wave 1 Foun
 
 After all 29 tasks complete:
 
-- A Next.js 15 + Tailwind + shadcn project deployable to Vercel
+- A Next.js 16 + Tailwind + shadcn project deployable to Vercel
 - TypeScript strict mode + Prettier + ESLint + Vitest + Playwright wired up
 - GitHub Actions CI: lint, typecheck, format check, unit tests
 - GitHub Actions E2E: Playwright (auth + a11y + RLS) against a fresh Supabase per PR
