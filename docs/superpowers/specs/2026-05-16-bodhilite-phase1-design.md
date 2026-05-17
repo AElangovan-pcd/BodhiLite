@@ -13,6 +13,7 @@ BodhiLite is a learner- and faculty-friendly Learning Management System being bu
 Phase 1 exists to (a) prove the keystone differentiator (chem/math parameterized assessments with WYSIWYG render fidelity) on real students before the rest of the LMS is built, and (b) materially improve the assessment experience for the instructor and the ~25 students in that summer section.
 
 ### Out-of-scope for Phase 1 (these are Phase 2)
+
 Pages, modules, files, announcements, assignments + submissions + rubrics, discussions, messaging, weighted gradebook, audit-log viewer UI, manual screen-reader QA at full breadth, SSO with Pierce IdP, native mobile apps, SIS/LTI integration. These are Fall 2026 work.
 
 ---
@@ -29,6 +30,7 @@ Phase 1 has shipped successfully when, by **Jul 27** (mid-term), all of the foll
 6. By Jul 27 the system supports Exam mode (server-authoritative timer, auto-submit) reliably enough to run the final exam in BodhiLite — OR the documented fallback (run final in Canvas) has been activated by Jul 22 if Wave 3 is at risk.
 
 ### Non-goals
+
 - Feature parity with Canvas
 - College-wide deployment
 - Multi-tenant SaaS
@@ -40,10 +42,10 @@ Phase 1 has shipped successfully when, by **Jul 27** (mid-term), all of the foll
 
 Two roles in Phase 1:
 
-| Role | Capabilities |
-|---|---|
+| Role                      | Capabilities                                                                                                                      |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | **Instructor** (the user) | Author and publish assessments; view and grade attempts; manage accommodations; export gradebook; admin view of audit log via SQL |
-| **Student** | Authenticate via magic link; take published assessments; see own attempts and grades only |
+| **Student**               | Authenticate via magic link; take published assessments; see own attempts and grades only                                         |
 
 A future "TA" role and a "system administrator" role are anticipated for Phase 2 but not built in Phase 1.
 
@@ -90,23 +92,23 @@ The instructor preview pane and the student attempt view are produced by the sam
 
 ### 5.1 Stack
 
-| Layer | Choice |
-|---|---|
-| App framework | Next.js 15 App Router on Vercel (Fluid Compute, Node.js 24 LTS) |
-| UI components | shadcn/ui (Radix) + Tailwind CSS |
-| Math rendering | KaTeX with MathML output |
-| Chem drawing | Ketcher (EPAM, MIT license) |
-| Chem grading (client preview) | RDKit-WASM |
-| Chem grading (server, source of truth) | RDKit Python in a Vercel Function (Python 3.13/3.14 via Fluid Compute) |
-| Database | Supabase Postgres, US East region |
-| Auth | Supabase Auth, magic-link email |
-| Storage | Supabase Storage, private buckets, signed URLs |
-| Per-row access control | Postgres RLS |
-| Sandboxed expression evaluator (grading formulas) | `asteval` (server-side Python) for formula grading |
-| Source + CI | GitHub + Vercel preview deployments; axe-core, Playwright a11y tests, TypeScript check, RLS coverage test per PR |
-| Backups | Supabase managed PITR (7-day) + daily `pg_dump` via GitHub Action → Cloudflare R2 (S3-compatible, zero egress fees), 30-day retention |
-| Error monitoring | Sentry with PII scrubbing (response bodies and email addresses are never sent) |
-| Analytics | Vercel Web Analytics (privacy-first, no cookies, no PII) |
+| Layer                                             | Choice                                                                                                                                |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| App framework                                     | Next.js 15 App Router on Vercel (Fluid Compute, Node.js 24 LTS)                                                                       |
+| UI components                                     | shadcn/ui (Radix) + Tailwind CSS                                                                                                      |
+| Math rendering                                    | KaTeX with MathML output                                                                                                              |
+| Chem drawing                                      | Ketcher (EPAM, MIT license)                                                                                                           |
+| Chem grading (client preview)                     | RDKit-WASM                                                                                                                            |
+| Chem grading (server, source of truth)            | RDKit Python in a Vercel Function (Python 3.13/3.14 via Fluid Compute)                                                                |
+| Database                                          | Supabase Postgres, US East region                                                                                                     |
+| Auth                                              | Supabase Auth, magic-link email                                                                                                       |
+| Storage                                           | Supabase Storage, private buckets, signed URLs                                                                                        |
+| Per-row access control                            | Postgres RLS                                                                                                                          |
+| Sandboxed expression evaluator (grading formulas) | `asteval` (server-side Python) for formula grading                                                                                    |
+| Source + CI                                       | GitHub + Vercel preview deployments; axe-core, Playwright a11y tests, TypeScript check, RLS coverage test per PR                      |
+| Backups                                           | Supabase managed PITR (7-day) + daily `pg_dump` via GitHub Action → Cloudflare R2 (S3-compatible, zero egress fees), 30-day retention |
+| Error monitoring                                  | Sentry with PII scrubbing (response bodies and email addresses are never sent)                                                        |
+| Analytics                                         | Vercel Web Analytics (privacy-first, no cookies, no PII)                                                                              |
 
 ### 5.2 Why this stack (the short version)
 
@@ -267,13 +269,13 @@ All subsequent operations on this question for this student (re-display, grading
 
 ### 7.3 Per-content-type behavior
 
-| Content type | Renderer | Accessibility |
-|---|---|---|
-| Plain text + Markdown | Standard MD-to-HTML with semantic tags | Standard semantic HTML |
-| Math | KaTeX `output: 'mathml'` + visual SVG | MathML read by NVDA, JAWS, VoiceOver |
-| Chemistry structure | Ketcher SDK → SVG; SMILES stored alongside | `aria-label` includes name + SMILES; alternative-format swap for accommodations |
-| Pasted image | Uploaded to Supabase Storage (private, signed URL) | Alt text required to save in Phase 1; VLM-suggested in Phase 2 |
-| Code / preformatted | `<pre><code>` | Standard; syntax highlighting post-Phase-1 |
+| Content type          | Renderer                                           | Accessibility                                                                   |
+| --------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Plain text + Markdown | Standard MD-to-HTML with semantic tags             | Standard semantic HTML                                                          |
+| Math                  | KaTeX `output: 'mathml'` + visual SVG              | MathML read by NVDA, JAWS, VoiceOver                                            |
+| Chemistry structure   | Ketcher SDK → SVG; SMILES stored alongside         | `aria-label` includes name + SMILES; alternative-format swap for accommodations |
+| Pasted image          | Uploaded to Supabase Storage (private, signed URL) | Alt text required to save in Phase 1; VLM-suggested in Phase 2                  |
+| Code / preformatted   | `<pre><code>`                                      | Standard; syntax highlighting post-Phase-1                                      |
 
 ---
 
@@ -281,31 +283,31 @@ All subsequent operations on this question for this student (re-display, grading
 
 ### 8.1 Assessment types
 
-| Capability | Quiz | Exam |
-|---|---|---|
-| Time limit | Not available | Required |
-| Default attempts | 3 | 1 |
-| Default available window | Open all term | Narrow open/close window |
-| Default question order | Author's | Randomized per student |
-| Default choice order (MC/MA) | Author's | Randomized per student |
-| Server-authoritative countdown | n/a | Yes |
-| Auto-submit on expiry | n/a | Yes, with small network-grace window |
+| Capability                     | Quiz          | Exam                                 |
+| ------------------------------ | ------------- | ------------------------------------ |
+| Time limit                     | Not available | Required                             |
+| Default attempts               | 3             | 1                                    |
+| Default available window       | Open all term | Narrow open/close window             |
+| Default question order         | Author's      | Randomized per student               |
+| Default choice order (MC/MA)   | Author's      | Randomized per student               |
+| Server-authoritative countdown | n/a           | Yes                                  |
+| Auto-submit on expiry          | n/a           | Yes, with small network-grace window |
 
 One underlying engine; UI presents them as separate tabs.
 
 ### 8.2 Question types (Phase 1)
 
-| Type | Author specifies | Auto-grade method |
-|---|---|---|
-| Multiple choice (single) | Stem (with `{{vars}}`), choices, correct choice | String/index match |
-| Multiple answer | Stem, choices, correct set | Set match; partial credit configurable |
-| True/false | Stem, truth value | Bool match |
-| Numeric (with tolerance) | Stem, grading formula, tolerance | `|response - formula(vars)| ≤ tolerance` |
-| Short answer (regex) | Stem, regex (with `{{vars}}` substitution) | Pattern match, case-insensitive default |
-| Fill-in-the-blank | Stem with blanks, target per blank | Per-blank match |
-| Chem: draw-to-target | Stem, target SMILES, mode (exact / substructure / functional-group set) | RDKit canonical SMILES / substructure / detected-group set |
-| Chem: pick-the-product | Stem (reactants), candidate structures, correct ones | MC over rendered structures |
-| Chem: identify-functional-group | Stem (structure), candidate functional groups, present groups | Set match against RDKit-detected groups |
+| Type                            | Author specifies                                                        | Auto-grade method                                          |
+| ------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------- | ------------------------ | ------------ |
+| Multiple choice (single)        | Stem (with `{{vars}}`), choices, correct choice                         | String/index match                                         |
+| Multiple answer                 | Stem, choices, correct set                                              | Set match; partial credit configurable                     |
+| True/false                      | Stem, truth value                                                       | Bool match                                                 |
+| Numeric (with tolerance)        | Stem, grading formula, tolerance                                        | `                                                          | response - formula(vars) | ≤ tolerance` |
+| Short answer (regex)            | Stem, regex (with `{{vars}}` substitution)                              | Pattern match, case-insensitive default                    |
+| Fill-in-the-blank               | Stem with blanks, target per blank                                      | Per-blank match                                            |
+| Chem: draw-to-target            | Stem, target SMILES, mode (exact / substructure / functional-group set) | RDKit canonical SMILES / substructure / detected-group set |
+| Chem: pick-the-product          | Stem (reactants), candidate structures, correct ones                    | MC over rendered structures                                |
+| Chem: identify-functional-group | Stem (structure), candidate functional groups, present groups           | Set match against RDKit-detected groups                    |
 
 Wave timing: standard objective + parameterized for Wave 1 (Jul 6); chem exact-match for Wave 2 (Jul 13); chem substructure + functional-group for Wave 4 (Aug 1).
 
@@ -360,12 +362,12 @@ All three run server-side via the RDKit Python Function (canonical) with client-
 
 ## 9. Backup and recovery
 
-| Layer | Frequency | Retention | Restore RTO target |
-|---|---|---|---|
-| Supabase managed PITR | continuous | 7 days | < 15 min |
-| Daily `pg_dump` → S3-compat bucket | 1×/day | 30 days | < 30 min |
-| Daily Storage bucket snapshot | 1×/day | 30 days | < 30 min |
-| Pre-migration ad-hoc backup | event-driven | retained until verified | < 30 min |
+| Layer                              | Frequency    | Retention               | Restore RTO target |
+| ---------------------------------- | ------------ | ----------------------- | ------------------ |
+| Supabase managed PITR              | continuous   | 7 days                  | < 15 min           |
+| Daily `pg_dump` → S3-compat bucket | 1×/day       | 30 days                 | < 30 min           |
+| Daily Storage bucket snapshot      | 1×/day       | 30 days                 | < 30 min           |
+| Pre-migration ad-hoc backup        | event-driven | retained until verified | < 30 min           |
 
 **Restore drill is a hard gate.** Before Wave 1 opens (no later than **Jul 5**): spin up a `bodhilite-restore-test` Supabase project, restore from a daily snapshot, verify a known row is recoverable, tear down. Logged as an event. Quarterly re-runs after that.
 
@@ -373,14 +375,14 @@ All three run server-side via the RDKit Python Function (canonical) with client-
 
 ## 10. Incident response (Phase 1)
 
-| Scenario | Response |
-|---|---|
-| Suspected unauthorized FERPA access | Rotate Supabase service-role key; invalidate sessions; review audit log + Supabase auth logs; notify affected students within 7 days per Pierce policy / state law |
-| Data loss | Restore from PITR (small loss) or daily snapshot (larger); identify gap; notify affected students; audit-log the restore |
-| Exam-time outage | Extend exam window via `assessment_overrides`; communicate by Pierce email; if extension impossible, drop the exam from grade calc with announcement |
-| RLS regression in CI | Block deploy; investigate; no production exposure |
-| RLS regression in prod | Disable affected route immediately; audit-log access since regression; notify per FERPA if confirmed exposure |
-| Wave 3 (exam mode) at risk by Jul 22 | Activate Canvas-fallback for Jul 27 final exam |
+| Scenario                             | Response                                                                                                                                                           |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Suspected unauthorized FERPA access  | Rotate Supabase service-role key; invalidate sessions; review audit log + Supabase auth logs; notify affected students within 7 days per Pierce policy / state law |
+| Data loss                            | Restore from PITR (small loss) or daily snapshot (larger); identify gap; notify affected students; audit-log the restore                                           |
+| Exam-time outage                     | Extend exam window via `assessment_overrides`; communicate by Pierce email; if extension impossible, drop the exam from grade calc with announcement               |
+| RLS regression in CI                 | Block deploy; investigate; no production exposure                                                                                                                  |
+| RLS regression in prod               | Disable affected route immediately; audit-log access since regression; notify per FERPA if confirmed exposure                                                      |
+| Wave 3 (exam mode) at risk by Jul 22 | Activate Canvas-fallback for Jul 27 final exam                                                                                                                     |
 
 ---
 
@@ -390,15 +392,15 @@ Today is **2026-05-16**. User availability is **5-10 hrs/wk** for review, integr
 
 ### Wave 1 — Jul 6 (course Day 1)
 
-| Week | Deliverable |
-|---|---|
-| W1 (May 16-22) | Next.js + Supabase + Vercel scaffold; magic-link auth; data-model migrations; RLS policies + CI coverage; axe-core in CI from day 3; `.gitignore` and CI baseline |
-| W2 (May 23-29) | Assessment list/create/edit shell (Quiz vs Exam settings); standard objective question authoring end-to-end |
-| W3 (May 30-Jun 5) | Variable spec UI; server-side materializer with deterministic seeding; sandboxed formula evaluator; preview-as-student seed switcher |
-| W4 (Jun 6-12) | Student attempt UI with snapshot capture; auto-save; submit; auto-grade for standard + parameterized; basic gradebook view; CSV export to Canvas format |
-| W5 (Jun 13-19) | Daily backup automation; restore-drill rehearsal; Sentry monitoring with PII scrubbing; first end-to-end smoke test; **half-day Ketcher integration spike** (proves the React/App-Router/Server-Component story works before Wave 2 starts) |
-| W6 (Jun 20-26) | Manual NVDA + VoiceOver pass against critical paths; you author your first real summer quiz in BodhiLite; fix what trips you up |
-| W7 partial (Jun 27-Jul 5) | Production smoke test; restore-drill final dry-run; go-live readiness checklist; **gate: ship Mon Jul 6 morning, with Friday Jul 3 as smoke-test in production-preview** |
+| Week                      | Deliverable                                                                                                                                                                                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| W1 (May 16-22)            | Next.js + Supabase + Vercel scaffold; magic-link auth; data-model migrations; RLS policies + CI coverage; axe-core in CI from day 3; `.gitignore` and CI baseline                                                                           |
+| W2 (May 23-29)            | Assessment list/create/edit shell (Quiz vs Exam settings); standard objective question authoring end-to-end                                                                                                                                 |
+| W3 (May 30-Jun 5)         | Variable spec UI; server-side materializer with deterministic seeding; sandboxed formula evaluator; preview-as-student seed switcher                                                                                                        |
+| W4 (Jun 6-12)             | Student attempt UI with snapshot capture; auto-save; submit; auto-grade for standard + parameterized; basic gradebook view; CSV export to Canvas format                                                                                     |
+| W5 (Jun 13-19)            | Daily backup automation; restore-drill rehearsal; Sentry monitoring with PII scrubbing; first end-to-end smoke test; **half-day Ketcher integration spike** (proves the React/App-Router/Server-Component story works before Wave 2 starts) |
+| W6 (Jun 20-26)            | Manual NVDA + VoiceOver pass against critical paths; you author your first real summer quiz in BodhiLite; fix what trips you up                                                                                                             |
+| W7 partial (Jun 27-Jul 5) | Production smoke test; restore-drill final dry-run; go-live readiness checklist; **gate: ship Mon Jul 6 morning, with Friday Jul 3 as smoke-test in production-preview**                                                                    |
 
 Wave 1 launch features: auth, RLS, data model, standard objective quizzes, parameterized quizzes, snapshot-based render fidelity, basic gradebook + CSV export, FERPA backup + restore drill, WCAG axe-core CI, manual accommodations via DB tool.
 
@@ -445,4 +447,4 @@ The Phase 1 codebase is designed so Phase 2 adds new entities and routes without
 
 ---
 
-*End of Phase 1 design spec.*
+_End of Phase 1 design spec._
