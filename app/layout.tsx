@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'BodhiLite',
-  description: 'BodhiLite Phase 1 — learner- and faculty-friendly quiz tool.',
+  description: 'Learner- and faculty-friendly LMS — Phase 1 quiz tool',
 };
 
 export default function RootLayout({
@@ -24,7 +24,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="bg-background text-foreground flex min-h-full flex-col antialiased">
+        {children}
+      </body>
     </html>
   );
 }
