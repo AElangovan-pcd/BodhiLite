@@ -13,7 +13,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "e2e": "playwright test",
-    "e2e:ui": "playwright test --ui"
+    "e2e:ui": "playwright test --ui",
+    "db:types": "supabase gen types typescript --local > lib/types/database.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.3",
