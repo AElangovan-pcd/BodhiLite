@@ -16,12 +16,14 @@ export default defineConfig({
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
   ],
-  webServer: process.env.PLAYWRIGHT_BASE_URL
-    ? undefined
+  ...(process.env.PLAYWRIGHT_BASE_URL
+    ? {}
     : {
-        command: 'npm run dev',
-        port: 3000,
-        reuseExistingServer: !process.env.CI,
-        timeout: 120_000,
-      },
+        webServer: {
+          command: 'npm run dev',
+          port: 3000,
+          reuseExistingServer: !process.env.CI,
+          timeout: 120_000,
+        },
+      }),
 });

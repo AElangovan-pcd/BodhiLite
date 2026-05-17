@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: __dirname,
   },
+  reactStrictMode: true,
+  typedRoutes: true,
+  poweredByHeader: false, // FERPA: do not expose internal info in headers
 };
 
 export default nextConfig;
