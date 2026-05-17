@@ -1,36 +1,131 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BodhiLite
 
-## Getting Started
+A learner- and faculty-friendly Learning Management System.
 
-First, run the development server:
+**Phase 1 (Summer Quiz Tool)** — a standalone quiz tool that runs alongside Canvas during the 2026 Pierce College Summer Session A course (Jul 6 – Aug 27). Designed to prove the keystone differentiator (chem/math parameterized assessments with WYSIWYG render fidelity) on real students before the rest of the LMS is built.
+
+**Phase 2** — Fall 2026 full Lean v1 LMS.
+
+Design spec: [`docs/superpowers/specs/2026-05-16-bodhilite-phase1-design.md`](docs/superpowers/specs/2026-05-16-bodhilite-phase1-design.md)
+
+## Local development
 
 ```bash
+# 1. Install dependencies
+npm install
+
+# 2. Boot the local Supabase stack (Postgres + Auth + Storage + Studio)
+#    Requires Docker Desktop running. First start pulls ~13 images (~10 min).
+npx --yes supabase start
+
+# 3. Apply migrations + seed
+npx --yes supabase db reset
+
+# 4. Capture the local Supabase keys and write them to .env.local
+SB_STATUS=$(npx --yes supabase status --output json)
+cat > .env.local <<EOF
+NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
+NEXT_PUBLIC_SUPABASE_ANON_KEY=$(echo "$SB_STATUS" | grep -oP '"ANON_KEY":\s*"\K[^"]+')
+SUPABASE_SERVICE_ROLE_KEY=$(echo "$SB_STATUS" | grep -oP '"SERVICE_ROLE_KEY":\s*"\K[^"]+')
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+EOF
+
+# 5. Run the dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit `http://localhost:3000` — you'll be redirected to `/sign-in`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Testing
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint            # Next/ESLint check
+npm run typecheck       # tsc --noEmit
+npm run format:check    # Prettier
+npm test                # Vitest unit tests
+npm run e2e             # Playwright E2E + a11y + RLS suites
+```
 
-## Learn More
+E2E tests need the local Supabase running and the env vars above exported (the test helper reads them).
 
-To learn more about Next.js, take a look at the following resources:
+## First production deploy (manual user actions)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This is a one-time setup. Subsequent deploys happen automatically on push to `main`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 1. Supabase project (production)
 
-## Deploy on Vercel
+- Sign in to https://supabase.com → create a new project (e.g. `bodhilite-prod`).
+- Region: **US East** (matches the Vercel deploy region).
+- After provisioning, go to Settings → API and copy:
+  - `URL`
+  - `anon` public key
+  - `service_role` secret key
+- In Settings → Database, **enable point-in-time recovery** (PITR) for 7-day retention.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 2. Apply migrations to the hosted Supabase
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npx --yes supabase login                                # one-time, opens browser
+npx --yes supabase link --project-ref <your-project-ref>
+npx --yes supabase db push                              # applies all migrations from supabase/migrations/
+```
+
+### 3. Vercel (production)
+
+- Sign in to https://vercel.com and import this GitHub repo (`AElangovan-pcd/BodhiLite`).
+- Settings → Environment Variables (set for both Production and Preview):
+  - `NEXT_PUBLIC_SUPABASE_URL` = your project URL
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = the anon key
+  - `SUPABASE_SERVICE_ROLE_KEY` = the service-role key (mark **Sensitive**)
+  - `NEXT_PUBLIC_SITE_URL` = `https://<your-vercel-prod-domain>`
+- Trigger a deploy (push to `main`, or click Redeploy).
+
+### 4. Supabase auth callback whitelisting
+
+- Supabase dashboard → Authentication → URL Configuration:
+  - **Site URL:** `https://<your-vercel-prod-domain>`
+  - **Redirect URLs:** add `https://<your-vercel-prod-domain>/callback`
+
+### 5. Smoke test
+
+- Visit `https://<your-vercel-prod-domain>`.
+- You're redirected to `/sign-in`.
+- Enter your real email; click "Send magic link".
+- Check your inbox; click the link.
+- You land on the home page; "Signed in as &lt;your email&gt;" is shown.
+- Click "Sign out" — redirected back to `/sign-in`.
+
+If all five steps pass, **Wave 1 Foundation is complete.** Proceed to Plan 2 (Authoring).
+
+## Manual accessibility verification
+
+Before each Wave ships to students, run the NVDA test script at [`docs/runbooks/nvda-test-script.md`](docs/runbooks/nvda-test-script.md).
+
+## Repository layout
+
+```
+app/                 Next.js 16 App Router
+  (auth)/            magic-link sign-in/callback/sign-out
+  page.tsx           home (redirects by auth state)
+components/ui/       shadcn/ui primitives (Radix-based)
+lib/
+  supabase/          browser/server/middleware client factories
+  types/database.ts  generated from `supabase gen types`
+  utils.ts           cn() helper
+supabase/
+  config.toml        local CLI config
+  migrations/        SQL migrations (0001-0012)
+tests/
+  auth/              Playwright E2E (sign-in flow)
+  a11y/              axe-core WCAG 2.2 AA checks
+  rls/               cross-user / immutability / append-only DB tests
+  helpers/           shared test utilities
+docs/
+  superpowers/specs/ design spec
+  superpowers/plans/ implementation plans
+  runbooks/          NVDA test script, etc.
+```
+
+## License
+
+TBD.
