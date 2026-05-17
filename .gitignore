@@ -43,3 +43,8 @@ next-env.d.ts
 # local session / brainstorm state (gitignored)
 .superpowers/
 .remember/
+
+# playwright
+test-results/
+playwright-report/
+playwright/.cache/
