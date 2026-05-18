@@ -2,11 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Establish a deployable Next.js 15 app shell with Supabase magic-link auth, a complete Postgres data model under bulletproof RLS, and WCAG CI infrastructure — the foundation every subsequent BodhiLite Wave 1 plan builds on.
+**Goal:** Establish a deployable Next.js 16 app shell with Supabase magic-link auth, a complete Postgres data model under bulletproof RLS, and WCAG CI infrastructure — the foundation every subsequent BodhiLite Wave 1 plan builds on.
 
-**Architecture:** Single Next.js 15 App Router project at the repo root, deployed to Vercel (Fluid Compute). Supabase manages Postgres + Auth + Storage in US-East. RLS policies enforce FERPA at the database layer; coverage is verified by a Playwright test suite that authenticates as two different students and asserts cross-user data invisibility. All UI surfaces shipped here are smoke-tested with `@axe-core/playwright` in CI.
+**Architecture:** Single Next.js 16 App Router project at the repo root, deployed to Vercel (Fluid Compute). Supabase manages Postgres + Auth + Storage in US-East. RLS policies enforce FERPA at the database layer; coverage is verified by a Playwright test suite that authenticates as two different students and asserts cross-user data invisibility. All UI surfaces shipped here are smoke-tested with `@axe-core/playwright` in CI.
 
-**Tech Stack:** Next.js 15 (App Router, Server Actions, Node 24 LTS), TypeScript (strict), Tailwind CSS, shadcn/ui (Radix), Supabase Postgres + Auth + Storage, `@supabase/ssr`, Vitest (unit), Playwright (E2E + a11y + RLS), `@axe-core/playwright`, GitHub Actions CI, Vercel deploy.
+**Tech Stack:** Next.js 16 (App Router, Server Actions, Node 24 LTS), TypeScript (strict), Tailwind CSS, shadcn/ui (Radix), Supabase Postgres + Auth + Storage, `@supabase/ssr`, Vitest (unit), Playwright (E2E + a11y + RLS), `@axe-core/playwright`, GitHub Actions CI, Vercel deploy.
 
 **Status when done:** A signed-in user lands on a stub home page. RLS-tested data model is in place but no LMS surfaces are built yet — those are Plans 2-4. The restore-drill, gradebook, and quiz features are NOT in this plan.
 
@@ -85,14 +85,16 @@ These are out-of-scope for the agent; user actions:
 
 ---
 
-## Task 1: Initialize Next.js 15 + TypeScript + Tailwind project
+## Task 1: Initialize Next.js 16 + TypeScript + Tailwind project
 
 **Files:**
+
 - Create: `package.json`, `tsconfig.json`, `next.config.ts`, `tailwind.config.ts`, `postcss.config.mjs`, `app/layout.tsx`, `app/page.tsx`, `app/globals.css`, `eslint.config.mjs`
 
 - [ ] **Step 1: Run the Next.js scaffold non-interactively**
 
 Run from repo root:
+
 ```bash
 npx create-next-app@latest . \
   --typescript --tailwind --app --no-src-dir \
@@ -121,6 +123,7 @@ Expected: `Local: http://localhost:3000` printed; visit it; default Next.js page
 - [ ] **Step 4: Pin Node version**
 
 Create `.nvmrc`:
+
 ```
 24
 ```
@@ -128,6 +131,7 @@ Create `.nvmrc`:
 - [ ] **Step 5: Enable TypeScript strict mode**
 
 Edit `tsconfig.json` so `compilerOptions` includes:
+
 ```json
 {
   "compilerOptions": {
@@ -152,7 +156,7 @@ Expected: no errors.
 
 ```bash
 git add .
-git commit -m "feat: scaffold Next.js 15 + TypeScript strict + Tailwind"
+git commit -m "feat: scaffold Next.js 16 + TypeScript strict + Tailwind"
 ```
 
 ---
@@ -160,6 +164,7 @@ git commit -m "feat: scaffold Next.js 15 + TypeScript strict + Tailwind"
 ## Task 2: Add shadcn/ui baseline
 
 **Files:**
+
 - Modify: `tailwind.config.ts`, `app/globals.css`
 - Create: `components/ui/` (button + input + label initially), `lib/utils.ts`, `components.json`
 
@@ -207,6 +212,7 @@ git commit -m "feat: add shadcn/ui baseline (button, input, label)"
 ## Task 3: Configure Prettier + project ESLint rules
 
 **Files:**
+
 - Create: `.prettierrc`, `.prettierignore`
 - Modify: `eslint.config.mjs`, `package.json` (scripts)
 
@@ -245,6 +251,7 @@ supabase/.temp
 - [ ] **Step 4: Add scripts to `package.json`**
 
 In `"scripts"` add:
+
 ```json
 "format": "prettier --write .",
 "format:check": "prettier --check .",
@@ -280,6 +287,7 @@ git commit -m "chore: add Prettier with Tailwind plugin; npm scripts for lint/ty
 ## Task 4: Install + configure Vitest
 
 **Files:**
+
 - Create: `vitest.config.ts`
 - Modify: `package.json` (scripts), `tsconfig.json` (types)
 
@@ -318,6 +326,7 @@ export default defineConfig({
 - [ ] **Step 3: Add Vitest types to tsconfig**
 
 Edit `tsconfig.json`, add `"vitest/globals"` to `compilerOptions.types`:
+
 ```json
 {
   "compilerOptions": {
@@ -336,6 +345,7 @@ Edit `tsconfig.json`, add `"vitest/globals"` to `compilerOptions.types`:
 - [ ] **Step 5: Add a smoke test to confirm wiring**
 
 Create `lib/utils.test.ts`:
+
 ```ts
 import { describe, it, expect } from 'vitest';
 import { cn } from './utils';
@@ -371,6 +381,7 @@ git commit -m "test: add Vitest + jsdom; smoke test for cn() utility"
 ## Task 5: Install + configure Playwright
 
 **Files:**
+
 - Create: `playwright.config.ts`, `tests/helpers/.gitkeep`
 - Modify: `package.json` (scripts), `.gitignore`
 
@@ -401,9 +412,7 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
-  projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-  ],
+  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined
     : {
@@ -425,6 +434,7 @@ export default defineConfig({
 - [ ] **Step 4: Append Playwright artifacts to `.gitignore`**
 
 Append to `.gitignore`:
+
 ```
 test-results/
 playwright-report/
@@ -449,11 +459,13 @@ git commit -m "test: add Playwright + Chromium for E2E/a11y/RLS suites"
 ## Task 6: Set up GitHub Actions CI (lint + typecheck + unit)
 
 **Files:**
+
 - Create: `.github/workflows/ci.yml`
 
 - [ ] **Step 1: Write the workflow**
 
 Create `.github/workflows/ci.yml`:
+
 ```yaml
 name: CI
 
@@ -510,6 +522,7 @@ If it fails, fix the failure locally, commit, push, repeat. Do not proceed until
 ## Task 7: Create `.env.local.example` and `next.config.ts`
 
 **Files:**
+
 - Create: `.env.local.example`
 - Modify: `next.config.ts`
 
@@ -536,6 +549,7 @@ Expected: either the rule is already there (silent) or it gets appended.
 - [ ] **Step 3: Modify `next.config.ts`**
 
 Replace the file contents:
+
 ```ts
 import type { NextConfig } from 'next';
 
@@ -571,6 +585,7 @@ git commit -m "feat: env example + harden next.config.ts (typedRoutes, no x-powe
 ## Task 8: Configure `vercel.ts`
 
 **Files:**
+
 - Create: `vercel.ts`
 - Install: `@vercel/config`
 
@@ -626,6 +641,7 @@ git commit -m "feat: vercel.ts config (US-East, security headers)"
 ## Task 9: Install Supabase client libraries
 
 **Files:**
+
 - Modify: `package.json`
 
 - [ ] **Step 1: Install**
@@ -654,6 +670,7 @@ git commit -m "feat: install @supabase/supabase-js and @supabase/ssr"
 ## Task 10: Create Supabase client factories (browser / server / middleware)
 
 **Files:**
+
 - Create: `lib/supabase/client.ts`, `lib/supabase/server.ts`, `lib/supabase/middleware.ts`, `middleware.ts`
 
 These are wrappers around `@supabase/ssr` that are imported wherever a Supabase client is needed. Each has a single responsibility (browser context / server-component context / Next.js middleware context).
@@ -661,6 +678,7 @@ These are wrappers around `@supabase/ssr` that are imported wherever a Supabase 
 - [ ] **Step 1: Write the failing unit test for the browser client factory**
 
 Create `lib/supabase/client.test.ts`:
+
 ```ts
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createBrowserSupabaseClient } from './client';
@@ -695,6 +713,7 @@ Expected: FAIL with "Cannot find module './client'".
 - [ ] **Step 3: Implement the browser client factory**
 
 Create `lib/supabase/client.ts`:
+
 ```ts
 import { createBrowserClient } from '@supabase/ssr';
 import type { Database } from '@/lib/types/database';
@@ -711,6 +730,7 @@ export function createBrowserSupabaseClient() {
 - [ ] **Step 4: Create a placeholder `Database` type so the import resolves**
 
 Create `lib/types/database.ts`:
+
 ```ts
 // Placeholder until Task 22 generates real types from the Supabase schema.
 export type Database = Record<string, unknown>;
@@ -727,6 +747,7 @@ Expected: 2 tests pass.
 - [ ] **Step 6: Implement the server client factory**
 
 Create `lib/supabase/server.ts`:
+
 ```ts
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
@@ -760,6 +781,7 @@ export async function createServerSupabaseClient() {
 - [ ] **Step 7: Implement the middleware client + root middleware**
 
 Create `lib/supabase/middleware.ts`:
+
 ```ts
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
@@ -790,6 +812,7 @@ export async function refreshSession(request: NextRequest): Promise<NextResponse
 ```
 
 Create `middleware.ts` at repo root:
+
 ```ts
 import type { NextRequest } from 'next/server';
 import { refreshSession } from '@/lib/supabase/middleware';
@@ -823,11 +846,13 @@ git commit -m "feat: Supabase client factories (browser/server/middleware) + ses
 ## Task 11: Build the sign-in page (magic-link form)
 
 **Files:**
+
 - Create: `app/(auth)/sign-in/page.tsx`, `app/(auth)/sign-in/actions.ts`
 
 - [ ] **Step 1: Write the failing E2E test for the sign-in form**
 
 Create `tests/auth/sign-in.spec.ts`:
+
 ```ts
 import { test, expect } from '@playwright/test';
 
@@ -860,6 +885,7 @@ Expected: FAIL with route 404.
 - [ ] **Step 3: Implement the sign-in form**
 
 Create `app/(auth)/sign-in/actions.ts`:
+
 ```ts
 'use server';
 
@@ -867,7 +893,9 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 
 export async function sendMagicLinkAction(formData: FormData): Promise<void> {
-  const email = String(formData.get('email') ?? '').trim().toLowerCase();
+  const email = String(formData.get('email') ?? '')
+    .trim()
+    .toLowerCase();
   if (!email) redirect('/sign-in?error=missing-email');
 
   const supabase = await createServerSupabaseClient();
@@ -886,6 +914,7 @@ export async function sendMagicLinkAction(formData: FormData): Promise<void> {
 ```
 
 Create `app/(auth)/sign-in/page.tsx`:
+
 ```tsx
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -900,7 +929,7 @@ export default function SignInPage({
   return (
     <main className="mx-auto flex min-h-svh max-w-md flex-col justify-center px-6">
       <h1 className="mb-2 text-2xl font-semibold">Sign in</h1>
-      <p className="mb-6 text-sm text-muted-foreground">
+      <p className="text-muted-foreground mb-6 text-sm">
         Enter your email and we&apos;ll send a sign-in link.
       </p>
 
@@ -923,14 +952,20 @@ async function SearchParamsBanner({
   const sp = await searchParams;
   if (sp.sent) {
     return (
-      <div role="status" className="mb-4 rounded border border-green-300 bg-green-50 p-3 text-sm text-green-900">
+      <div
+        role="status"
+        className="mb-4 rounded border border-green-300 bg-green-50 p-3 text-sm text-green-900"
+      >
         Magic link sent. Check your email.
       </div>
     );
   }
   if (sp.error) {
     return (
-      <div role="alert" className="mb-4 rounded border border-red-300 bg-red-50 p-3 text-sm text-red-900">
+      <div
+        role="alert"
+        className="mb-4 rounded border border-red-300 bg-red-50 p-3 text-sm text-red-900"
+      >
         {sp.error}
       </div>
     );
@@ -959,6 +994,7 @@ git commit -m "feat: magic-link sign-in page with server action"
 ## Task 12: Magic-link callback + sign-out routes
 
 **Files:**
+
 - Create: `app/(auth)/callback/route.ts`, `app/(auth)/sign-out/route.ts`
 
 These are route handlers (not pages); the callback exchanges the code for a session, the sign-out destroys it.
@@ -966,6 +1002,7 @@ These are route handlers (not pages); the callback exchanges the code for a sess
 - [ ] **Step 1: Implement the callback route**
 
 Create `app/(auth)/callback/route.ts`:
+
 ```ts
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
@@ -992,6 +1029,7 @@ export async function GET(request: NextRequest) {
 - [ ] **Step 2: Implement the sign-out route**
 
 Create `app/(auth)/sign-out/route.ts`:
+
 ```ts
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
@@ -1024,6 +1062,7 @@ git commit -m "feat: magic-link callback + sign-out route handlers"
 ## Task 13: Stub home page that redirects by auth state
 
 **Files:**
+
 - Modify: `app/page.tsx`, `app/layout.tsx`
 
 - [ ] **Step 1: Replace `app/page.tsx`**
@@ -1034,15 +1073,17 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 export default async function Home() {
   const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) redirect('/sign-in');
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
       <h1 className="text-3xl font-semibold">BodhiLite</h1>
-      <p className="mt-2 text-muted-foreground">Signed in as {user.email}.</p>
+      <p className="text-muted-foreground mt-2">Signed in as {user.email}.</p>
       <form action="/sign-out" method="post" className="mt-6">
-        <button type="submit" className="rounded border px-3 py-1.5 text-sm hover:bg-muted">
+        <button type="submit" className="hover:bg-muted rounded border px-3 py-1.5 text-sm">
           Sign out
         </button>
       </form>
@@ -1054,6 +1095,7 @@ export default async function Home() {
 - [ ] **Step 2: Ensure `app/layout.tsx` has accessible defaults**
 
 Replace `app/layout.tsx`:
+
 ```tsx
 import './globals.css';
 import type { Metadata } from 'next';
@@ -1092,6 +1134,7 @@ git commit -m "feat: stub home page redirects unauthenticated users to /sign-in"
 ## Task 14: Add the a11y test helper and a sign-in a11y test
 
 **Files:**
+
 - Create: `tests/helpers/axe.ts`, `tests/a11y/sign-in.spec.ts`
 - Modify: `package.json` (install dep)
 
@@ -1104,6 +1147,7 @@ npm install -D @axe-core/playwright
 - [ ] **Step 2: Create the axe helper**
 
 Create `tests/helpers/axe.ts`:
+
 ```ts
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
@@ -1132,6 +1176,7 @@ export async function assertNoSeriousAxeViolations(page: Page, ctx: string): Pro
 - [ ] **Step 3: Write the failing sign-in a11y test**
 
 Create `tests/a11y/sign-in.spec.ts`:
+
 ```ts
 import { test } from '@playwright/test';
 import { assertNoSeriousAxeViolations } from '../helpers/axe';
@@ -1141,7 +1186,9 @@ test('sign-in page has no serious/critical axe violations', async ({ page }) => 
   await assertNoSeriousAxeViolations(page, '/sign-in');
 });
 
-test('sign-in page with success banner has no serious/critical axe violations', async ({ page }) => {
+test('sign-in page with success banner has no serious/critical axe violations', async ({
+  page,
+}) => {
   await page.goto('/sign-in?sent=1');
   await assertNoSeriousAxeViolations(page, '/sign-in?sent=1');
 });
@@ -1172,6 +1219,7 @@ git commit -m "test(a11y): @axe-core/playwright helper + sign-in WCAG 2.2 AA pas
 ## Task 15: Add the E2E GitHub Actions workflow
 
 **Files:**
+
 - Create: `.github/workflows/e2e.yml`
 
 This workflow runs Playwright tests (auth + a11y; RLS added by Task 26) against an **ephemeral Supabase project per PR**. To keep CI cheap and parallel, we use Supabase branches. The user must enable Supabase Branching on their project in the Supabase dashboard before this works in CI; for now the workflow is structured to be enabled later — it runs the local Supabase via the CLI.
@@ -1179,6 +1227,7 @@ This workflow runs Playwright tests (auth + a11y; RLS added by Task 26) against 
 - [ ] **Step 1: Write the workflow**
 
 Create `.github/workflows/e2e.yml`:
+
 ```yaml
 name: E2E
 
@@ -1261,6 +1310,7 @@ The workflow is committed locally but not pushed. Task 27 finalizes the workflow
 ## Task 16: Initialize the Supabase CLI for this project
 
 **Files:**
+
 - Create: `supabase/config.toml`, `.gitignore` additions
 
 - [ ] **Step 1: Initialize Supabase**
@@ -1307,6 +1357,7 @@ git commit -m "chore: initialize Supabase CLI config"
 ## Task 17: Migration 0001 — users table
 
 **Files:**
+
 - Create: `supabase/migrations/0001_users.sql`
 
 - [ ] **Step 1: Generate the migration file**
@@ -1324,6 +1375,7 @@ mv supabase/migrations/*_users.sql supabase/migrations/0001_users.sql
 - [ ] **Step 2: Write the migration**
 
 Replace contents of `supabase/migrations/0001_users.sql`:
+
 ```sql
 -- App-level users table; rows are created by a trigger when an auth.users row is inserted.
 -- We keep auth.users (Supabase-managed) and public.users (app-managed) in 1:1 lockstep.
@@ -1388,6 +1440,7 @@ git commit -m "feat(db): migration 0001 — users + role enum + auth-trigger"
 ## Task 18: Migration 0002 — assessments table
 
 **Files:**
+
 - Create: `supabase/migrations/0002_assessments.sql`
 
 - [ ] **Step 1: Generate + rename migration file**
@@ -1463,6 +1516,7 @@ git commit -m "feat(db): migration 0002 — assessments table with Quiz/Exam con
 ## Task 19: Migration 0003 — questions + 0004 question_variables
 
 **Files:**
+
 - Create: `supabase/migrations/0003_questions.sql`, `supabase/migrations/0004_question_variables.sql`
 
 - [ ] **Step 1: Generate + rename both files**
@@ -1542,6 +1596,7 @@ git commit -m "feat(db): migrations 0003-0004 — questions + question_variables
 ## Task 20: Migrations 0005-0007 — attempts, answers, media
 
 **Files:**
+
 - Create: `supabase/migrations/0005_attempts.sql`, `0006_answers.sql`, `0007_media.sql`
 
 - [ ] **Step 1: Generate + rename**
@@ -1660,6 +1715,7 @@ git commit -m "feat(db): migrations 0005-0007 — attempts, answers (snapshot tr
 ## Task 21: Migrations 0008-0009 — assessment_overrides + audit_log
 
 **Files:**
+
 - Create: `supabase/migrations/0008_assessment_overrides.sql`, `0009_audit_log.sql`
 
 - [ ] **Step 1: Generate + rename**
@@ -1747,6 +1803,7 @@ git commit -m "feat(db): migrations 0008-0009 — assessment_overrides + immutab
 ## Task 22: Migration 0010 — RLS policies (all tables)
 
 **Files:**
+
 - Create: `supabase/migrations/0010_rls_policies.sql`
 
 All RLS policies live in one ordered file for clarity; future policy changes get their own numbered migration.
@@ -1944,11 +2001,13 @@ git commit -m "feat(db): migration 0010 — RLS policies for all 9 tables"
 ## Task 23: Generate TypeScript types from the Supabase schema
 
 **Files:**
+
 - Modify: `lib/types/database.ts` (replace placeholder), `package.json` (script)
 
 - [ ] **Step 1: Add a script**
 
 In `package.json`:
+
 ```json
 "db:types": "supabase gen types typescript --local > lib/types/database.ts"
 ```
@@ -1981,6 +2040,7 @@ git commit -m "feat(types): generate Database types from Supabase schema"
 ## Task 24: RLS coverage test — students cannot see other students' data
 
 **Files:**
+
 - Create: `tests/helpers/auth.ts`, `tests/rls/students-isolation.spec.ts`
 
 This is the load-bearing FERPA test. It directly proves that student A cannot read student B's `attempts`, `answers`, or `assessment_overrides` rows. The test uses two Supabase auth tokens directly (not through the UI) to test the DB layer.
@@ -1988,6 +2048,7 @@ This is the load-bearing FERPA test. It directly proves that student A cannot re
 - [ ] **Step 1: Write the auth helper**
 
 Create `tests/helpers/auth.ts`:
+
 ```ts
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/lib/types/database';
@@ -2056,6 +2117,7 @@ export async function deleteTestUser(userId: string): Promise<void> {
 - [ ] **Step 2: Write the failing RLS test**
 
 Create `tests/rls/students-isolation.spec.ts`:
+
 ```ts
 import { test, expect } from '@playwright/test';
 import { adminClient, createTestUserClient, deleteTestUser } from '../helpers/auth';
@@ -2090,39 +2152,55 @@ test.describe('RLS: student A cannot see student B', () => {
     });
     studentBId = studentB.userId;
 
-    const { data: a, error: aErr } = await admin.from('assessments').insert({
-      owner_user_id: instructorId,
-      title: 'Test quiz',
-      slug: 'test-quiz',
-      status: 'published',
-    }).select().single();
+    const { data: a, error: aErr } = await admin
+      .from('assessments')
+      .insert({
+        owner_user_id: instructorId,
+        title: 'Test quiz',
+        slug: 'test-quiz',
+        status: 'published',
+      })
+      .select()
+      .single();
     if (aErr || !a) throw aErr ?? new Error('no assessment');
     assessmentId = a.id;
 
-    const { data: q, error: qErr } = await admin.from('questions').insert({
-      assessment_id: assessmentId,
-      position: 1,
-      type: 'mc',
-      body: { stem: '2+2?' },
-      scoring: { correct: 'b' },
-    }).select().single();
+    const { data: q, error: qErr } = await admin
+      .from('questions')
+      .insert({
+        assessment_id: assessmentId,
+        position: 1,
+        type: 'mc',
+        body: { stem: '2+2?' },
+        scoring: { correct: 'b' },
+      })
+      .select()
+      .single();
     if (qErr || !q) throw qErr ?? new Error('no question');
 
-    const { data: att, error: attErr } = await admin.from('attempts').insert({
-      assessment_id: assessmentId,
-      student_user_id: studentBId,
-      attempt_no: 1,
-      seed: 12345,
-    }).select().single();
+    const { data: att, error: attErr } = await admin
+      .from('attempts')
+      .insert({
+        assessment_id: assessmentId,
+        student_user_id: studentBId,
+        attempt_no: 1,
+        seed: 12345,
+      })
+      .select()
+      .single();
     if (attErr || !att) throw attErr ?? new Error('no attempt');
     attemptBId = att.id;
 
-    const { data: ans, error: ansErr } = await admin.from('answers').insert({
-      attempt_id: attemptBId,
-      question_id: q.id,
-      rendered_question_snapshot: { stem: 'snapshot for B' },
-      response: { choice: 'b' },
-    }).select().single();
+    const { data: ans, error: ansErr } = await admin
+      .from('answers')
+      .insert({
+        attempt_id: attemptBId,
+        question_id: q.id,
+        rendered_question_snapshot: { stem: 'snapshot for B' },
+        response: { choice: 'b' },
+      })
+      .select()
+      .single();
     if (ansErr || !ans) throw ansErr ?? new Error('no answer');
     answerBId = ans.id;
   });
@@ -2160,6 +2238,7 @@ test.describe('RLS: student A cannot see student B', () => {
 Make sure local Supabase is running (`supabase start`). Make sure the dev env has `SUPABASE_SERVICE_ROLE_KEY` set — get it from `supabase status` output.
 
 Run:
+
 ```bash
 SUPABASE_SERVICE_ROLE_KEY=$(supabase status --output json | jq -r '.SERVICE_ROLE_KEY') \
 NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321 \
@@ -2182,11 +2261,13 @@ git commit -m "test(rls): student A cannot see student B's attempts or answers"
 ## Task 25: RLS coverage test — snapshot is immutable
 
 **Files:**
+
 - Create: `tests/rls/snapshot-immutability.spec.ts`
 
 - [ ] **Step 1: Write the test**
 
 Create `tests/rls/snapshot-immutability.spec.ts`:
+
 ```ts
 import { test, expect } from '@playwright/test';
 import { adminClient, createTestUserClient, deleteTestUser } from '../helpers/auth';
@@ -2205,16 +2286,37 @@ test('rendered_question_snapshot is write-once', async () => {
   });
 
   try {
-    const { data: a } = await admin.from('assessments').insert({
-      owner_user_id: instructor.userId, title: 't', slug: 't-snap', status: 'published',
-    }).select().single();
-    const { data: q } = await admin.from('questions').insert({
-      assessment_id: a!.id, position: 1, type: 'mc',
-      body: {}, scoring: {},
-    }).select().single();
-    const { data: att } = await admin.from('attempts').insert({
-      assessment_id: a!.id, student_user_id: student.userId, attempt_no: 1, seed: 1,
-    }).select().single();
+    const { data: a } = await admin
+      .from('assessments')
+      .insert({
+        owner_user_id: instructor.userId,
+        title: 't',
+        slug: 't-snap',
+        status: 'published',
+      })
+      .select()
+      .single();
+    const { data: q } = await admin
+      .from('questions')
+      .insert({
+        assessment_id: a!.id,
+        position: 1,
+        type: 'mc',
+        body: {},
+        scoring: {},
+      })
+      .select()
+      .single();
+    const { data: att } = await admin
+      .from('attempts')
+      .insert({
+        assessment_id: a!.id,
+        student_user_id: student.userId,
+        attempt_no: 1,
+        seed: 1,
+      })
+      .select()
+      .single();
 
     // Student writes their snapshot the first time (allowed).
     const { error: insertErr } = await student.client.from('answers').insert({
@@ -2270,11 +2372,13 @@ git commit -m "test(rls): rendered_question_snapshot is write-once (trigger-enfo
 ## Task 26: RLS coverage test — audit_log is append-only
 
 **Files:**
+
 - Create: `tests/rls/audit-log-append-only.spec.ts`
 
 - [ ] **Step 1: Write the test**
 
 Create `tests/rls/audit-log-append-only.spec.ts`:
+
 ```ts
 import { test, expect } from '@playwright/test';
 import { adminClient, createTestUserClient, deleteTestUser } from '../helpers/auth';
@@ -2288,14 +2392,18 @@ test('audit_log rejects UPDATE and DELETE', async () => {
   });
 
   try {
-    const { data: row, error: insertErr } = await admin.from('audit_log').insert({
-      actor_user_id: instructor.userId,
-      action: 'TEST_EVENT',
-      target_kind: 'test',
-      target_id: null,
-      before: null,
-      after: { foo: 'bar' },
-    }).select().single();
+    const { data: row, error: insertErr } = await admin
+      .from('audit_log')
+      .insert({
+        actor_user_id: instructor.userId,
+        action: 'TEST_EVENT',
+        target_kind: 'test',
+        target_id: null,
+        before: null,
+        after: { foo: 'bar' },
+      })
+      .select()
+      .single();
     expect(insertErr).toBeNull();
     expect(row).toBeTruthy();
 
@@ -2337,6 +2445,7 @@ git commit -m "test(rls): audit_log rejects UPDATE/DELETE (trigger-enforced)"
 ## Task 27: Wire RLS tests into the E2E workflow
 
 **Files:**
+
 - Modify: `.github/workflows/e2e.yml`
 
 - [ ] **Step 1: Update the workflow to export Supabase keys before the test step**
@@ -2344,24 +2453,24 @@ git commit -m "test(rls): audit_log rejects UPDATE/DELETE (trigger-enforced)"
 Replace the `Run Playwright tests` step in `.github/workflows/e2e.yml` with:
 
 ```yaml
-      - name: Capture local Supabase keys
-        id: keys
-        run: |
-          ANON=$(supabase status --output json | jq -r '.ANON_KEY')
-          SVC=$(supabase status --output json | jq -r '.SERVICE_ROLE_KEY')
-          echo "anon=$ANON" >> $GITHUB_OUTPUT
-          echo "service=$SVC" >> $GITHUB_OUTPUT
-      - name: Run Playwright tests
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ steps.keys.outputs.anon }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ steps.keys.outputs.service }}
-          NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
-          PLAYWRIGHT_BASE_URL: http://127.0.0.1:3000
-        run: |
-          npm run start &
-          npx wait-on http://127.0.0.1:3000 -t 60000
-          npm run e2e
+- name: Capture local Supabase keys
+  id: keys
+  run: |
+    ANON=$(supabase status --output json | jq -r '.ANON_KEY')
+    SVC=$(supabase status --output json | jq -r '.SERVICE_ROLE_KEY')
+    echo "anon=$ANON" >> $GITHUB_OUTPUT
+    echo "service=$SVC" >> $GITHUB_OUTPUT
+- name: Run Playwright tests
+  env:
+    NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ steps.keys.outputs.anon }}
+    SUPABASE_SERVICE_ROLE_KEY: ${{ steps.keys.outputs.service }}
+    NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
+    PLAYWRIGHT_BASE_URL: http://127.0.0.1:3000
+  run: |
+    npm run start &
+    npx wait-on http://127.0.0.1:3000 -t 60000
+    npm run e2e
 ```
 
 (`jq` is preinstalled on `ubuntu-latest`.)
@@ -2389,23 +2498,27 @@ If anything fails, **fix it before moving on**. Foundation must be green.
 ## Task 28: NVDA manual test script (runbook)
 
 **Files:**
+
 - Create: `docs/runbooks/nvda-test-script.md`
 
 - [ ] **Step 1: Write the runbook**
 
 Create `docs/runbooks/nvda-test-script.md`:
+
 ```markdown
 # NVDA Manual Test — Critical Paths (Wave 1)
 
 Run this before every Wave launches to production. Estimated time: ~30 min for Wave 1 surface area; grows as Wave 2-4 add features.
 
 ## Setup
+
 - Windows machine
 - NVDA 2024.x or later installed (free: https://www.nvaccess.org/)
 - Latest Chrome
 - A confirmed test instructor account + a confirmed test student account
 
 ## Test 1: Sign-in flow (student)
+
 1. Start NVDA. Open Chrome. Navigate to `https://<your-vercel-url>/sign-in`.
 2. Expected announcement: page title "Sign in — BodhiLite", heading "Sign in".
 3. Tab through the form. Expected order: Email field → Send magic link button.
@@ -2418,6 +2531,7 @@ Run this before every Wave launches to production. Estimated time: ~30 min for W
 Pass criteria: every step's expected announcement actually happens, no silent regions.
 
 ## Test 2: Sign-out flow
+
 1. From the home page, Tab to the "Sign out" button (no keyboard trap reaching it).
 2. Press Enter. Page redirects to /sign-in.
 3. NVDA announces the sign-in heading.
@@ -2425,15 +2539,19 @@ Pass criteria: every step's expected announcement actually happens, no silent re
 Pass criteria: above happens with keyboard only, no mouse.
 
 ## Test 3: Zoom to 200% (WCAG 1.4.4)
+
 1. On /sign-in, press Ctrl + + repeatedly to zoom to 200%.
 2. Form remains usable; no content cut off, no horizontal scroll on standard desktop width.
 
 ## Test 4: Prefers-reduced-motion
+
 1. Enable "Reduce motion" in Windows accessibility settings.
 2. Reload /sign-in. Any animations should be absent or instantaneous.
 
 ## Result recording
+
 After running, record results in `docs/runbooks/nvda-results/YYYY-MM-DD.md`:
+
 - Tester name
 - Date
 - Pass/fail per test
@@ -2452,6 +2570,7 @@ git commit -m "docs(runbook): NVDA manual test script for Wave 1 critical paths"
 ## Task 29: First production deploy + smoke test
 
 **Files:**
+
 - Modify: `README.md` (or create it) with deploy instructions
 
 This is partly a user task: the user adds Supabase env vars to Vercel and clicks Deploy. The agent provides the runbook.
@@ -2459,7 +2578,8 @@ This is partly a user task: the user adds Supabase env vars to Vercel and clicks
 - [ ] **Step 1: Write deploy instructions in `README.md`**
 
 Create `README.md` (or append):
-```markdown
+
+````markdown
 # BodhiLite
 
 A learner- and faculty-friendly Learning Management System. Phase 1 is a standalone Summer Quiz Tool.
@@ -2485,7 +2605,9 @@ A learner- and faculty-friendly Learning Management System. Phase 1 is a standal
    ```bash
    supabase db push
    ```
-   (Requires `supabase link --project-ref <ref>` first.)
+````
+
+(Requires `supabase link --project-ref <ref>` first.)
 
 6. **Smoke test:**
    - Visit `https://<your-vercel-prod-domain>`.
@@ -2496,14 +2618,15 @@ A learner- and faculty-friendly Learning Management System. Phase 1 is a standal
    - Click "Sign out"; redirected back to /sign-in.
 
 If all of that works, Wave 1 Foundation is **complete**. Proceed to Plan 2 (Authoring).
-```
+
+````
 
 - [ ] **Step 2: Commit**
 
 ```bash
 git add README.md
 git commit -m "docs: production deploy + smoke test instructions for Wave 1 Foundation"
-```
+````
 
 ---
 
@@ -2511,7 +2634,7 @@ git commit -m "docs: production deploy + smoke test instructions for Wave 1 Foun
 
 After all 29 tasks complete:
 
-- A Next.js 15 + Tailwind + shadcn project deployable to Vercel
+- A Next.js 16 + Tailwind + shadcn project deployable to Vercel
 - TypeScript strict mode + Prettier + ESLint + Vitest + Playwright wired up
 - GitHub Actions CI: lint, typecheck, format check, unit tests
 - GitHub Actions E2E: Playwright (auth + a11y + RLS) against a fresh Supabase per PR
