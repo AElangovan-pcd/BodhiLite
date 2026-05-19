@@ -1,6 +1,7 @@
 import { mulberry32 } from '@/lib/rng/mulberry32';
 import type { VariableSpec } from '@/lib/schemas/variables';
 import type { MaterializedValues, MaterializedValue } from './types';
+import { evaluate } from '@/lib/grading/formula';
 
 export function materialize(specs: VariableSpec[], seed: number): MaterializedValues {
   const rng = mulberry32(seed);
@@ -43,8 +44,7 @@ function materializeOne(
       return Math.round(raw * f) / f;
     }
     case 'derived': {
-      // Implemented in Task 9
-      throw new Error('derived variables not yet supported');
+      return evaluate(v.spec.expression, _scope);
     }
   }
 }

@@ -65,3 +65,35 @@ describe('materialize — non-derived types', () => {
     expect(r1).toEqual(r2);
   });
 });
+
+describe('materialize — derived', () => {
+  it('evaluates a single derived against earlier variables', () => {
+    const specs: VariableSpec[] = [
+      { name: 'a', type: 'randint', position: 1, spec: { min: 5, max: 5 } },
+      { name: 'b', type: 'randint', position: 2, spec: { min: 7, max: 7 } },
+      { name: 's', type: 'derived', position: 3, spec: { expression: 'a + b' } },
+    ];
+    const out = materialize(specs, 1);
+    expect(out.a).toBe(5);
+    expect(out.b).toBe(7);
+    expect(out.s).toBe(12);
+  });
+
+  it('chains: derived can depend on another derived', () => {
+    const specs: VariableSpec[] = [
+      { name: 'm', type: 'randint', position: 1, spec: { min: 100, max: 100 } },
+      { name: 'mm', type: 'derived', position: 2, spec: { expression: 'molar_mass("NaCl")' } },
+      { name: 'moles', type: 'derived', position: 3, spec: { expression: 'm / mm' } },
+    ];
+    const out = materialize(specs, 1);
+    expect(out.mm).toBeCloseTo(58.44, 2);
+    expect(out.moles as number).toBeCloseTo(100 / 58.44, 4);
+  });
+
+  it('throws on derived referencing undefined variable', () => {
+    const specs: VariableSpec[] = [
+      { name: 'a', type: 'derived', position: 1, spec: { expression: 'undefined_var + 1' } },
+    ];
+    expect(() => materialize(specs, 1)).toThrow();
+  });
+});
