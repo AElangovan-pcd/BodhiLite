@@ -97,9 +97,9 @@ describe('signInBrowser', () => {
 
     const cookie = cookies[0]!;
 
-    // Cookie name: sb-<host-with-dots-replaced-by-dashes>-auth-token
-    // hostname 127.0.0.1 → 127-0-0-1
-    expect(cookie.name).toBe('sb-127-0-0-1-auth-token');
+    // Cookie name: sb-<first-hostname-label>-auth-token (matches supabase-js storageKey)
+    // hostname 127.0.0.1 → first label "127"
+    expect(cookie.name).toBe('sb-127-auth-token');
 
     // Value must start with the @supabase/ssr prefix
     expect(cookie.value).toMatch(/^base64-/);
