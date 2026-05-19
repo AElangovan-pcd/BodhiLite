@@ -24,8 +24,31 @@ describe('<Markdown />', () => {
     expect(container.innerHTML).toContain('katex-display');
   });
 
-  it('escapes raw HTML in the source', () => {
+  it('treats raw HTML as literal text, not markup', () => {
     const { container } = render(<Markdown source="<script>x</script>" />);
     expect(container.innerHTML).not.toContain('<script>');
+    expect(container.innerHTML).toContain('&lt;script&gt;');
+  });
+
+  it('blocks event-handler injection via raw img tag', () => {
+    const { container } = render(<Markdown source="<img src=x onerror=alert(1)>" />);
+    expect(container.querySelector('img')).toBeNull();
+  });
+
+  it('blocks svg onload injection', () => {
+    const { container } = render(<Markdown source="<svg onload=alert(1)>" />);
+    expect(container.querySelector('svg')).toBeNull();
+  });
+
+  it('sanitizes javascript: hrefs in markdown links', () => {
+    const { container } = render(<Markdown source="[click](javascript:alert(1))" />);
+    const a = container.querySelector('a');
+    expect(a?.getAttribute('href')).toBe('#');
+  });
+
+  it('sanitizes javascript: src in markdown images', () => {
+    const { container } = render(<Markdown source="![alt](javascript:alert(1))" />);
+    const img = container.querySelector('img');
+    expect(img?.getAttribute('src')).toBe('#');
   });
 });
