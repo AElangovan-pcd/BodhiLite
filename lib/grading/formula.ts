@@ -79,7 +79,10 @@ function walk(node: Node, vars: Vars): unknown {
     case 'Literal': {
       const n = node as unknown as { value: unknown };
       if (typeof n.value === 'number' || typeof n.value === 'string') return n.value;
-      throw new EvalError(`Unsupported literal: ${JSON.stringify(n.value)}`);
+      if (typeof n.value === 'bigint') {
+        throw new EvalError('BigInt literals are not supported');
+      }
+      throw new EvalError(`Unsupported literal: ${typeof n.value}`);
     }
     case 'Identifier': {
       const n = node as unknown as { name: string };

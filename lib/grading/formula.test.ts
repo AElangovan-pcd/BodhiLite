@@ -93,4 +93,12 @@ describe('evaluate — sandbox rejections', () => {
   it('rejects bracket member access', () => {
     expect(() => evaluate('a["constructor"]', vars)).toThrow();
   });
+
+  it('rejects BigInt literal as EvalError', () => {
+    expect(() => evaluate('1n', vars)).toThrow(EvalError);
+  });
+
+  it('rejects regex literal as EvalError', () => {
+    expect(() => evaluate('/abc/', vars)).toThrow(EvalError);
+  });
 });
