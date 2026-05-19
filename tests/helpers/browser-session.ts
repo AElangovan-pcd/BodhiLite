@@ -22,9 +22,8 @@ export async function signInBrowser(
   const url = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!);
   const host = url.hostname.replace(/\./g, '-');
   const tokenName = `sb-${host}-auth-token`;
-  const payload = encodeURIComponent(
-    JSON.stringify([data.session.access_token, data.session.refresh_token]),
-  );
+  const payload =
+    'base64-' + Buffer.from(JSON.stringify(data.session), 'utf8').toString('base64url');
 
   await context.addCookies([
     {
