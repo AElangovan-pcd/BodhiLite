@@ -108,3 +108,74 @@ describe('renderQuestion — determinism', () => {
     expect(a).toEqual(b);
   });
 });
+
+describe('renderQuestion — never throws contract', () => {
+  it('returns sensible output when choices is not an array', () => {
+    const out = renderQuestion({
+      question: {
+        type: 'mc',
+        body: { stem: 'x', choices: 'corrupt-not-an-array' as unknown as never },
+        scoring: { correct_id: 'a' },
+        variables: [],
+      },
+      seed: 0,
+    });
+    expect(out).toBeDefined();
+    expect(out.rendered_body).toMatchObject({ kind: 'mc', choices: [] });
+    expect(out.validation_errors).toBeDefined();
+  });
+
+  it('returns sensible output when a choice element is missing label', () => {
+    const out = renderQuestion({
+      question: {
+        type: 'mc',
+        body: {
+          stem: 'x',
+          choices: [{ id: 'a' }, { id: 'b', label: 'B' }],
+        },
+        scoring: { correct_id: 'a' },
+        variables: [],
+      },
+      seed: 0,
+    });
+    expect(out).toBeDefined();
+    expect(out.rendered_body).toMatchObject({
+      kind: 'mc',
+      choices: [
+        { id: 'a', label_substituted: '' },
+        { id: 'b', label_substituted: 'B' },
+      ],
+    });
+  });
+
+  it('returns sensible output when fill_in blanks is not an array', () => {
+    const out = renderQuestion({
+      question: {
+        type: 'fill_in',
+        body: { stem: 'X is {{blank:a}}.', blanks: null as unknown as never },
+        scoring: { targets: [{ id: 'a', target: 'Y' }] },
+        variables: [],
+      },
+      seed: 0,
+    });
+    expect(out).toBeDefined();
+    expect(out.rendered_body).toMatchObject({ kind: 'fill_in', blanks: [] });
+  });
+
+  it('collects materializer errors without throwing', () => {
+    const out = renderQuestion({
+      question: {
+        type: 'numeric',
+        body: { stem: 'x' },
+        scoring: { formula: 'a + 1', tolerance: 0.01 },
+        variables: [
+          { name: 'a', type: 'derived', position: 1, spec: { expression: 'undefined_var' } },
+        ],
+      },
+      seed: 0,
+    });
+    expect(out).toBeDefined();
+    expect(out.validation_errors.length).toBeGreaterThan(0);
+    expect(out.grading_target).toMatchObject({ kind: 'numeric', value: NaN, tolerance: 0.01 });
+  });
+});
