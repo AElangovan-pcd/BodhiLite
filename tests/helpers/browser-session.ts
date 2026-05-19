@@ -19,8 +19,11 @@ export async function signInBrowser(
   // The @supabase/ssr cookie name pattern: sb-<host-slug>-auth-token
   // Local: 127.0.0.1 → sb-127-auth-token. Use a wildcard fallback: read all cookies
   // set by the client and reissue them on the Playwright context.
+  // Match the @supabase/supabase-js storageKey derivation:
+  //   `sb-${baseUrl.hostname.split(".")[0]}-auth-token`
+  // e.g. http://127.0.0.1:54321 → "sb-127-auth-token"
   const url = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!);
-  const host = url.hostname.replace(/\./g, '-');
+  const host = url.hostname.split('.')[0];
   const tokenName = `sb-${host}-auth-token`;
   const payload =
     'base64-' + Buffer.from(JSON.stringify(data.session), 'utf8').toString('base64url');
