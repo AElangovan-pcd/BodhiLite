@@ -20,6 +20,7 @@ export function McScoringForm({
     onChange({ ...body, choices: next }, { ...scoring });
   }
   function addChoice() {
+    if (choices.length >= 26) return; // Guard: max 26 choices (a-z)
     const id = String.fromCharCode(97 + choices.length); // a, b, c, ...
     setChoices([...choices, { id, label: '' }]);
   }
@@ -27,7 +28,13 @@ export function McScoringForm({
     setChoices(choices.map((c) => (c.id === id ? { ...c, label } : c)));
   }
   function remove(id: string) {
-    setChoices(choices.filter((c) => c.id !== id));
+    const next = choices.filter((c) => c.id !== id);
+    // If the removed choice was the correct one, clear correct_id
+    if (correct === id) {
+      onChange({ ...body, choices: next }, { ...scoring, correct_id: undefined });
+    } else {
+      setChoices(next);
+    }
   }
   function setCorrect(id: string) {
     onChange({ ...body }, { ...scoring, correct_id: id });
@@ -68,6 +75,7 @@ export function MaScoringForm({
     onChange({ ...body }, { ...scoring, correct_ids: [...next] });
   }
   function addChoice() {
+    if (choices.length >= 26) return; // Guard: max 26 choices (a-z)
     const id = String.fromCharCode(97 + choices.length);
     onChange({ ...body, choices: [...choices, { id, label: '' }] }, { ...scoring });
   }
@@ -115,17 +123,18 @@ export function TfScoringForm({
   scoring: { correct?: boolean };
   onChange: (body: Record<string, unknown>, scoring: Record<string, unknown>) => void;
 }) {
+  const isUndefined = scoring.correct === undefined;
   const correct = scoring.correct === true;
   return (
     <div className="flex flex-col gap-2">
       <Label>Correct answer</Label>
       <div className="flex items-center gap-4 text-sm">
         <label className="flex items-center gap-2">
-          <input type="radio" checked={correct} onChange={() => onChange({}, { ...scoring, correct: true })} />
+          <input type="radio" name="tf-correct" checked={correct} onChange={() => onChange({}, { ...scoring, correct: true })} />
           True
         </label>
         <label className="flex items-center gap-2">
-          <input type="radio" checked={!correct} onChange={() => onChange({}, { ...scoring, correct: false })} />
+          <input type="radio" name="tf-correct" checked={!correct && !isUndefined} onChange={() => onChange({}, { ...scoring, correct: false })} />
           False
         </label>
       </div>
