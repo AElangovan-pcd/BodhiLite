@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { Route } from 'next';
 import { EditorPane, type QuestionDraft } from '@/components/editor/EditorPane';
 import { PreviewPane } from '@/components/preview/PreviewPane';
+import { renderQuestion } from '@/lib/rendering';
+import type { MaterializedValues } from '@/lib/materializer/types';
 import { saveQuestionAction } from './actions';
 
 export function QuestionEditorClient({
@@ -24,6 +26,23 @@ export function QuestionEditorClient({
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [liveDraft, setLiveDraft] = useState<QuestionDraft>(initial);
+  const [seed, setSeed] = useState(0);
+
+  const materialized = useMemo<MaterializedValues>(() => {
+    try {
+      return renderQuestion({
+        question: {
+          type: liveDraft.type,
+          body: liveDraft.body,
+          scoring: liveDraft.scoring,
+          variables: liveDraft.variables as never,
+        },
+        seed,
+      }).materialized_values;
+    } catch {
+      return {};
+    }
+  }, [liveDraft, seed]);
 
   async function doSave(draft: QuestionDraft, andNext: boolean): Promise<void> {
     setSaving(true);
@@ -55,10 +74,11 @@ export function QuestionEditorClient({
             onChange={setLiveDraft}
             onSave={(d) => doSave(d, false)}
             onSaveAndNext={(d) => doSave(d, true)}
+            materializedScope={materialized}
           />
         </section>
         <section aria-label="Preview">
-          <PreviewPane draft={liveDraft} />
+          <PreviewPane draft={liveDraft} seed={seed} onSeedChange={setSeed} />
         </section>
       </div>
     </main>

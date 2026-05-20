@@ -5,6 +5,7 @@ import * as acorn from 'acorn';
 import { walk } from 'estree-walker';
 
 const ALLOWED_CALLERS = [
+  'app/(instructor)/assessments/[id]/questions/[qid]/client.tsx',
   'components/preview/PreviewPane.tsx',
 ];
 

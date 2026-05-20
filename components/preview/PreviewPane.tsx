@@ -1,13 +1,16 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { renderQuestion, type RenderInput } from '@/lib/rendering';
 import { Markdown } from '@/lib/rendering';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { QuestionDraft } from '@/components/editor/EditorPane';
 
-export function PreviewPane({ draft }: { draft: QuestionDraft }) {
-  const [seed, setSeed] = useState(0);
+export function PreviewPane({ draft, seed, onSeedChange }: {
+  draft: QuestionDraft;
+  seed: number;
+  onSeedChange: (next: number) => void;
+}) {
 
   const output = useMemo(() => {
     try {
@@ -31,7 +34,7 @@ export function PreviewPane({ draft }: { draft: QuestionDraft }) {
     <div className="flex h-full flex-col gap-4 overflow-y-auto px-2 pb-8">
       <div className="flex items-center gap-2">
         <span className="text-muted-foreground text-xs">Preview as</span>
-        <Select value={String(seed)} onValueChange={(v) => setSeed(Number(v))}>
+        <Select value={String(seed)} onValueChange={(v) => onSeedChange(Number(v))}>
           <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="0">Author (seed=0)</SelectItem>

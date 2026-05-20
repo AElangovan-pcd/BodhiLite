@@ -7,8 +7,9 @@ import { Button } from '@/components/ui/button';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
-import { ChoiceSpec, ChemistryCompoundSpec, RandintSpec, RandfloatSpec } from './variable-specs';
+import { ChoiceSpec, ChemistryCompoundSpec, RandintSpec, RandfloatSpec, DerivedSpec } from './variable-specs';
 import { IDENT_RE } from '@/lib/schemas/variables';
+import type { MaterializedValues } from '@/lib/materializer/types';
 
 export type VariableType = 'choice' | 'chemistry_compound' | 'randint' | 'randfloat' | 'derived';
 type VType = VariableType;
@@ -29,10 +30,11 @@ const DEFAULTS: Record<VType, Record<string, unknown>> = {
 };
 
 export function VariablesSection({
-  variables, onChange,
+  variables, onChange, scope,
 }: {
   variables: V[];
   onChange: (next: V[]) => void;
+  scope: MaterializedValues;
 }) {
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
 
@@ -74,7 +76,7 @@ export function VariablesSection({
       case 'randint': return <RandintSpec spec={v.spec as never} onChange={onSpecChange} />;
       case 'randfloat': return <RandfloatSpec spec={v.spec as never} onChange={onSpecChange} />;
       case 'derived':
-        return <p className="text-muted-foreground text-sm">Derived editor — Task 24.</p>;
+        return <DerivedSpec spec={v.spec as never} scope={scope} onChange={onSpecChange} />;
     }
   }
 

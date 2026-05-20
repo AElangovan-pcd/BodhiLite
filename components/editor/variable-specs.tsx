@@ -1,9 +1,12 @@
 'use client';
 
+import { useMemo } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { evaluate, EvalError } from '@/lib/grading';
+import type { MaterializedValues } from '@/lib/materializer/types';
 
 export function ChoiceSpec({ spec, onChange }: {
   spec: { values?: string[] };
@@ -88,6 +91,40 @@ export function RandfloatSpec({ spec, onChange }: {
       <div className="flex flex-col gap-1"><Label>Units</Label>
         <Input value={spec.units ?? ''}
                onChange={(e) => onChange({ ...spec, units: e.target.value })} /></div>
+    </div>
+  );
+}
+
+export function DerivedSpec({
+  spec, scope, onChange,
+}: {
+  spec: { expression?: string };
+  scope: MaterializedValues;
+  onChange: (next: object) => void;
+}) {
+  const evalResult = useMemo(() => {
+    const expr = spec.expression ?? '';
+    if (!expr) return { ok: false as const, msg: 'empty' };
+    try {
+      return { ok: true as const, value: evaluate(expr, scope) };
+    } catch (e) {
+      return { ok: false as const, msg: e instanceof EvalError ? e.message : (e as Error).message };
+    }
+  }, [spec.expression, scope]);
+
+  return (
+    <div className="flex flex-col gap-1">
+      <Label htmlFor="derived-expr">Expression</Label>
+      <Textarea id="derived-expr" rows={2} className="font-mono text-sm"
+                value={spec.expression ?? ''}
+                onChange={(e) => onChange({ expression: e.target.value })} />
+      {evalResult.ok ? (
+        <p className="text-muted-foreground text-xs">
+          evaluates to: <span className="text-foreground font-mono">{String(evalResult.value)}</span>
+        </p>
+      ) : (
+        <p role="alert" className="text-destructive text-xs">{evalResult.msg}</p>
+      )}
     </div>
   );
 }

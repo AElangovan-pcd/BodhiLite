@@ -11,6 +11,7 @@ import {
   NumericScoringForm, ShortAnswerScoringForm, FillInScoringForm,
 } from './scoring-forms';
 import { VariablesSection, type VariableType } from './VariablesSection';
+import type { MaterializedValues } from '@/lib/materializer/types';
 
 function Scoring({ type, body, scoring, onChange }: {
   type: QuestionType;
@@ -43,6 +44,7 @@ export function EditorPane({
   onSave,
   onSaveAndNext,
   onChange,
+  materializedScope,
 }: {
   position: number;
   totalQuestions: number;
@@ -51,6 +53,7 @@ export function EditorPane({
   onSave: (q: QuestionDraft) => Promise<void>;
   onSaveAndNext: (q: QuestionDraft) => Promise<void>;
   onChange: (q: QuestionDraft) => void;
+  materializedScope: MaterializedValues;
 }) {
   const [draft, setDraft] = useState<QuestionDraft>(initial);
   const [dirty, setDirty] = useState(false);
@@ -98,6 +101,7 @@ export function EditorPane({
       <VariablesSection
         variables={draft.variables}
         onChange={(variables) => patch({ variables })}
+        scope={materializedScope}
       />
 
       <ActionBar
