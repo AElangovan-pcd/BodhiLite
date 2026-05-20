@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { QuestionSchema, VariableSpecSchema } from '@/lib/schemas';
 import { evaluate } from '@/lib/grading';
+import type { Json } from '@/lib/types/database';
 
 type SaveResult = { ok: true } | { ok: false; errors: string[] };
 
@@ -67,18 +68,32 @@ export async function saveQuestionAction(
     }
   }
 
-  // Persist
+  // Persist. Scoping the update by BOTH assessment_id and id ensures that
+  // (a) we don't write to a question that doesn't belong to this assessment
+  // (URL fudging across an instructor's own assessments) and (b) the row-count
+  // check below correctly distinguishes "wrong question" from "RLS blocked"
+  // — both manifest as zero rows updated, both should be a clear error.
   const supabase = await createServerSupabaseClient();
-  const { error: qErr } = await supabase
+  const { error: qErr, data: qRows } = await supabase
     .from('questions')
     .update({
-      body: parsed.body as unknown as Record<string, never>,
-      scoring: parsed.scoring as unknown as Record<string, never>,
+      body: parsed.body as Json,
+      scoring: parsed.scoring as Json,
     })
-    .eq('id', questionId);
+    .eq('assessment_id', assessmentId)
+    .eq('id', questionId)
+    .select('id');
   if (qErr) return { ok: false, errors: [qErr.message] };
+  if ((qRows ?? []).length === 0) {
+    return { ok: false, errors: ['Question not found'] };
+  }
 
-  await supabase.from('question_variables').delete().eq('question_id', questionId);
+  const { error: delErr } = await supabase
+    .from('question_variables')
+    .delete()
+    .eq('question_id', questionId);
+  if (delErr) return { ok: false, errors: [delErr.message] };
+
   if (variables.length > 0) {
     const { error: vErr } = await supabase.from('question_variables').insert(
       variables.map((v) => ({
@@ -86,7 +101,7 @@ export async function saveQuestionAction(
         name: v.name,
         type: v.type,
         position: v.position,
-        spec: v.spec as unknown as Record<string, never>,
+        spec: v.spec as Json,
       })),
     );
     if (vErr) return { ok: false, errors: [vErr.message] };
