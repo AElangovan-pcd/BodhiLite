@@ -104,11 +104,11 @@ export function DerivedSpec({
 }) {
   const evalResult = useMemo(() => {
     const expr = spec.expression ?? '';
-    if (!expr) return { ok: false as const, msg: 'empty' };
+    if (!expr) return { state: 'empty' as const };
     try {
-      return { ok: true as const, value: evaluate(expr, scope) };
+      return { state: 'ok' as const, value: evaluate(expr, scope) };
     } catch (e) {
-      return { ok: false as const, msg: e instanceof EvalError ? e.message : (e as Error).message };
+      return { state: 'error' as const, msg: e instanceof EvalError ? e.message : (e as Error).message };
     }
   }, [spec.expression, scope]);
 
@@ -118,11 +118,12 @@ export function DerivedSpec({
       <Textarea id="derived-expr" rows={2} className="font-mono text-sm"
                 value={spec.expression ?? ''}
                 onChange={(e) => onChange({ expression: e.target.value })} />
-      {evalResult.ok ? (
+      {evalResult.state === 'ok' && (
         <p className="text-muted-foreground text-xs">
           evaluates to: <span className="text-foreground font-mono">{String(evalResult.value)}</span>
         </p>
-      ) : (
+      )}
+      {evalResult.state === 'error' && (
         <p role="alert" className="text-destructive text-xs">{evalResult.msg}</p>
       )}
     </div>
