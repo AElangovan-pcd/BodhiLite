@@ -28,8 +28,8 @@ const TfScoring = z.object({ correct: z.boolean(), points: z.number().optional()
 
 const NumericBody = z.object({ stem, units: z.string().optional() });
 const NumericScoring = z.object({
-  formula: z.string().min(1),
-  tolerance: z.number().min(0),
+  formula: z.string().min(1, { message: 'Grading formula must not be empty' }),
+  tolerance: z.number().min(0, { message: 'Tolerance must be ≥ 0' }),
   points: z.number().optional(),
 });
 
