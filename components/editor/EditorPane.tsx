@@ -10,6 +10,7 @@ import {
   McScoringForm, MaScoringForm, TfScoringForm,
   NumericScoringForm, ShortAnswerScoringForm, FillInScoringForm,
 } from './scoring-forms';
+import { VariablesSection } from './VariablesSection';
 
 function Scoring({ type, body, scoring, onChange }: {
   type: QuestionType;
@@ -94,8 +95,10 @@ export function EditorPane({
 
       <Separator />
 
-      {/* Variables come in Tasks 23-25 */}
-      <p className="text-muted-foreground text-sm">Variables — implemented in Tasks 23-25.</p>
+      <VariablesSection
+        variables={draft.variables as never}
+        onChange={(variables) => patch({ variables: variables as typeof draft.variables })}
+      />
 
       <ActionBar
         saving={saving}
