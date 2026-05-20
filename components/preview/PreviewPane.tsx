@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { renderQuestion, Markdown, type RenderInput } from '@/lib/rendering';
 import { SeedSwitcher } from './SeedSwitcher';
 import { RevealPanel } from './RevealPanel';
+import { AnswerSurface } from './answer-surfaces';
 import type { QuestionDraft } from '@/components/editor/EditorPane';
 
 export function PreviewPane({
@@ -33,8 +34,7 @@ export function PreviewPane({
       {output ? (
         <>
           <Markdown source={output.rendered_stem} />
-          {/* Answer surface — implemented in Task 26 */}
-          <p className="text-muted-foreground text-sm">Answer surface — Task 26.</p>
+          <AnswerSurface body={output.rendered_body} />
           <RevealPanel output={output} />
         </>
       ) : (
