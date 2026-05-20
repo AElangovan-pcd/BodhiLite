@@ -25,6 +25,7 @@ export function QuestionEditorClient({
 }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
   const [liveDraft, setLiveDraft] = useState<QuestionDraft>(initial);
   const [seed, setSeed] = useState(0);
 
@@ -46,11 +47,18 @@ export function QuestionEditorClient({
 
   async function doSave(draft: QuestionDraft, andNext: boolean): Promise<void> {
     setSaving(true);
+    setErrors([]);
     try {
       const fd = new FormData();
       fd.set('payload', JSON.stringify(draft));
-      await saveQuestionAction(assessmentId, questionId, fd);
+      const result = await saveQuestionAction(assessmentId, questionId, fd);
+      if (!result.ok) {
+        setErrors(result.errors);
+        return;
+      }
       if (!andNext) router.refresh();
+    } catch (e) {
+      setErrors([`Save failed: ${(e as Error).message}`]);
     } finally {
       setSaving(false);
     }
@@ -64,6 +72,11 @@ export function QuestionEditorClient({
           ← Assessment
         </Link>
       </header>
+      {errors.length > 0 && (
+        <div role="alert" className="mx-2 my-2 rounded border border-destructive/50 bg-destructive/10 p-2 text-sm text-destructive">
+          <ul>{errors.map((e, i) => <li key={i}>• {e}</li>)}</ul>
+        </div>
+      )}
       <div className="grid flex-1 grid-cols-1 overflow-hidden md:grid-cols-2">
         <section aria-label="Editor" className="border-r overflow-hidden">
           <EditorPane

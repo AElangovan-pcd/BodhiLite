@@ -107,8 +107,22 @@ export function EditorPane({
       <ActionBar
         saving={saving}
         dirty={dirty}
-        onSave={async () => { await onSave(draft); setDirty(false); }}
-        onSaveAndNext={async () => { await onSaveAndNext(draft); setDirty(false); }}
+        onSave={async () => {
+          const snapshot = draft;
+          await onSave(draft);
+          setDraft((current) => {
+            if (current === snapshot) setDirty(false);
+            return current;
+          });
+        }}
+        onSaveAndNext={async () => {
+          const snapshot = draft;
+          await onSaveAndNext(draft);
+          setDraft((current) => {
+            if (current === snapshot) setDirty(false);
+            return current;
+          });
+        }}
         onDiscard={() => { setDraft(initial); setDirty(false); }}
         nextDisabled={position >= totalQuestions}
       />
