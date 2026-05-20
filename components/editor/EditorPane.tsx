@@ -6,6 +6,21 @@ import { Separator } from '@/components/ui/separator';
 import { StemField } from './StemField';
 import { ActionBar } from './ActionBar';
 import type { QuestionType } from '@/lib/schemas';
+import { McScoringForm, MaScoringForm, TfScoringForm } from './scoring-forms';
+
+function Scoring({ type, body, scoring, onChange }: {
+  type: QuestionType;
+  body: Record<string, unknown>;
+  scoring: Record<string, unknown>;
+  onChange: (body: Record<string, unknown>, scoring: Record<string, unknown>) => void;
+}) {
+  switch (type) {
+    case 'mc': return <McScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />;
+    case 'ma': return <MaScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />;
+    case 'tf': return <TfScoringForm body={body} scoring={scoring as never} onChange={onChange} />;
+    default: return <p className="text-muted-foreground text-sm">{type} scoring form — Task 22.</p>;
+  }
+}
 
 export type QuestionDraft = {
   type: QuestionType;
@@ -69,8 +84,8 @@ export function EditorPane({
 
       <Separator />
 
-      {/* Scoring forms come in Tasks 21-22 */}
-      <p className="text-muted-foreground text-sm">Scoring form — implemented in Tasks 21-22.</p>
+      <Scoring type={draft.type} body={draft.body} scoring={draft.scoring}
+               onChange={(body, scoring) => patch({ body: { ...draft.body, ...body }, scoring })} />
 
       <Separator />
 
