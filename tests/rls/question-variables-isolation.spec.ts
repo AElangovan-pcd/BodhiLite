@@ -5,6 +5,7 @@ test.describe("RLS: instructor cannot reach another instructor's question_variab
   let aId: string;
   let bId: string;
   let aVariableId: string;
+  const perTestUserIds: string[] = [];
 
   test.beforeAll(async () => {
     const admin = adminClient();
@@ -64,14 +65,16 @@ test.describe("RLS: instructor cannot reach another instructor's question_variab
   test.afterAll(async () => {
     await deleteTestUser(aId);
     await deleteTestUser(bId);
+    for (const id of perTestUserIds) await deleteTestUser(id);
   });
 
   test('instructor B SELECTs => empty', async () => {
-    const { client } = await createTestUserClient({
+    const { userId, client } = await createTestUserClient({
       email: `instrB-v-read+${Date.now()}@test.local`,
       password: 'p!assword1',
       role: 'instructor',
     });
+    perTestUserIds.push(userId);
     const { data } = await client
       .from('question_variables')
       .select('*')
@@ -80,11 +83,12 @@ test.describe("RLS: instructor cannot reach another instructor's question_variab
   });
 
   test('instructor B UPDATE => rejected (affects 0 rows under RLS)', async () => {
-    const { client } = await createTestUserClient({
+    const { userId, client } = await createTestUserClient({
       email: `instrB-v-upd+${Date.now()}@test.local`,
       password: 'p!assword1',
       role: 'instructor',
     });
+    perTestUserIds.push(userId);
     const { data, error } = await client
       .from('question_variables')
       .update({ spec: { min: 99, max: 100 } })
@@ -95,11 +99,12 @@ test.describe("RLS: instructor cannot reach another instructor's question_variab
   });
 
   test('instructor B DELETE => rejected (affects 0 rows)', async () => {
-    const { client } = await createTestUserClient({
+    const { userId, client } = await createTestUserClient({
       email: `instrB-v-del+${Date.now()}@test.local`,
       password: 'p!assword1',
       role: 'instructor',
     });
+    perTestUserIds.push(userId);
     const { data } = await client
       .from('question_variables')
       .delete()

@@ -5,6 +5,7 @@ test.describe("RLS: instructor cannot reach another instructor's assessments", (
   let aId: string;
   let bId: string;
   let aAssessmentId: string;
+  const perTestUserIds: string[] = [];
 
   test.beforeAll(async () => {
     const admin = adminClient();
@@ -38,14 +39,16 @@ test.describe("RLS: instructor cannot reach another instructor's assessments", (
   test.afterAll(async () => {
     await deleteTestUser(aId);
     await deleteTestUser(bId);
+    for (const id of perTestUserIds) await deleteTestUser(id);
   });
 
   test('instructor B SELECTs => empty', async () => {
-    const { client } = await createTestUserClient({
+    const { userId, client } = await createTestUserClient({
       email: `instrB-read+${Date.now()}@test.local`,
       password: 'p!assword1',
       role: 'instructor',
     });
+    perTestUserIds.push(userId);
     const { data } = await client
       .from('assessments')
       .select('*')
@@ -54,11 +57,12 @@ test.describe("RLS: instructor cannot reach another instructor's assessments", (
   });
 
   test('instructor B UPDATE => rejected (affects 0 rows under RLS)', async () => {
-    const { client } = await createTestUserClient({
+    const { userId, client } = await createTestUserClient({
       email: `instrB-upd+${Date.now()}@test.local`,
       password: 'p!assword1',
       role: 'instructor',
     });
+    perTestUserIds.push(userId);
     const { data, error } = await client
       .from('assessments')
       .update({ title: 'hijacked' })
@@ -69,11 +73,12 @@ test.describe("RLS: instructor cannot reach another instructor's assessments", (
   });
 
   test('instructor B DELETE => rejected (affects 0 rows)', async () => {
-    const { client } = await createTestUserClient({
+    const { userId, client } = await createTestUserClient({
       email: `instrB-del+${Date.now()}@test.local`,
       password: 'p!assword1',
       role: 'instructor',
     });
+    perTestUserIds.push(userId);
     const { data } = await client
       .from('assessments')
       .delete()
