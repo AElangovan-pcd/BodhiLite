@@ -141,3 +141,118 @@ export function TfScoringForm({
     </div>
   );
 }
+
+export function NumericScoringForm({
+  body, scoring, onChange,
+}: {
+  body: { units?: string };
+  scoring: { formula?: string; tolerance?: number };
+  onChange: (body: Record<string, unknown>, scoring: Record<string, unknown>) => void;
+}) {
+  return (
+    <div className="grid gap-2 md:grid-cols-2">
+      <div className="flex flex-col gap-1 md:col-span-2">
+        <Label htmlFor="formula">Grading formula</Label>
+        <Input id="formula" value={scoring.formula ?? ''}
+               onChange={(e) => onChange({ ...body }, { ...scoring, formula: e.target.value })}
+               placeholder="e.g. m / molar_mass(c)" />
+      </div>
+      <div className="flex flex-col gap-1">
+        <Label htmlFor="tolerance">Tolerance</Label>
+        <Input id="tolerance" type="number" step="any" min={0}
+               value={scoring.tolerance ?? 0}
+               onChange={(e) => onChange({ ...body }, { ...scoring, tolerance: Number(e.target.value) })} />
+      </div>
+      <div className="flex flex-col gap-1">
+        <Label htmlFor="units">Units (optional)</Label>
+        <Input id="units" value={body.units ?? ''}
+               onChange={(e) => onChange({ ...body, units: e.target.value }, { ...scoring })} />
+      </div>
+    </div>
+  );
+}
+
+export function ShortAnswerScoringForm({
+  body: _body, scoring, onChange,
+}: {
+  body: Record<string, unknown>;
+  scoring: { pattern?: string; case_insensitive?: boolean };
+  onChange: (body: Record<string, unknown>, scoring: Record<string, unknown>) => void;
+}) {
+  let regexError: string | null = null;
+  try { new RegExp(scoring.pattern ?? ''); } catch (e) { regexError = (e as Error).message; }
+  return (
+    <div className="flex flex-col gap-2">
+      <Label htmlFor="pattern">Regex pattern</Label>
+      <Input id="pattern" value={scoring.pattern ?? ''}
+             onChange={(e) => onChange({}, { ...scoring, pattern: e.target.value })}
+             aria-invalid={regexError != null} />
+      {regexError && <p role="alert" className="text-destructive text-xs">{regexError}</p>}
+      <label className="flex items-center gap-2 text-sm">
+        <input type="checkbox" checked={Boolean(scoring.case_insensitive)}
+               onChange={(e) => onChange({}, { ...scoring, case_insensitive: e.target.checked })} />
+        Case-insensitive
+      </label>
+    </div>
+  );
+}
+
+export function FillInScoringForm({
+  body, scoring, onChange,
+}: {
+  body: { stem?: string; blanks?: { id: string; prompt?: string }[] };
+  scoring: { targets?: { id: string; target: string; case_insensitive?: boolean }[] };
+  onChange: (body: Record<string, unknown>, scoring: Record<string, unknown>) => void;
+}) {
+  // Infer blank IDs from stem tokens {{blank:id}}
+  const tokenIds = new Set<string>();
+  const stem = body.stem ?? '';
+  for (const m of stem.matchAll(/\{\{blank:([a-zA-Z0-9_-]+)\}\}/g)) tokenIds.add(m[1]!);
+  const targets = scoring.targets ?? [];
+  const blanks = body.blanks ?? [];
+
+  // Sync blanks + targets with token IDs
+  function sync() {
+    const nextBlanks = [...tokenIds].map((id) => blanks.find((b) => b.id === id) ?? { id });
+    const nextTargets = [...tokenIds].map(
+      (id) => targets.find((t) => t.id === id) ?? { id, target: '', case_insensitive: false },
+    );
+    onChange({ ...body, blanks: nextBlanks }, { ...scoring, targets: nextTargets });
+  }
+
+  function setTarget(id: string, target: string) {
+    onChange(
+      { ...body },
+      {
+        ...scoring,
+        targets: [...tokenIds].map(
+          (tid) => targets.find((t) => t.id === tid) ?? { id: tid, target: '', case_insensitive: false },
+        ).map((t) => (t.id === id ? { ...t, target } : t)),
+      },
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-2">
+      <Label>Blanks (auto-detected from stem tokens)</Label>
+      {tokenIds.size === 0 && (
+        <p className="text-muted-foreground text-sm">
+          Add <code>{'{{blank:id}}'}</code> tokens in the stem to define blanks.
+        </p>
+      )}
+      <Button type="button" variant="outline" onClick={sync}>Sync from stem</Button>
+      <ul className="flex flex-col gap-2">
+        {[...tokenIds].map((id) => {
+          const t = targets.find((x) => x.id === id);
+          return (
+            <li key={id} className="flex items-center gap-2">
+              <span className="font-mono text-xs w-16">{id}</span>
+              <Input value={t?.target ?? ''} placeholder="target answer"
+                     onChange={(e) => setTarget(id, e.target.value)} />
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}

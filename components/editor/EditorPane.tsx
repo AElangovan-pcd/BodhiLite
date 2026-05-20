@@ -6,7 +6,10 @@ import { Separator } from '@/components/ui/separator';
 import { StemField } from './StemField';
 import { ActionBar } from './ActionBar';
 import type { QuestionType } from '@/lib/schemas';
-import { McScoringForm, MaScoringForm, TfScoringForm } from './scoring-forms';
+import {
+  McScoringForm, MaScoringForm, TfScoringForm,
+  NumericScoringForm, ShortAnswerScoringForm, FillInScoringForm,
+} from './scoring-forms';
 
 function Scoring({ type, body, scoring, onChange }: {
   type: QuestionType;
@@ -18,7 +21,9 @@ function Scoring({ type, body, scoring, onChange }: {
     case 'mc': return <McScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />;
     case 'ma': return <MaScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />;
     case 'tf': return <TfScoringForm body={body} scoring={scoring as never} onChange={onChange} />;
-    default: return <p className="text-muted-foreground text-sm">{type} scoring form — Task 22.</p>;
+    case 'numeric': return <NumericScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />;
+    case 'short_answer': return <ShortAnswerScoringForm body={body} scoring={scoring as never} onChange={onChange} />;
+    case 'fill_in': return <FillInScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />;
   }
 }
 
