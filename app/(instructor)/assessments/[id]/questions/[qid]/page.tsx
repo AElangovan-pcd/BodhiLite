@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { QuestionEditorClient } from './client';
 import type { QuestionType } from '@/lib/schemas';
+import type { VariableType } from '@/components/editor/VariablesSection';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,12 +32,13 @@ export default async function QuestionEditorPage({
     type: q.type as QuestionType,
     body: q.body as Record<string, unknown>,
     scoring: q.scoring as Record<string, unknown>,
-    variables: (q.question_variables ?? []) as {
-      name: string;
-      type: string;
-      position: number;
-      spec: Record<string, unknown>;
-    }[],
+    variables: (q.question_variables ?? []).map((v) => ({
+      ...v,
+      // DB text column is wider than VariableType; cast is safe because the DB
+      // enum only contains these 5 values (enforced by the questions_type_check constraint).
+      type: v.type as VariableType,
+      spec: v.spec as Record<string, unknown>,
+    })),
   };
 
   return (

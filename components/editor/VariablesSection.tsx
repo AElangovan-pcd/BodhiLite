@@ -8,8 +8,10 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { ChoiceSpec, ChemistryCompoundSpec, RandintSpec, RandfloatSpec } from './variable-specs';
+import { IDENT_RE } from '@/lib/schemas/variables';
 
-type VType = 'choice' | 'chemistry_compound' | 'randint' | 'randfloat' | 'derived';
+export type VariableType = 'choice' | 'chemistry_compound' | 'randint' | 'randfloat' | 'derived';
+type VType = VariableType;
 
 type V = {
   name: string;
@@ -53,6 +55,13 @@ export function VariablesSection({
     set(i, { type, spec: DEFAULTS[type] });
   }
   function remove(i: number) {
+    const nextExpanded = new Set<number>();
+    for (const idx of expanded) {
+      if (idx < i) nextExpanded.add(idx);
+      else if (idx > i) nextExpanded.add(idx - 1);
+      // idx === i: dropped
+    }
+    setExpanded(nextExpanded);
     onChange(variables.filter((_, idx) => idx !== i).map((v, idx) => ({ ...v, position: idx + 1 })));
   }
 
@@ -73,12 +82,15 @@ export function VariablesSection({
     <div className="flex flex-col gap-2">
       <Label>Variables (optional — parameterization)</Label>
       <ul className="flex flex-col gap-2">
-        {variables.map((v, i) => (
+        {variables.map((v, i) => {
+          const nameValid = IDENT_RE.test(v.name);
+          return (
           <li key={i} className="rounded border p-2">
             <div className="flex items-center gap-2">
               <Input className="w-40 font-mono text-sm" value={v.name}
                      onChange={(e) => set(i, { name: e.target.value })}
-                     aria-label={`Variable ${i + 1} name`} />
+                     aria-label={`Variable ${i + 1} name`}
+                     {...(!nameValid ? { 'aria-invalid': true as const } : {})} />
               <Select value={v.type} onValueChange={(t) => setType(i, t as VType)}>
                 <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -96,11 +108,17 @@ export function VariablesSection({
               </Button>
               <Button type="button" variant="ghost" onClick={() => remove(i)} aria-label="Remove">×</Button>
             </div>
+            {!nameValid && v.name.length > 0 && (
+              <p role="alert" className="text-destructive text-xs">
+                Must start with a letter or _, then letters/digits/_ only.
+              </p>
+            )}
             {expanded.has(i) && (
               <div id={`vspec-${i}`} className="mt-2">{renderSpec(v, i)}</div>
             )}
           </li>
-        ))}
+          );
+        })}
       </ul>
       <Button type="button" variant="outline" onClick={add}>+ Add variable</Button>
     </div>

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const IDENT = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+export const IDENT_RE = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
 
 const ChoiceSpec = z.object({
   values: z.array(z.string().min(1)).min(1),
@@ -41,31 +41,31 @@ const DerivedSpec = z.object({
 
 export const VariableSpecSchema = z.discriminatedUnion('type', [
   z.object({
-    name: z.string().regex(IDENT),
+    name: z.string().regex(IDENT_RE),
     position: z.number().int().min(1),
     type: z.literal('choice'),
     spec: ChoiceSpec,
   }),
   z.object({
-    name: z.string().regex(IDENT),
+    name: z.string().regex(IDENT_RE),
     position: z.number().int().min(1),
     type: z.literal('chemistry_compound'),
     spec: ChemistryCompoundSpec,
   }),
   z.object({
-    name: z.string().regex(IDENT),
+    name: z.string().regex(IDENT_RE),
     position: z.number().int().min(1),
     type: z.literal('randint'),
     spec: RandintSpec,
   }),
   z.object({
-    name: z.string().regex(IDENT),
+    name: z.string().regex(IDENT_RE),
     position: z.number().int().min(1),
     type: z.literal('randfloat'),
     spec: RandfloatSpec,
   }),
   z.object({
-    name: z.string().regex(IDENT),
+    name: z.string().regex(IDENT_RE),
     position: z.number().int().min(1),
     type: z.literal('derived'),
     spec: DerivedSpec,

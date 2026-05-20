@@ -10,7 +10,7 @@ import {
   McScoringForm, MaScoringForm, TfScoringForm,
   NumericScoringForm, ShortAnswerScoringForm, FillInScoringForm,
 } from './scoring-forms';
-import { VariablesSection } from './VariablesSection';
+import { VariablesSection, type VariableType } from './VariablesSection';
 
 function Scoring({ type, body, scoring, onChange }: {
   type: QuestionType;
@@ -32,7 +32,7 @@ export type QuestionDraft = {
   type: QuestionType;
   body: Record<string, unknown>;
   scoring: Record<string, unknown>;
-  variables: { name: string; type: string; position: number; spec: Record<string, unknown> }[];
+  variables: { name: string; type: VariableType; position: number; spec: Record<string, unknown> }[];
 };
 
 export function EditorPane({
@@ -96,8 +96,8 @@ export function EditorPane({
       <Separator />
 
       <VariablesSection
-        variables={draft.variables as never}
-        onChange={(variables) => patch({ variables: variables as typeof draft.variables })}
+        variables={draft.variables}
+        onChange={(variables) => patch({ variables })}
       />
 
       <ActionBar
