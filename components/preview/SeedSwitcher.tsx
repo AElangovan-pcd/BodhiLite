@@ -13,25 +13,45 @@ const PRESETS = [
   { value: 3, label: 'Test student 3' },
 ];
 
+function isPreset(seed: number): boolean {
+  return PRESETS.some((p) => p.value === seed);
+}
+
 export function SeedSwitcher({
   seed, onSeedChange,
 }: {
   seed: number;
   onSeedChange: (next: number) => void;
 }) {
-  const isPreset = PRESETS.some((p) => p.value === seed);
-  const [custom, setCustom] = useState(isPreset ? '' : String(seed));
+  // Initial customMode is true iff the incoming seed isn't a preset (e.g. deep-link with ?seed=42).
+  const [customMode, setCustomMode] = useState<boolean>(() => !isPreset(seed));
+  const [custom, setCustom] = useState<string>(() => (isPreset(seed) ? '' : String(seed)));
+
+  function onSelect(v: string) {
+    if (v === 'custom') {
+      setCustomMode(true);
+      // Do not change seed yet — user will type the value.
+      return;
+    }
+    setCustomMode(false);
+    setCustom('');
+    onSeedChange(Number(v));
+  }
+
+  function onCustomChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const raw = e.target.value;
+    setCustom(raw);
+    const trimmed = raw.trim();
+    if (trimmed === '') return; // hold mid-edit; don't snap to 0
+    const parsed = Number(trimmed);
+    if (Number.isFinite(parsed)) onSeedChange(parsed);
+    // Non-numeric junk: ignore (don't propagate); user sees the raw chars in the field
+  }
 
   return (
     <div className="flex items-center gap-2">
       <span className="text-muted-foreground text-xs">Preview as</span>
-      <Select
-        value={isPreset ? String(seed) : 'custom'}
-        onValueChange={(v) => {
-          if (v === 'custom') return;
-          onSeedChange(Number(v));
-        }}
-      >
+      <Select value={customMode ? 'custom' : String(seed)} onValueChange={onSelect}>
         <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
         <SelectContent>
           {PRESETS.map((p) => (
@@ -40,9 +60,9 @@ export function SeedSwitcher({
           <SelectItem value="custom">Custom seed…</SelectItem>
         </SelectContent>
       </Select>
-      {!isPreset && (
+      {customMode && (
         <Input type="number" className="w-28" value={custom}
-               onChange={(e) => { setCustom(e.target.value); onSeedChange(Number(e.target.value) || 0); }}
+               onChange={onCustomChange}
                aria-label="Custom seed" />
       )}
     </div>
