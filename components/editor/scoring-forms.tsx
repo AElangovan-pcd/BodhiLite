@@ -186,7 +186,7 @@ export function ShortAnswerScoringForm({
       <Label htmlFor="pattern">Regex pattern</Label>
       <Input id="pattern" value={scoring.pattern ?? ''}
              onChange={(e) => onChange({}, { ...scoring, pattern: e.target.value })}
-             aria-invalid={regexError != null} />
+             {...(regexError != null ? { 'aria-invalid': true as const } : {})} />
       {regexError && <p role="alert" className="text-destructive text-xs">{regexError}</p>}
       <label className="flex items-center gap-2 text-sm">
         <input type="checkbox" checked={Boolean(scoring.case_insensitive)}
