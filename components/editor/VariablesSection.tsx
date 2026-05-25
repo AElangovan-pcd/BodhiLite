@@ -122,7 +122,7 @@ export function VariablesSection({
                   {...(!nameValid ? { 'aria-invalid': true as const } : {})}
                 />
                 <Select value={v.type} onValueChange={(t) => setType(i, t as VType)}>
-                  <SelectTrigger className="w-48">
+                  <SelectTrigger className="w-48" aria-label={`Variable ${i + 1} type`}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

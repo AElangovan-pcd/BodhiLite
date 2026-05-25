@@ -55,9 +55,11 @@ export function SeedSwitcher({
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-muted-foreground text-xs">Preview as</span>
+      <span className="text-muted-foreground text-xs" aria-hidden="true">
+        Preview as
+      </span>
       <Select value={customMode ? 'custom' : String(seed)} onValueChange={onSelect}>
-        <SelectTrigger className="w-48">
+        <SelectTrigger className="w-48" aria-label="Preview as">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

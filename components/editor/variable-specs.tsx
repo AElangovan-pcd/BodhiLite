@@ -62,7 +62,7 @@ export function ChemistryCompoundSpec({
               className="font-mono"
               onChange={(e) => set(i, { smiles: e.target.value })}
             />
-            <Button type="button" variant="ghost" onClick={() => remove(i)}>
+            <Button type="button" variant="ghost" onClick={() => remove(i)} aria-label="Remove">
               ×
             </Button>
           </li>
