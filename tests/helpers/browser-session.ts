@@ -28,11 +28,15 @@ export async function signInBrowser(
   const payload =
     'base64-' + Buffer.from(JSON.stringify(data.session), 'utf8').toString('base64url');
 
+  // Cookie domain must match the host the browser actually navigates to.
+  // Locally that's usually http://localhost:3000; CI uses http://127.0.0.1:3000.
+  const appHost = new URL(process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000').hostname;
+
   await context.addCookies([
     {
       name: tokenName,
       value: payload,
-      domain: 'localhost',
+      domain: appHost,
       path: '/',
       httpOnly: false,
       secure: false,

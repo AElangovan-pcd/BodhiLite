@@ -69,6 +69,7 @@ function makeBrowserContext(): { ctx: BrowserContext; captured: Cookie[][] } {
 
 describe('signInBrowser', () => {
   const originalUrl = process.env['NEXT_PUBLIC_SUPABASE_URL'];
+  const originalBaseUrl = process.env['PLAYWRIGHT_BASE_URL'];
 
   beforeEach(() => {
     process.env['NEXT_PUBLIC_SUPABASE_URL'] = 'http://127.0.0.1:54321';
@@ -79,6 +80,11 @@ describe('signInBrowser', () => {
       delete process.env['NEXT_PUBLIC_SUPABASE_URL'];
     } else {
       process.env['NEXT_PUBLIC_SUPABASE_URL'] = originalUrl;
+    }
+    if (originalBaseUrl === undefined) {
+      delete process.env['PLAYWRIGHT_BASE_URL'];
+    } else {
+      process.env['PLAYWRIGHT_BASE_URL'] = originalBaseUrl;
     }
     vi.restoreAllMocks();
   });
@@ -110,6 +116,27 @@ describe('signInBrowser', () => {
 
     expect(decoded).toEqual(FAKE_SESSION);
   });
+
+  it.each([
+    { baseUrl: 'http://localhost:3000', expectedDomain: 'localhost' },
+    { baseUrl: 'http://127.0.0.1:3000', expectedDomain: '127.0.0.1' },
+    { baseUrl: undefined, expectedDomain: 'localhost' },
+  ])(
+    'sets cookie domain to $expectedDomain when PLAYWRIGHT_BASE_URL is $baseUrl',
+    async ({ baseUrl, expectedDomain }) => {
+      if (baseUrl === undefined) {
+        delete process.env['PLAYWRIGHT_BASE_URL'];
+      } else {
+        process.env['PLAYWRIGHT_BASE_URL'] = baseUrl;
+      }
+      const { ctx, captured } = makeBrowserContext();
+      const client = makeClient(FAKE_SESSION);
+
+      await signInBrowser(ctx, { userId: 'u1', client });
+
+      expect(captured[0]![0]!.domain).toBe(expectedDomain);
+    },
+  );
 
   it('throws when getSession returns a null session', async () => {
     const { ctx } = makeBrowserContext();
