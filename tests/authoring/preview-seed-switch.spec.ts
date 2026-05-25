@@ -48,8 +48,9 @@ test('typing in editor updates preview live; seed switch re-materializes', async
     const preview = page.locator('section[aria-label="Preview"]');
     await expect(preview).toContainText('How many g of');
 
-    // Switch to a different seed; reveal panel changes
-    await page.getByRole('combobox').click();
+    // Switch to a different seed; reveal panel changes.
+    // Scope to Preview region — the Editor region also has a combobox (variable type).
+    await preview.getByRole('combobox').click();
     await page.getByRole('option', { name: /Test student 2/i }).click();
     // Reveal panel should still show the materialized values
     await expect(preview).toContainText(/Materialized values/i);

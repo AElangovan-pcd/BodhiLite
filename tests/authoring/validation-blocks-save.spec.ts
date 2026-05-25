@@ -34,7 +34,9 @@ test('invalid form blocks save with field-level error', async ({ page, context }
     await page.getByLabel(/Tolerance/i).fill('-1');
     await page.getByRole('button', { name: /^Save$/i }).click();
 
-    await expect(page.getByRole('alert')).toContainText(/tolerance/i);
+    // Scope to the error banner — Next.js renders its own role="alert" route announcer
+    // that also matches getByRole('alert'), so the bare query is ambiguous in strict mode.
+    await expect(page.getByRole('alert').filter({ hasText: /tolerance/i })).toBeVisible();
   } finally {
     await deleteTestUser(instr.userId);
   }
