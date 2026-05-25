@@ -13,7 +13,10 @@ export default async function NewAssessmentPage({
   const sp = await searchParams;
   return (
     <main className="mx-auto max-w-md px-6 py-8">
-      <Link href={'/assessments' as Route} className="text-muted-foreground text-sm hover:underline">
+      <Link
+        href={'/assessments' as Route}
+        className="text-muted-foreground text-sm hover:underline"
+      >
         ← Assessments
       </Link>
       <h1 className="mt-2 text-2xl font-semibold">New assessment</h1>

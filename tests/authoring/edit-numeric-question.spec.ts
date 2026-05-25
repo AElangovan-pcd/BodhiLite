@@ -2,7 +2,10 @@ import { test, expect } from '@playwright/test';
 import { adminClient, createTestUserClient, deleteTestUser } from '../helpers/auth';
 import { signInBrowser } from '../helpers/browser-session';
 
-test('instructor authors a parameterized numeric question end-to-end', async ({ page, context }) => {
+test('instructor authors a parameterized numeric question end-to-end', async ({
+  page,
+  context,
+}) => {
   const admin = adminClient();
   const instr = await createTestUserClient({
     email: `instr-num+${Date.now()}@test.local`,
@@ -13,14 +16,19 @@ test('instructor authors a parameterized numeric question end-to-end', async ({ 
     const { data: a } = await admin
       .from('assessments')
       .insert({ owner_user_id: instr.userId, title: 'Stoich', slug: 'stoich', status: 'draft' })
-      .select('id').single();
+      .select('id')
+      .single();
     const { data: q } = await admin
       .from('questions')
       .insert({
-        assessment_id: a!.id, position: 1, type: 'numeric',
-        body: { stem: '' }, scoring: { formula: '0', tolerance: 0 },
+        assessment_id: a!.id,
+        position: 1,
+        type: 'numeric',
+        body: { stem: '' },
+        scoring: { formula: '0', tolerance: 0 },
       })
-      .select('id').single();
+      .select('id')
+      .single();
 
     await signInBrowser(context, instr);
     await page.goto(`/assessments/${a!.id}/questions/${q!.id}`);

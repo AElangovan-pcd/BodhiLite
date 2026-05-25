@@ -24,32 +24,54 @@ export function QuestionsTable({
   onDelete: (formData: FormData) => Promise<void>;
 }) {
   if (questions.length === 0) {
-    return (
-      <p className="text-muted-foreground my-4">No questions yet. Add your first one.</p>
-    );
+    return <p className="text-muted-foreground my-4">No questions yet. Add your first one.</p>;
   }
   return (
-    <ul className="divide-y divide-border my-4">
+    <ul className="divide-border my-4 divide-y">
       {questions.map((q, i) => (
         <li key={q.id} className="flex items-center gap-3 py-2">
           <span className="text-muted-foreground w-8 text-sm">Q{q.position}</span>
           <Badge variant="outline">{q.type}</Badge>
-          <Link href={`/assessments/${assessmentId}/questions/${q.id}` as Route}
-                className="flex-1 truncate hover:underline">
+          <Link
+            href={`/assessments/${assessmentId}/questions/${q.id}` as Route}
+            className="flex-1 truncate hover:underline"
+          >
             {q.stem_preview || <em className="text-muted-foreground">(empty stem)</em>}
           </Link>
-          <form action={onMoveUp}><input type="hidden" name="qid" value={q.id} />
-            <Button type="submit" variant="ghost" size="default" disabled={i === 0}
-                    aria-label={`Move question ${q.position} up`}>↑</Button>
+          <form action={onMoveUp}>
+            <input type="hidden" name="qid" value={q.id} />
+            <Button
+              type="submit"
+              variant="ghost"
+              size="default"
+              disabled={i === 0}
+              aria-label={`Move question ${q.position} up`}
+            >
+              ↑
+            </Button>
           </form>
-          <form action={onMoveDown}><input type="hidden" name="qid" value={q.id} />
-            <Button type="submit" variant="ghost" size="default"
-                    disabled={i === questions.length - 1}
-                    aria-label={`Move question ${q.position} down`}>↓</Button>
+          <form action={onMoveDown}>
+            <input type="hidden" name="qid" value={q.id} />
+            <Button
+              type="submit"
+              variant="ghost"
+              size="default"
+              disabled={i === questions.length - 1}
+              aria-label={`Move question ${q.position} down`}
+            >
+              ↓
+            </Button>
           </form>
-          <form action={onDelete}><input type="hidden" name="qid" value={q.id} />
-            <Button type="submit" variant="destructive" size="default"
-                    aria-label={`Delete question ${q.position}`}>×</Button>
+          <form action={onDelete}>
+            <input type="hidden" name="qid" value={q.id} />
+            <Button
+              type="submit"
+              variant="destructive"
+              size="default"
+              aria-label={`Delete question ${q.position}`}
+            >
+              ×
+            </Button>
           </form>
         </li>
       ))}

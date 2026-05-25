@@ -75,10 +75,7 @@ test.describe("RLS: instructor cannot reach another instructor's question_variab
       role: 'instructor',
     });
     perTestUserIds.push(userId);
-    const { data } = await client
-      .from('question_variables')
-      .select('*')
-      .eq('id', aVariableId);
+    const { data } = await client.from('question_variables').select('*').eq('id', aVariableId);
     expect(data).toEqual([]);
   });
 

@@ -22,16 +22,14 @@ export function AssessmentCard(p: Props) {
             <CardTitle>{p.title}</CardTitle>
             <div className="flex gap-2">
               <Badge variant="outline">{p.assessment_type}</Badge>
-              <Badge variant={p.status === 'published' ? 'default' : 'secondary'}>
-                {p.status}
-              </Badge>
+              <Badge variant={p.status === 'published' ? 'default' : 'secondary'}>{p.status}</Badge>
             </div>
           </div>
           <CardDescription className="font-mono text-xs">{p.slug}</CardDescription>
         </CardHeader>
         <CardFooter className="text-muted-foreground text-xs">
-          {p.questionCount} question{p.questionCount === 1 ? '' : 's'} ·
-          updated {new Date(p.updated_at).toLocaleDateString()}
+          {p.questionCount} question{p.questionCount === 1 ? '' : 's'} · updated{' '}
+          {new Date(p.updated_at).toLocaleDateString()}
         </CardFooter>
       </Card>
     </Link>

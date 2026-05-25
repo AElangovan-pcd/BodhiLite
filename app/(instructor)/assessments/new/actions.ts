@@ -16,7 +16,9 @@ const CreateSchema = z.object({
 export async function createAssessmentAction(formData: FormData): Promise<void> {
   const raw = {
     title: String(formData.get('title') ?? '').trim(),
-    slug: String(formData.get('slug') ?? '').trim().toLowerCase(),
+    slug: String(formData.get('slug') ?? '')
+      .trim()
+      .toLowerCase(),
     assessment_type: String(formData.get('assessment_type') ?? 'quiz'),
     time_limit_seconds: formData.get('time_limit_seconds')
       ? Number(formData.get('time_limit_seconds'))

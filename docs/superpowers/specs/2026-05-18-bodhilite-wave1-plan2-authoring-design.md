@@ -26,17 +26,17 @@ This document describes WHAT Plan 2 delivers and HOW the modules fit together. T
 
 These are the design-shaping decisions made before plan-writing. Each is recorded here so the implementation plan can flow from them without re-litigation.
 
-| # | Decision | Why |
-|---|---|---|
-| D1 | **Plan 2 ends at interactive preview.** Instructor can type answers into the preview surface; no persistence, no grading hint. | Answer-form components are the heaviest UI work; building them interactively now and reusing in Plan 3 is roughly the same effort as building read-only and rewriting. Dogfoodable while Plan 3 is in flight. |
-| D2 | **Formula evaluator in TypeScript, not Python (yet).** | Wave 1 has no Python infra; standing it up just to evaluate `a + b * sqrt(c)` is overkill. Wave 2 will add the Python service for chem grading; if the formula surface needs to share code then, fixtures port across runtimes. |
-| D3 | **Defer image upload to Plan 4.** | Most Wave 1 quizzes are math/numeric; chem structures arrive via Ketcher in Wave 2 (separate channel). Image-upload infrastructure pairs naturally with backups/Storage ops in Plan 4. |
-| D4 | **Instructor role bootstrap via manual SQL bump.** | Phase 1 has one instructor (the user). One-line `UPDATE public.users SET role='instructor' WHERE email = ?` documented in the deploy runbook is honest for the cohort size. |
-| D5 | **Explicit Save buttons; no autosave in the editor.** | Authoring is not the same workflow as student attempts (which do auto-save per spec §8.6). Predictable form semantics, lowest risk of partial writes, browser `beforeunload` warning on unsaved changes. |
-| D6 | **Split-pane editor layout (editor left, live preview right).** | Best feedback loop for parameterized chem/math — instructor sees variables resolve and grading targets update as they type. Narrow-screen fallback collapses to tabs (≤1024 px). |
-| D7 | **Question type is locked after creation.** | Changing type would require migrating between discriminated `body`/`scoring` schemas. Plan 2 ships delete + create as the workaround; an in-place type-change UX is deferred to a polish phase if/when the workflow proves painful. |
-| D8 | **Up/down arrow buttons for question reorder; no drag-and-drop.** | Keyboard-accessible by default, no DnD a11y burden. DnD is a polish-tier improvement for a future plan. |
-| D9 | **Structured `RenderOutput` instead of HTML strings.** | The parent spec's "rendered_html" phrasing meant deterministic equivalence, not literal HTML serialization. Structured output lets React reconcile, lets a11y attributes apply at component-render time, and gives Plan 3 a queryable / diff-able JSONB snapshot instead of an opaque blob. |
+| #   | Decision                                                                                                                       | Why                                                                                                                                                                                                                                                                                         |
+| --- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D1  | **Plan 2 ends at interactive preview.** Instructor can type answers into the preview surface; no persistence, no grading hint. | Answer-form components are the heaviest UI work; building them interactively now and reusing in Plan 3 is roughly the same effort as building read-only and rewriting. Dogfoodable while Plan 3 is in flight.                                                                               |
+| D2  | **Formula evaluator in TypeScript, not Python (yet).**                                                                         | Wave 1 has no Python infra; standing it up just to evaluate `a + b * sqrt(c)` is overkill. Wave 2 will add the Python service for chem grading; if the formula surface needs to share code then, fixtures port across runtimes.                                                             |
+| D3  | **Defer image upload to Plan 4.**                                                                                              | Most Wave 1 quizzes are math/numeric; chem structures arrive via Ketcher in Wave 2 (separate channel). Image-upload infrastructure pairs naturally with backups/Storage ops in Plan 4.                                                                                                      |
+| D4  | **Instructor role bootstrap via manual SQL bump.**                                                                             | Phase 1 has one instructor (the user). One-line `UPDATE public.users SET role='instructor' WHERE email = ?` documented in the deploy runbook is honest for the cohort size.                                                                                                                 |
+| D5  | **Explicit Save buttons; no autosave in the editor.**                                                                          | Authoring is not the same workflow as student attempts (which do auto-save per spec §8.6). Predictable form semantics, lowest risk of partial writes, browser `beforeunload` warning on unsaved changes.                                                                                    |
+| D6  | **Split-pane editor layout (editor left, live preview right).**                                                                | Best feedback loop for parameterized chem/math — instructor sees variables resolve and grading targets update as they type. Narrow-screen fallback collapses to tabs (≤1024 px).                                                                                                            |
+| D7  | **Question type is locked after creation.**                                                                                    | Changing type would require migrating between discriminated `body`/`scoring` schemas. Plan 2 ships delete + create as the workaround; an in-place type-change UX is deferred to a polish phase if/when the workflow proves painful.                                                         |
+| D8  | **Up/down arrow buttons for question reorder; no drag-and-drop.**                                                              | Keyboard-accessible by default, no DnD a11y burden. DnD is a polish-tier improvement for a future plan.                                                                                                                                                                                     |
+| D9  | **Structured `RenderOutput` instead of HTML strings.**                                                                         | The parent spec's "rendered_html" phrasing meant deterministic equivalence, not literal HTML serialization. Structured output lets React reconcile, lets a11y attributes apply at component-render time, and gives Plan 3 a queryable / diff-able JSONB snapshot instead of an opaque blob. |
 
 ---
 
@@ -196,6 +196,7 @@ These rules are enforced by zod refinements layered onto the per-type schemas:
 ```
 
 Validation includes:
+
 - Variable names unique within a question; valid identifier pattern.
 - `derived` expressions parse through the TS evaluator and reference only defined variables.
 - `numeric.formula` likewise.
@@ -205,6 +206,7 @@ Validation includes:
 ### 5.3 Server Action contract
 
 Every Server Action:
+
 1. `await createServerSupabaseClient()` to get an RLS-scoped client.
 2. zod-parse the form payload.
 3. Perform the DB write; rely on RLS for the authorization check (do not re-check ownership in app code).
@@ -249,19 +251,19 @@ lib/
 export type RenderInput = {
   question: {
     type: QuestionType;
-    body: QuestionBody;          // discriminated by type
-    scoring: QuestionScoring;    // discriminated by type
-    variables: VariableSpec[];   // 0..n
+    body: QuestionBody; // discriminated by type
+    scoring: QuestionScoring; // discriminated by type
+    variables: VariableSpec[]; // 0..n
   };
   seed: number;
 };
 
 export type RenderOutput = {
   materialized_values: Record<string, MaterializedValue>;
-  rendered_stem: string;         // post-substitution Markdown (rendered to HTML by the shared <Markdown /> component)
-  rendered_body: RenderedBody;   // discriminated by question type; e.g. mc: { choices: [{ id, label_substituted }] }
+  rendered_stem: string; // post-substitution Markdown (rendered to HTML by the shared <Markdown /> component)
+  rendered_body: RenderedBody; // discriminated by question type; e.g. mc: { choices: [{ id, label_substituted }] }
   grading_target: GradingTarget; // numeric: { value, tolerance }; mc: { correct_id }; etc.
-  validation_errors: string[];   // non-fatal; surfaced in the preview's Reveal panel
+  validation_errors: string[]; // non-fatal; surfaced in the preview's Reveal panel
 };
 ```
 
@@ -327,12 +329,12 @@ upsert questions row + delete/insert question_variables rows in one transaction
 
 ### 8.2 New npm dependencies
 
-| Package | Why | Notes |
-|---|---|---|
-| `marked` | Markdown → HTML for stems | Lightweight; custom-renderer hook for math escaping. `unified`/`remark`/`rehype-katex` is ~10× heavier — not worth it for Plan 2. |
-| `katex` | Math rendering (inline + display) + MathML output | MathML is the WCAG win — screen readers consume it natively per parent spec §4.2. |
-| `acorn` | Parser for the sandboxed formula evaluator + the call-site manifest test | Already transitive via Next; promoting to direct dep stabilizes the version. Pure JS, runs identically in RSC + browser. |
-| `zod` | Server Action schema validation | Standard pattern in App Router. Not yet in deps. |
+| Package  | Why                                                                      | Notes                                                                                                                             |
+| -------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `marked` | Markdown → HTML for stems                                                | Lightweight; custom-renderer hook for math escaping. `unified`/`remark`/`rehype-katex` is ~10× heavier — not worth it for Plan 2. |
+| `katex`  | Math rendering (inline + display) + MathML output                        | MathML is the WCAG win — screen readers consume it natively per parent spec §4.2.                                                 |
+| `acorn`  | Parser for the sandboxed formula evaluator + the call-site manifest test | Already transitive via Next; promoting to direct dep stabilizes the version. Pure JS, runs identically in RSC + browser.          |
+| `zod`    | Server Action schema validation                                          | Standard pattern in App Router. Not yet in deps.                                                                                  |
 
 No new deps for the PRNG (mulberry32 is ~10 LOC), seed hashing (Web Crypto `subtle.digest`), or chem data (static JSON).
 
@@ -340,15 +342,15 @@ No new deps for the PRNG (mulberry32 is ~10 LOC), seed hashing (Web Crypto `subt
 
 ## 9. Testing strategy
 
-| Layer | Examples |
-|---|---|
-| **Vitest unit** | `lib/materializer/rng.test.ts` (PRNG output pinned for fixed seeds), `materialize.test.ts` (table-driven across all five var types), `seed.test.ts`, `lib/rendering/render.test.ts` (snapshot per type), `lib/rendering/substitute.test.ts` (escape edge cases), `lib/grading/formula.test.ts` (whitelist passes, blocklist throws), `lib/grading/chem-data/molar-mass.test.ts` (~20 common formulas), `lib/schemas/*.test.ts` (zod validation per type) |
-| **Vitest invariant** | `lib/rendering/render.call-site.test.ts` — single-call-site manifest, parsed via `acorn` (spec §4.4 enforcement) |
-| **Playwright auth+role** | `tests/auth/instructor-only-routes.spec.ts` — student GET `/(instructor)/assessments` returns 404 |
-| **Playwright authoring E2E** | `tests/authoring/create-assessment.spec.ts`, `edit-numeric-question.spec.ts` (add var + derived grading target + preview re-render), `preview-seed-switch.spec.ts`, `validation-blocks-save.spec.ts` |
-| **Playwright RLS** (extending Plan 1 patterns) | `tests/rls/assessments-owner-isolation.spec.ts`, `questions-owner-isolation.spec.ts`, `question-variables-owner-isolation.spec.ts` |
-| **axe-core in CI** | New routes added to the fixed axe matrix: `/(instructor)/assessments`, `/assessments/new`, `/assessments/[id]`, `/assessments/[id]/questions/[qid]`. Build fails on any axe violation ≥ serious. |
-| **Manual NVDA** before merge | Keyboard-only authoring of one parameterized numeric question end-to-end; runbook update at `docs/runbooks/nvda-test-script.md` |
+| Layer                                          | Examples                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Vitest unit**                                | `lib/materializer/rng.test.ts` (PRNG output pinned for fixed seeds), `materialize.test.ts` (table-driven across all five var types), `seed.test.ts`, `lib/rendering/render.test.ts` (snapshot per type), `lib/rendering/substitute.test.ts` (escape edge cases), `lib/grading/formula.test.ts` (whitelist passes, blocklist throws), `lib/grading/chem-data/molar-mass.test.ts` (~20 common formulas), `lib/schemas/*.test.ts` (zod validation per type) |
+| **Vitest invariant**                           | `lib/rendering/render.call-site.test.ts` — single-call-site manifest, parsed via `acorn` (spec §4.4 enforcement)                                                                                                                                                                                                                                                                                                                                         |
+| **Playwright auth+role**                       | `tests/auth/instructor-only-routes.spec.ts` — student GET `/(instructor)/assessments` returns 404                                                                                                                                                                                                                                                                                                                                                        |
+| **Playwright authoring E2E**                   | `tests/authoring/create-assessment.spec.ts`, `edit-numeric-question.spec.ts` (add var + derived grading target + preview re-render), `preview-seed-switch.spec.ts`, `validation-blocks-save.spec.ts`                                                                                                                                                                                                                                                     |
+| **Playwright RLS** (extending Plan 1 patterns) | `tests/rls/assessments-owner-isolation.spec.ts`, `questions-owner-isolation.spec.ts`, `question-variables-owner-isolation.spec.ts`                                                                                                                                                                                                                                                                                                                       |
+| **axe-core in CI**                             | New routes added to the fixed axe matrix: `/(instructor)/assessments`, `/assessments/new`, `/assessments/[id]`, `/assessments/[id]/questions/[qid]`. Build fails on any axe violation ≥ serious.                                                                                                                                                                                                                                                         |
+| **Manual NVDA** before merge                   | Keyboard-only authoring of one parameterized numeric question end-to-end; runbook update at `docs/runbooks/nvda-test-script.md`                                                                                                                                                                                                                                                                                                                          |
 
 ---
 

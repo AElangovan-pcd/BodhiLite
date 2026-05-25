@@ -12,11 +12,7 @@ export default async function Home() {
   } = await supabase.auth.getUser();
   if (!user) redirect('/sign-in' as Route);
 
-  const { data: profile } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single();
+  const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">

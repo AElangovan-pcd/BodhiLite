@@ -130,6 +130,7 @@ docs/
 ### Task 1: Install npm dependencies (marked, katex, acorn, zod)
 
 **Files:**
+
 - Modify: `package.json`, `package-lock.json`
 
 - [ ] **Step 1: Install runtime deps**
@@ -155,11 +156,13 @@ git commit -m "feat(deps): add marked, katex, acorn, zod for Plan 2 authoring"
 ### Task 2: Add shadcn components for Plan 2
 
 **Files:**
+
 - Create: `components/ui/{card,dialog,dropdown-menu,select,table,tabs,textarea,sonner,badge,separator,breadcrumb,tooltip}.tsx`
 
 - [ ] **Step 1: Add components in one batch**
 
 Run:
+
 ```bash
 npx --yes shadcn@latest add card dialog dropdown-menu select table tabs textarea sonner badge separator breadcrumb tooltip
 ```
@@ -183,8 +186,9 @@ git commit -m "feat(ui): add shadcn primitives (card, dialog, dropdown, select, 
 ### Task 3: Implement seeded PRNG (mulberry32) with TDD
 
 **Files:**
+
 - Create: `lib/rng/mulberry32.ts`
-- Test:   `lib/rng/mulberry32.test.ts`
+- Test: `lib/rng/mulberry32.test.ts`
 
 - [ ] **Step 1: Write the failing test**
 
@@ -266,8 +270,9 @@ git commit -m "feat(rng): seeded mulberry32 PRNG for deterministic materializati
 ### Task 4: Implement stableSeed with TDD
 
 **Files:**
+
 - Create: `lib/materializer/seed.ts`
-- Test:   `lib/materializer/seed.test.ts`
+- Test: `lib/materializer/seed.test.ts`
 
 - [ ] **Step 1: Write the failing test**
 
@@ -363,12 +368,14 @@ git commit -m "feat(materializer): stableSeed (SHA-256, 53-bit) for deterministi
 ### Task 5: Variable spec zod schemas
 
 **Files:**
+
 - Create: `lib/schemas/variables.ts`
-- Test:   `lib/schemas/variables.test.ts`
+- Test: `lib/schemas/variables.test.ts`
 
 - [ ] **Step 1: Write the failing test**
 
 Create `lib/schemas/variables.test.ts` with cases for:
+
 - accepts valid `choice`, `chemistry_compound`, `randint`, `randfloat`, `derived` specs
 - rejects: identifier-violating name (`1bad`), `randint` with `min >= max`, empty `choice.values`, `chemistry_compound` with empty `label`, empty `derived.expression`
 
@@ -590,9 +597,10 @@ git commit -m "feat(schemas): zod schemas for the 5 variable spec types"
 ### Task 6: Materializer for 4 non-derived variable types
 
 **Files:**
+
 - Create: `lib/materializer/types.ts`
 - Create: `lib/materializer/materialize.ts`
-- Test:   `lib/materializer/materialize.test.ts`
+- Test: `lib/materializer/materialize.test.ts`
 
 - [ ] **Step 1: Write the failing test**
 
@@ -757,10 +765,11 @@ git commit -m "feat(materializer): deterministic materialization for choice, che
 ### Task 7: Chem data + molar_mass
 
 **Files:**
+
 - Create: `lib/grading/chem-data/periodic-table.json` (full 118 elements; abbreviated example below)
 - Create: `lib/grading/chem-data/common-compounds.json` (~30 compounds with densities)
 - Create: `lib/grading/chem-data/molar-mass.ts`
-- Test:   `lib/grading/chem-data/molar-mass.test.ts`
+- Test: `lib/grading/chem-data/molar-mass.test.ts`
 
 - [ ] **Step 1: Create the periodic-table JSON**
 
@@ -768,26 +777,26 @@ Use IUPAC 2021 standard atomic weights. Full file must contain all 118 elements;
 
 ```json
 {
-  "H":  { "Z": 1,   "atomic_mass": 1.008 },
-  "He": { "Z": 2,   "atomic_mass": 4.0026 },
-  "Li": { "Z": 3,   "atomic_mass": 6.94 },
-  "Be": { "Z": 4,   "atomic_mass": 9.0122 },
-  "B":  { "Z": 5,   "atomic_mass": 10.81 },
-  "C":  { "Z": 6,   "atomic_mass": 12.011 },
-  "N":  { "Z": 7,   "atomic_mass": 14.007 },
-  "O":  { "Z": 8,   "atomic_mass": 15.999 },
-  "F":  { "Z": 9,   "atomic_mass": 18.998 },
-  "Ne": { "Z": 10,  "atomic_mass": 20.180 },
-  "Na": { "Z": 11,  "atomic_mass": 22.990 },
-  "Mg": { "Z": 12,  "atomic_mass": 24.305 },
-  "Al": { "Z": 13,  "atomic_mass": 26.982 },
-  "Si": { "Z": 14,  "atomic_mass": 28.085 },
-  "P":  { "Z": 15,  "atomic_mass": 30.974 },
-  "S":  { "Z": 16,  "atomic_mass": 32.06 },
-  "Cl": { "Z": 17,  "atomic_mass": 35.45 },
-  "Ar": { "Z": 18,  "atomic_mass": 39.948 },
-  "K":  { "Z": 19,  "atomic_mass": 39.098 },
-  "Ca": { "Z": 20,  "atomic_mass": 40.078 }
+  "H": { "Z": 1, "atomic_mass": 1.008 },
+  "He": { "Z": 2, "atomic_mass": 4.0026 },
+  "Li": { "Z": 3, "atomic_mass": 6.94 },
+  "Be": { "Z": 4, "atomic_mass": 9.0122 },
+  "B": { "Z": 5, "atomic_mass": 10.81 },
+  "C": { "Z": 6, "atomic_mass": 12.011 },
+  "N": { "Z": 7, "atomic_mass": 14.007 },
+  "O": { "Z": 8, "atomic_mass": 15.999 },
+  "F": { "Z": 9, "atomic_mass": 18.998 },
+  "Ne": { "Z": 10, "atomic_mass": 20.18 },
+  "Na": { "Z": 11, "atomic_mass": 22.99 },
+  "Mg": { "Z": 12, "atomic_mass": 24.305 },
+  "Al": { "Z": 13, "atomic_mass": 26.982 },
+  "Si": { "Z": 14, "atomic_mass": 28.085 },
+  "P": { "Z": 15, "atomic_mass": 30.974 },
+  "S": { "Z": 16, "atomic_mass": 32.06 },
+  "Cl": { "Z": 17, "atomic_mass": 35.45 },
+  "Ar": { "Z": 18, "atomic_mass": 39.948 },
+  "K": { "Z": 19, "atomic_mass": 39.098 },
+  "Ca": { "Z": 20, "atomic_mass": 40.078 }
   /* ... continue through element 118 (Og) ... */
 }
 ```
@@ -800,36 +809,36 @@ Create `lib/grading/chem-data/common-compounds.json`:
 
 ```json
 {
-  "NaCl":   { "formula": "NaCl",   "density": 2.165 },
-  "KCl":    { "formula": "KCl",    "density": 1.984 },
-  "CaCO3":  { "formula": "CaCO3",  "density": 2.711 },
-  "H2O":    { "formula": "H2O",    "density": 0.997 },
-  "NaOH":   { "formula": "NaOH",   "density": 2.13 },
-  "HCl":    { "formula": "HCl",    "density": 1.49 },
-  "H2SO4":  { "formula": "H2SO4",  "density": 1.84 },
-  "HNO3":   { "formula": "HNO3",   "density": 1.51 },
-  "CO2":    { "formula": "CO2",    "density": 0.001977 },
-  "O2":     { "formula": "O2",     "density": 0.001429 },
-  "N2":     { "formula": "N2",     "density": 0.001251 },
-  "CH4":    { "formula": "CH4",    "density": 0.000657 },
-  "C2H6":   { "formula": "C2H6",   "density": 0.001263 },
-  "C3H8":   { "formula": "C3H8",   "density": 0.002009 },
-  "CH3OH":  { "formula": "CH3OH",  "density": 0.7918 },
+  "NaCl": { "formula": "NaCl", "density": 2.165 },
+  "KCl": { "formula": "KCl", "density": 1.984 },
+  "CaCO3": { "formula": "CaCO3", "density": 2.711 },
+  "H2O": { "formula": "H2O", "density": 0.997 },
+  "NaOH": { "formula": "NaOH", "density": 2.13 },
+  "HCl": { "formula": "HCl", "density": 1.49 },
+  "H2SO4": { "formula": "H2SO4", "density": 1.84 },
+  "HNO3": { "formula": "HNO3", "density": 1.51 },
+  "CO2": { "formula": "CO2", "density": 0.001977 },
+  "O2": { "formula": "O2", "density": 0.001429 },
+  "N2": { "formula": "N2", "density": 0.001251 },
+  "CH4": { "formula": "CH4", "density": 0.000657 },
+  "C2H6": { "formula": "C2H6", "density": 0.001263 },
+  "C3H8": { "formula": "C3H8", "density": 0.002009 },
+  "CH3OH": { "formula": "CH3OH", "density": 0.7918 },
   "C2H5OH": { "formula": "C2H5OH", "density": 0.789 },
-  "C6H12O6":{ "formula": "C6H12O6","density": 1.54 },
-  "CaCl2":  { "formula": "CaCl2",  "density": 2.15 },
-  "MgO":    { "formula": "MgO",    "density": 3.58 },
-  "MgSO4":  { "formula": "MgSO4",  "density": 2.66 },
-  "Fe2O3":  { "formula": "Fe2O3",  "density": 5.24 },
-  "Al2O3":  { "formula": "Al2O3",  "density": 3.95 },
-  "SiO2":   { "formula": "SiO2",   "density": 2.65 },
-  "NH3":    { "formula": "NH3",    "density": 0.000769 },
-  "NH4Cl":  { "formula": "NH4Cl",  "density": 1.53 },
-  "KMnO4":  { "formula": "KMnO4",  "density": 2.703 },
-  "K2Cr2O7":{ "formula": "K2Cr2O7","density": 2.676 },
-  "CuSO4":  { "formula": "CuSO4",  "density": 3.6 },
-  "AgNO3":  { "formula": "AgNO3",  "density": 4.35 },
-  "PbI2":   { "formula": "PbI2",   "density": 6.16 }
+  "C6H12O6": { "formula": "C6H12O6", "density": 1.54 },
+  "CaCl2": { "formula": "CaCl2", "density": 2.15 },
+  "MgO": { "formula": "MgO", "density": 3.58 },
+  "MgSO4": { "formula": "MgSO4", "density": 2.66 },
+  "Fe2O3": { "formula": "Fe2O3", "density": 5.24 },
+  "Al2O3": { "formula": "Al2O3", "density": 3.95 },
+  "SiO2": { "formula": "SiO2", "density": 2.65 },
+  "NH3": { "formula": "NH3", "density": 0.000769 },
+  "NH4Cl": { "formula": "NH4Cl", "density": 1.53 },
+  "KMnO4": { "formula": "KMnO4", "density": 2.703 },
+  "K2Cr2O7": { "formula": "K2Cr2O7", "density": 2.676 },
+  "CuSO4": { "formula": "CuSO4", "density": 3.6 },
+  "AgNO3": { "formula": "AgNO3", "density": 4.35 },
+  "PbI2": { "formula": "PbI2", "density": 6.16 }
 }
 ```
 
@@ -843,23 +852,23 @@ import { molarMass } from './molar-mass';
 
 describe('molarMass', () => {
   it.each([
-    ['H',        1.008],
-    ['H2',       2.016],
-    ['H2O',      18.015],
-    ['CO2',      44.009],
-    ['NaCl',     58.44],
-    ['CaCO3',    100.087],
-    ['NaOH',     39.997],
-    ['H2SO4',    98.072],
-    ['Mg(OH)2',  58.319],
-    ['Ca(OH)2',  74.092],
+    ['H', 1.008],
+    ['H2', 2.016],
+    ['H2O', 18.015],
+    ['CO2', 44.009],
+    ['NaCl', 58.44],
+    ['CaCO3', 100.087],
+    ['NaOH', 39.997],
+    ['H2SO4', 98.072],
+    ['Mg(OH)2', 58.319],
+    ['Ca(OH)2', 74.092],
     ['Al2(SO4)3', 342.151],
-    ['C6H12O6',  180.156],
-    ['NH4NO3',   80.043],
+    ['C6H12O6', 180.156],
+    ['NH4NO3', 80.043],
     ['(NH4)2SO4', 132.134],
-    ['CuSO4',    159.609],
-    ['KMnO4',    158.034],
-    ['K2Cr2O7',  294.184],
+    ['CuSO4', 159.609],
+    ['KMnO4', 158.034],
+    ['K2Cr2O7', 294.184],
   ])('molarMass(%s) ≈ %f', (formula, expected) => {
     expect(molarMass(formula)).toBeCloseTo(expected, 2);
   });
@@ -974,8 +983,9 @@ git commit -m "feat(grading): periodic table, common-compounds data, molar_mass 
 ### Task 8: Sandboxed formula evaluator (acorn-based)
 
 **Files:**
+
 - Create: `lib/grading/formula.ts`
-- Test:   `lib/grading/formula.test.ts`
+- Test: `lib/grading/formula.test.ts`
 - Create: `lib/grading/index.ts`
 
 - [ ] **Step 1: Write the failing test**
@@ -1184,19 +1194,32 @@ function walk(node: Node, vars: Vars): unknown {
       const l = asNumber(walk(n.left, vars));
       const r = asNumber(walk(n.right, vars));
       switch (n.operator) {
-        case '+': return l + r;
-        case '-': return l - r;
-        case '*': return l * r;
-        case '/': return l / r;
-        case '**': return l ** r;
-        case '%': return l % r;
-        case '<': return l < r ? 1 : 0;
-        case '<=': return l <= r ? 1 : 0;
-        case '>': return l > r ? 1 : 0;
-        case '>=': return l >= r ? 1 : 0;
-        case '==': return l === r ? 1 : 0;
-        case '!=': return l !== r ? 1 : 0;
-        default: throw new EvalError(`Unsupported operator: ${n.operator}`);
+        case '+':
+          return l + r;
+        case '-':
+          return l - r;
+        case '*':
+          return l * r;
+        case '/':
+          return l / r;
+        case '**':
+          return l ** r;
+        case '%':
+          return l % r;
+        case '<':
+          return l < r ? 1 : 0;
+        case '<=':
+          return l <= r ? 1 : 0;
+        case '>':
+          return l > r ? 1 : 0;
+        case '>=':
+          return l >= r ? 1 : 0;
+        case '==':
+          return l === r ? 1 : 0;
+        case '!=':
+          return l !== r ? 1 : 0;
+        default:
+          throw new EvalError(`Unsupported operator: ${n.operator}`);
       }
     }
     case 'UnaryExpression': {
@@ -1261,6 +1284,7 @@ git commit -m "feat(grading): acorn-sandboxed formula evaluator with chem helper
 ### Task 9: Derived variables — wire formula evaluator into materializer
 
 **Files:**
+
 - Modify: `lib/materializer/materialize.ts` (lift `derived` from throwing to evaluating)
 - Modify: `lib/materializer/materialize.test.ts` (add derived test cases)
 - Create: `lib/materializer/index.ts`
@@ -1351,8 +1375,9 @@ git commit -m "feat(materializer): support derived variables via formula evaluat
 ### Task 10: Question per-type zod schemas
 
 **Files:**
+
 - Create: `lib/schemas/questions.ts`
-- Test:   `lib/schemas/questions.test.ts`
+- Test: `lib/schemas/questions.test.ts`
 - Create: `lib/schemas/index.ts`
 
 - [ ] **Step 1: Write the failing test**
@@ -1560,8 +1585,12 @@ const ShortAnswerScoring = z
   })
   .refine(
     (s) => {
-      try { new RegExp(s.pattern); return true; }
-      catch { return false; }
+      try {
+        new RegExp(s.pattern);
+        return true;
+      } catch {
+        return false;
+      }
     },
     { message: 'pattern must be a valid regular expression' },
   );
@@ -1583,10 +1612,12 @@ const FillInScoring = z.object({
 
 const BLANK_TOKEN = /\{\{blank:([a-zA-Z0-9_-]+)\}\}/g;
 
-const Mc = z.object({ type: z.literal('mc'), body: McBody, scoring: McScoring }).refine(
-  (q) => q.body.choices.some((c) => c.id === q.scoring.correct_id),
-  { message: 'correct_id must match one of the choices', path: ['scoring', 'correct_id'] },
-);
+const Mc = z
+  .object({ type: z.literal('mc'), body: McBody, scoring: McScoring })
+  .refine((q) => q.body.choices.some((c) => c.id === q.scoring.correct_id), {
+    message: 'correct_id must match one of the choices',
+    path: ['scoring', 'correct_id'],
+  });
 
 const Ma = z.object({ type: z.literal('ma'), body: MaBody, scoring: MaScoring }).refine(
   (q) => {
@@ -1599,7 +1630,9 @@ const Ma = z.object({ type: z.literal('ma'), body: MaBody, scoring: MaScoring })
 const Tf = z.object({ type: z.literal('tf'), body: TfBody, scoring: TfScoring });
 
 const Numeric = z.object({
-  type: z.literal('numeric'), body: NumericBody, scoring: NumericScoring,
+  type: z.literal('numeric'),
+  body: NumericBody,
+  scoring: NumericScoring,
 });
 
 const ShortAnswer = z.object({
@@ -1627,7 +1660,12 @@ const FillIn = z
   );
 
 export const QuestionSchema = z.discriminatedUnion('type', [
-  Mc, Ma, Tf, Numeric, ShortAnswer, FillIn,
+  Mc,
+  Ma,
+  Tf,
+  Numeric,
+  ShortAnswer,
+  FillIn,
 ]);
 
 export type Question = z.infer<typeof QuestionSchema>;
@@ -1660,8 +1698,9 @@ git commit -m "feat(schemas): zod schemas for 6 question types with cross-field 
 ### Task 11: {{var}} substitution
 
 **Files:**
+
 - Create: `lib/rendering/substitute.ts`
-- Test:   `lib/rendering/substitute.test.ts`
+- Test: `lib/rendering/substitute.test.ts`
 
 - [ ] **Step 1: Write the failing test**
 
@@ -1700,9 +1739,7 @@ describe('substitute', () => {
   });
 
   it('leaves blank tokens {{blank:id}} alone (handled later)', () => {
-    expect(substitute('Fill {{blank:x}}', { blank: 'something' })).toBe(
-      'Fill {{blank:x}}',
-    );
+    expect(substitute('Fill {{blank:x}}', { blank: 'something' })).toBe('Fill {{blank:x}}');
   });
 });
 ```
@@ -1762,8 +1799,9 @@ git commit -m "feat(rendering): {{var}} substitution with HTML escape"
 ### Task 12: Markdown + KaTeX render component
 
 **Files:**
+
 - Create: `lib/rendering/md.tsx`
-- Test:   `lib/rendering/md.test.tsx`
+- Test: `lib/rendering/md.test.tsx`
 
 - [ ] **Step 1: Write the failing test**
 
@@ -1806,9 +1844,11 @@ describe('<Markdown />', () => {
 - [ ] **Step 2: Add testing-library to deps if missing**
 
 `@testing-library/react` and `@testing-library/jest-dom` are already devDeps (per Plan 1). If `render` fails to import, install:
+
 ```bash
 npm install -D @testing-library/react@^16 @testing-library/jest-dom@^6
 ```
+
 (Skip if already installed.)
 
 - [ ] **Step 3: Run to verify it fails**
@@ -1832,7 +1872,9 @@ marked.use({
     {
       name: 'inlineMath',
       level: 'inline',
-      start(src) { return src.indexOf('$'); },
+      start(src) {
+        return src.indexOf('$');
+      },
       tokenizer(src) {
         const m = /^\$([^$\n]+)\$/.exec(src);
         if (m) return { type: 'inlineMath', raw: m[0], text: m[1]! };
@@ -1849,7 +1891,9 @@ marked.use({
     {
       name: 'blockMath',
       level: 'block',
-      start(src) { return src.indexOf('$$'); },
+      start(src) {
+        return src.indexOf('$$');
+      },
       tokenizer(src) {
         const m = /^\$\$([\s\S]+?)\$\$/.exec(src);
         if (m) return { type: 'blockMath', raw: m[0], text: m[1]! };
@@ -1903,9 +1947,10 @@ git commit -m "feat(rendering): Markdown component with KaTeX (MathML output for
 ### Task 13: renderQuestion + types + index barrel
 
 **Files:**
+
 - Create: `lib/rendering/types.ts`
 - Create: `lib/rendering/render.ts`
-- Test:   `lib/rendering/render.test.ts`
+- Test: `lib/rendering/render.test.ts`
 - Create: `lib/rendering/index.ts`
 
 - [ ] **Step 1: Write the failing test**
@@ -2093,18 +2138,14 @@ export function renderQuestion(input: RenderInput): RenderOutput {
     errors.push(`Materializer error: ${(e as Error).message}`);
   }
 
-  const stem = substitute(
-    (input.question.body['stem'] as string) ?? '',
-    materialized,
-  );
+  const stem = substitute((input.question.body['stem'] as string) ?? '', materialized);
 
   let body: RenderedBody;
   let target: GradingTarget;
 
   switch (input.question.type) {
     case 'mc': {
-      const choices =
-        (input.question.body['choices'] as { id: string; label: string }[]) ?? [];
+      const choices = (input.question.body['choices'] as { id: string; label: string }[]) ?? [];
       body = {
         kind: 'mc',
         choices: choices.map((c) => ({
@@ -2119,8 +2160,7 @@ export function renderQuestion(input: RenderInput): RenderOutput {
       break;
     }
     case 'ma': {
-      const choices =
-        (input.question.body['choices'] as { id: string; label: string }[]) ?? [];
+      const choices = (input.question.body['choices'] as { id: string; label: string }[]) ?? [];
       body = {
         kind: 'ma',
         choices: choices.map((c) => ({
@@ -2142,9 +2182,7 @@ export function renderQuestion(input: RenderInput): RenderOutput {
     case 'numeric': {
       body = {
         kind: 'numeric',
-        ...(input.question.body['units']
-          ? { units: input.question.body['units'] as string }
-          : {}),
+        ...(input.question.body['units'] ? { units: input.question.body['units'] as string } : {}),
       };
       const formula = (input.question.scoring['formula'] as string) ?? '';
       const tolerance = Number(input.question.scoring['tolerance'] ?? 0);
@@ -2168,8 +2206,7 @@ export function renderQuestion(input: RenderInput): RenderOutput {
       break;
     }
     case 'fill_in': {
-      const blanks =
-        (input.question.body['blanks'] as { id: string; prompt?: string }[]) ?? [];
+      const blanks = (input.question.body['blanks'] as { id: string; prompt?: string }[]) ?? [];
       body = { kind: 'fill_in', blanks };
       const rawTargets =
         (input.question.scoring['targets'] as {
@@ -2207,12 +2244,7 @@ Create `lib/rendering/index.ts`:
 export { renderQuestion } from './render';
 export { substitute } from './substitute';
 export { Markdown } from './md';
-export type {
-  RenderInput,
-  RenderOutput,
-  RenderedBody,
-  GradingTarget,
-} from './types';
+export type { RenderInput, RenderOutput, RenderedBody, GradingTarget } from './types';
 ```
 
 - [ ] **Step 6: Run to verify it passes**
@@ -2232,7 +2264,8 @@ git commit -m "feat(rendering): renderQuestion — single render pipeline for al
 ### Task 14: Single-call-site manifest test for renderQuestion
 
 **Files:**
-- Test:   `lib/rendering/render.call-site.test.ts`
+
+- Test: `lib/rendering/render.call-site.test.ts`
 
 This is the **invariant test** the parent spec demands (§4.4). It greps the source for `renderQuestion` import statements via `acorn` and asserts the set of importing files equals the allow-list. CI fails closed on any new caller.
 
@@ -2257,11 +2290,16 @@ const REPO_ROOT = path.resolve(__dirname, '..', '..');
 
 function walkDir(dir: string, out: string[] = []): string[] {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (entry.name === 'node_modules' || entry.name === '.next' || entry.name.startsWith('.')) continue;
+    if (entry.name === 'node_modules' || entry.name === '.next' || entry.name.startsWith('.'))
+      continue;
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) walkDir(full, out);
-    else if (/\.(ts|tsx|js|jsx)$/.test(entry.name) && !entry.name.endsWith('.test.ts') &&
-             !entry.name.endsWith('.test.tsx') && !entry.name.endsWith('.call-site.test.ts')) {
+    else if (
+      /\.(ts|tsx|js|jsx)$/.test(entry.name) &&
+      !entry.name.endsWith('.test.ts') &&
+      !entry.name.endsWith('.test.tsx') &&
+      !entry.name.endsWith('.call-site.test.ts')
+    ) {
       out.push(full);
     }
   }
@@ -2339,6 +2377,7 @@ git commit -m "test(rendering): single-call-site manifest invariant for renderQu
 ### Task 15: Instructor route group with role guard
 
 **Files:**
+
 - Create: `app/(instructor)/layout.tsx`
 
 - [ ] **Step 1: Write the failing test**
@@ -2453,22 +2492,14 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
-export default async function InstructorLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function InstructorLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createServerSupabaseClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect('/sign-in' as Route);
 
-  const { data: profile } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single();
+  const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
 
   if (!profile || profile.role !== 'instructor') {
     notFound();
@@ -2497,6 +2528,7 @@ git commit -m "feat(auth): (instructor) route group with role guard + browser-se
 ### Task 16: Assessment list page
 
 **Files:**
+
 - Create: `app/(instructor)/assessments/page.tsx`
 - Create: `components/assessments/AssessmentCard.tsx`
 
@@ -2529,16 +2561,14 @@ export function AssessmentCard(p: Props) {
             <CardTitle>{p.title}</CardTitle>
             <div className="flex gap-2">
               <Badge variant="outline">{p.assessment_type}</Badge>
-              <Badge variant={p.status === 'published' ? 'default' : 'secondary'}>
-                {p.status}
-              </Badge>
+              <Badge variant={p.status === 'published' ? 'default' : 'secondary'}>{p.status}</Badge>
             </div>
           </div>
           <CardDescription className="font-mono text-xs">{p.slug}</CardDescription>
         </CardHeader>
         <CardFooter className="text-muted-foreground text-xs">
-          {p.questionCount} question{p.questionCount === 1 ? '' : 's'} ·
-          updated {new Date(p.updated_at).toLocaleDateString()}
+          {p.questionCount} question{p.questionCount === 1 ? '' : 's'} · updated{' '}
+          {new Date(p.updated_at).toLocaleDateString()}
         </CardFooter>
       </Card>
     </Link>
@@ -2589,7 +2619,9 @@ export default async function AssessmentsListPage() {
         <p className="text-muted-foreground">No assessments yet. Create your first one.</p>
       ) : (
         <div className="grid gap-3">
-          {rows.map((r) => <AssessmentCard key={r.id} {...r} />)}
+          {rows.map((r) => (
+            <AssessmentCard key={r.id} {...r} />
+          ))}
         </div>
       )}
     </main>
@@ -2614,6 +2646,7 @@ git commit -m "feat(authoring): assessment list page + AssessmentCard"
 ### Task 17: Create assessment flow (page + Server Action)
 
 **Files:**
+
 - Create: `app/(instructor)/assessments/new/page.tsx`
 - Create: `app/(instructor)/assessments/new/actions.ts`
 
@@ -2671,7 +2704,9 @@ const CreateSchema = z.object({
 export async function createAssessmentAction(formData: FormData): Promise<void> {
   const raw = {
     title: String(formData.get('title') ?? '').trim(),
-    slug: String(formData.get('slug') ?? '').trim().toLowerCase(),
+    slug: String(formData.get('slug') ?? '')
+      .trim()
+      .toLowerCase(),
     assessment_type: String(formData.get('assessment_type') ?? 'quiz'),
     time_limit_seconds: formData.get('time_limit_seconds')
       ? Number(formData.get('time_limit_seconds'))
@@ -2686,7 +2721,9 @@ export async function createAssessmentAction(formData: FormData): Promise<void> 
   }
 
   const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) redirect('/sign-in' as Route);
 
   const { data, error } = await supabase
@@ -2732,13 +2769,19 @@ export default async function NewAssessmentPage({
   const sp = await searchParams;
   return (
     <main className="mx-auto max-w-md px-6 py-8">
-      <Link href={'/assessments' as Route} className="text-muted-foreground text-sm hover:underline">
+      <Link
+        href={'/assessments' as Route}
+        className="text-muted-foreground text-sm hover:underline"
+      >
         ← Assessments
       </Link>
       <h1 className="mt-2 text-2xl font-semibold">New assessment</h1>
 
       {sp.error && (
-        <div role="alert" className="my-3 rounded border border-red-300 bg-red-50 p-2 text-sm text-red-900">
+        <div
+          role="alert"
+          className="my-3 rounded border border-red-300 bg-red-50 p-2 text-sm text-red-900"
+        >
           {sp.error}
         </div>
       )}
@@ -2751,8 +2794,12 @@ export default async function NewAssessmentPage({
         <Input id="slug" name="slug" required pattern="^[a-z0-9-]+$" />
 
         <Label htmlFor="assessment_type">Type</Label>
-        <select id="assessment_type" name="assessment_type" defaultValue="quiz"
-                className="border-input bg-background rounded-md border px-3 py-1 text-sm">
+        <select
+          id="assessment_type"
+          name="assessment_type"
+          defaultValue="quiz"
+          className="border-input bg-background rounded-md border px-3 py-1 text-sm"
+        >
           <option value="quiz">Quiz</option>
           <option value="exam">Exam</option>
         </select>
@@ -2760,7 +2807,9 @@ export default async function NewAssessmentPage({
         <Label htmlFor="time_limit_seconds">Time limit (seconds, exam only)</Label>
         <Input id="time_limit_seconds" name="time_limit_seconds" type="number" min={1} />
 
-        <Button type="submit" className="mt-2">Create</Button>
+        <Button type="submit" className="mt-2">
+          Create
+        </Button>
       </form>
     </main>
   );
@@ -2784,6 +2833,7 @@ git commit -m "feat(authoring): create-assessment page + Server Action"
 ### Task 18: Assessment overview page (settings + question list)
 
 **Files:**
+
 - Create: `app/(instructor)/assessments/[id]/page.tsx`
 - Create: `components/assessments/SettingsForm.tsx`
 - Create: `components/assessments/QuestionsTable.tsx`
@@ -2830,14 +2880,23 @@ export function SettingsForm({
 
       <div className="flex flex-col gap-1">
         <Label htmlFor="slug">Slug</Label>
-        <Input id="slug" name="slug" defaultValue={assessment.slug} required
-               pattern="^[a-z0-9-]+$" />
+        <Input
+          id="slug"
+          name="slug"
+          defaultValue={assessment.slug}
+          required
+          pattern="^[a-z0-9-]+$"
+        />
       </div>
 
       <div className="flex flex-col gap-1">
         <Label htmlFor="status">Status</Label>
-        <select id="status" name="status" defaultValue={assessment.status}
-                className="border-input bg-background rounded-md border px-3 py-1 text-sm">
+        <select
+          id="status"
+          name="status"
+          defaultValue={assessment.status}
+          className="border-input bg-background rounded-md border px-3 py-1 text-sm"
+        >
           <option value="draft">Draft</option>
           <option value="published">Published</option>
           <option value="archived">Archived</option>
@@ -2846,27 +2905,43 @@ export function SettingsForm({
 
       <div className="flex flex-col gap-1">
         <Label htmlFor="default_attempts">Default attempts</Label>
-        <Input id="default_attempts" name="default_attempts" type="number" min={1}
-               defaultValue={assessment.default_attempts} />
+        <Input
+          id="default_attempts"
+          name="default_attempts"
+          type="number"
+          min={1}
+          defaultValue={assessment.default_attempts}
+        />
       </div>
 
       {assessment.assessment_type === 'exam' && (
         <div className="flex flex-col gap-1">
           <Label htmlFor="time_limit_seconds">Time limit (seconds)</Label>
-          <Input id="time_limit_seconds" name="time_limit_seconds" type="number" min={1}
-                 defaultValue={assessment.time_limit_seconds ?? undefined} />
+          <Input
+            id="time_limit_seconds"
+            name="time_limit_seconds"
+            type="number"
+            min={1}
+            defaultValue={assessment.time_limit_seconds ?? undefined}
+          />
         </div>
       )}
 
       <label className="flex items-center gap-2">
-        <input type="checkbox" name="randomize_questions"
-               defaultChecked={assessment.randomize_questions} />
+        <input
+          type="checkbox"
+          name="randomize_questions"
+          defaultChecked={assessment.randomize_questions}
+        />
         Randomize question order
       </label>
 
       <label className="flex items-center gap-2">
-        <input type="checkbox" name="randomize_choices"
-               defaultChecked={assessment.randomize_choices} />
+        <input
+          type="checkbox"
+          name="randomize_choices"
+          defaultChecked={assessment.randomize_choices}
+        />
         Randomize choice order (mc/ma)
       </label>
 
@@ -2909,32 +2984,54 @@ export function QuestionsTable({
   onDelete: (formData: FormData) => Promise<void>;
 }) {
   if (questions.length === 0) {
-    return (
-      <p className="text-muted-foreground my-4">No questions yet. Add your first one.</p>
-    );
+    return <p className="text-muted-foreground my-4">No questions yet. Add your first one.</p>;
   }
   return (
-    <ul className="divide-y divide-border my-4">
+    <ul className="divide-border my-4 divide-y">
       {questions.map((q, i) => (
         <li key={q.id} className="flex items-center gap-3 py-2">
           <span className="text-muted-foreground w-8 text-sm">Q{q.position}</span>
           <Badge variant="outline">{q.type}</Badge>
-          <Link href={`/assessments/${assessmentId}/questions/${q.id}` as Route}
-                className="flex-1 truncate hover:underline">
+          <Link
+            href={`/assessments/${assessmentId}/questions/${q.id}` as Route}
+            className="flex-1 truncate hover:underline"
+          >
             {q.stem_preview || <em className="text-muted-foreground">(empty stem)</em>}
           </Link>
-          <form action={onMoveUp}><input type="hidden" name="qid" value={q.id} />
-            <Button type="submit" variant="ghost" size="default" disabled={i === 0}
-                    aria-label={`Move question ${q.position} up`}>↑</Button>
+          <form action={onMoveUp}>
+            <input type="hidden" name="qid" value={q.id} />
+            <Button
+              type="submit"
+              variant="ghost"
+              size="default"
+              disabled={i === 0}
+              aria-label={`Move question ${q.position} up`}
+            >
+              ↑
+            </Button>
           </form>
-          <form action={onMoveDown}><input type="hidden" name="qid" value={q.id} />
-            <Button type="submit" variant="ghost" size="default"
-                    disabled={i === questions.length - 1}
-                    aria-label={`Move question ${q.position} down`}>↓</Button>
+          <form action={onMoveDown}>
+            <input type="hidden" name="qid" value={q.id} />
+            <Button
+              type="submit"
+              variant="ghost"
+              size="default"
+              disabled={i === questions.length - 1}
+              aria-label={`Move question ${q.position} down`}
+            >
+              ↓
+            </Button>
           </form>
-          <form action={onDelete}><input type="hidden" name="qid" value={q.id} />
-            <Button type="submit" variant="destructive" size="default"
-                    aria-label={`Delete question ${q.position}`}>×</Button>
+          <form action={onDelete}>
+            <input type="hidden" name="qid" value={q.id} />
+            <Button
+              type="submit"
+              variant="destructive"
+              size="default"
+              aria-label={`Delete question ${q.position}`}
+            >
+              ×
+            </Button>
           </form>
         </li>
       ))}
@@ -2971,7 +3068,9 @@ export async function updateSettingsAction(formData: FormData): Promise<void> {
   const raw = {
     id: String(formData.get('id') ?? ''),
     title: String(formData.get('title') ?? '').trim(),
-    slug: String(formData.get('slug') ?? '').trim().toLowerCase(),
+    slug: String(formData.get('slug') ?? '')
+      .trim()
+      .toLowerCase(),
     status: String(formData.get('status') ?? 'draft'),
     default_attempts: Number(formData.get('default_attempts') ?? 3),
     time_limit_seconds: formData.get('time_limit_seconds')
@@ -3024,11 +3123,7 @@ export default async function AssessmentOverviewPage({
   const { id } = await params;
   const supabase = await createServerSupabaseClient();
 
-  const { data: a } = await supabase
-    .from('assessments')
-    .select('*')
-    .eq('id', id)
-    .single();
+  const { data: a } = await supabase.from('assessments').select('*').eq('id', id).single();
   if (!a) notFound();
 
   const { data: questions } = await supabase
@@ -3041,14 +3136,15 @@ export default async function AssessmentOverviewPage({
     id: q.id,
     position: q.position,
     type: q.type,
-    stem_preview: String(
-      (q.body as { stem?: string })?.stem ?? '',
-    ).slice(0, 80),
+    stem_preview: String((q.body as { stem?: string })?.stem ?? '').slice(0, 80),
   }));
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-8">
-      <Link href={'/assessments' as Route} className="text-muted-foreground text-sm hover:underline">
+      <Link
+        href={'/assessments' as Route}
+        className="text-muted-foreground text-sm hover:underline"
+      >
         ← Assessments
       </Link>
 
@@ -3118,6 +3214,7 @@ git commit -m "feat(authoring): assessment overview page (settings + questions t
 ### Task 19: Question type picker + create question action
 
 **Files:**
+
 - Create: `app/(instructor)/assessments/[id]/questions/new/page.tsx`
 - Create: `app/(instructor)/assessments/[id]/questions/new/actions.ts`
 - Create: `components/assessments/TypePicker.tsx`
@@ -3135,7 +3232,11 @@ const TYPES = [
   { type: 'ma', name: 'Multiple answer', desc: 'One or more correct choices.' },
   { type: 'tf', name: 'True / false', desc: 'Boolean answer.' },
   { type: 'numeric', name: 'Numeric (with tolerance)', desc: 'Compare to a computed value.' },
-  { type: 'short_answer', name: 'Short answer (regex)', desc: 'Free text matched against a pattern.' },
+  {
+    type: 'short_answer',
+    name: 'Short answer (regex)',
+    desc: 'Free text matched against a pattern.',
+  },
   { type: 'fill_in', name: 'Fill in the blank', desc: 'Inline {{blank:id}} tokens.' },
 ];
 
@@ -3145,7 +3246,7 @@ export function TypePicker({ action }: { action: (formData: FormData) => Promise
       {TYPES.map((t) => (
         <form key={t.type} action={action}>
           <input type="hidden" name="type" value={t.type} />
-          <button type="submit" className="text-left w-full">
+          <button type="submit" className="w-full text-left">
             <Card className="hover:bg-muted/40 transition-colors">
               <CardHeader>
                 <CardTitle>{t.name}</CardTitle>
@@ -3179,14 +3280,30 @@ const PathSchema = z.object({
 
 // Default body/scoring shapes by type — minimal so the form has something to render
 const DEFAULTS: Record<string, { body: object; scoring: object }> = {
-  mc:           { body: { stem: '', choices: [{ id: 'a', label: '' }, { id: 'b', label: '' }] },
-                  scoring: { correct_id: 'a' } },
-  ma:           { body: { stem: '', choices: [{ id: 'a', label: '' }, { id: 'b', label: '' }] },
-                  scoring: { correct_ids: [] } },
-  tf:           { body: { stem: '' }, scoring: { correct: true } },
-  numeric:      { body: { stem: '' }, scoring: { formula: '0', tolerance: 0 } },
+  mc: {
+    body: {
+      stem: '',
+      choices: [
+        { id: 'a', label: '' },
+        { id: 'b', label: '' },
+      ],
+    },
+    scoring: { correct_id: 'a' },
+  },
+  ma: {
+    body: {
+      stem: '',
+      choices: [
+        { id: 'a', label: '' },
+        { id: 'b', label: '' },
+      ],
+    },
+    scoring: { correct_ids: [] },
+  },
+  tf: { body: { stem: '' }, scoring: { correct: true } },
+  numeric: { body: { stem: '' }, scoring: { formula: '0', tolerance: 0 } },
   short_answer: { body: { stem: '' }, scoring: { pattern: '.*', case_insensitive: true } },
-  fill_in:      { body: { stem: '', blanks: [] }, scoring: { targets: [] } },
+  fill_in: { body: { stem: '', blanks: [] }, scoring: { targets: [] } },
 };
 
 export async function createQuestionAction(
@@ -3224,7 +3341,9 @@ export async function createQuestionAction(
     .single();
 
   if (error || !data) {
-    redirect(`/assessments/${assessmentId}?error=${encodeURIComponent(error?.message ?? '')}` as Route);
+    redirect(
+      `/assessments/${assessmentId}?error=${encodeURIComponent(error?.message ?? '')}` as Route,
+    );
   }
   redirect(`/assessments/${assessmentId}/questions/${data.id}` as Route);
 }
@@ -3240,22 +3359,20 @@ import type { Route } from 'next';
 import { TypePicker } from '@/components/assessments/TypePicker';
 import { createQuestionAction } from './actions';
 
-export default async function NewQuestionPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function NewQuestionPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const boundAction = createQuestionAction.bind(null, id);
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-8">
-      <Link href={`/assessments/${id}` as Route}
-            className="text-muted-foreground text-sm hover:underline">
+      <Link
+        href={`/assessments/${id}` as Route}
+        className="text-muted-foreground text-sm hover:underline"
+      >
         ← Assessment
       </Link>
       <h1 className="mt-2 text-2xl font-semibold">New question</h1>
-      <p className="text-muted-foreground mb-6 mt-1 text-sm">
+      <p className="text-muted-foreground mt-1 mb-6 text-sm">
         Pick a type. The question type can't change later — delete + recreate if you need to switch.
       </p>
       <TypePicker action={boundAction} />
@@ -3276,6 +3393,7 @@ git commit -m "feat(authoring): question type picker + create-question action"
 ### Task 20: Split-pane editor shell (page + Stem field + ActionBar + placeholders)
 
 **Files:**
+
 - Create: `app/(instructor)/assessments/[id]/questions/[qid]/page.tsx`
 - Create: `app/(instructor)/assessments/[id]/questions/[qid]/actions.ts` (placeholder)
 - Create: `components/editor/EditorPane.tsx`
@@ -3348,8 +3466,10 @@ export function ActionBar({
   nextDisabled: boolean;
 }) {
   return (
-    <div className="sticky bottom-0 -mx-2 flex items-center gap-2 border-t bg-background/95 px-2 py-2 backdrop-blur">
-      <Button onClick={onSave} disabled={saving || !dirty}>Save</Button>
+    <div className="bg-background/95 sticky bottom-0 -mx-2 flex items-center gap-2 border-t px-2 py-2 backdrop-blur">
+      <Button onClick={onSave} disabled={saving || !dirty}>
+        Save
+      </Button>
       <Button onClick={onSaveAndNext} disabled={saving || !dirty || nextDisabled} variant="outline">
         Save &amp; Next
       </Button>
@@ -3427,7 +3547,9 @@ export function EditorPane({
   return (
     <div className="flex h-full flex-col gap-4 overflow-y-auto px-2 pb-16">
       <div className="flex items-center gap-2 text-sm">
-        <span className="text-muted-foreground">Q{position} / {totalQuestions}</span>
+        <span className="text-muted-foreground">
+          Q{position} / {totalQuestions}
+        </span>
         <Badge variant="outline">{draft.type}</Badge>
       </div>
 
@@ -3449,9 +3571,18 @@ export function EditorPane({
       <ActionBar
         saving={saving}
         dirty={dirty}
-        onSave={async () => { await onSave(draft); setDirty(false); }}
-        onSaveAndNext={async () => { await onSaveAndNext(draft); setDirty(false); }}
-        onDiscard={() => { setDraft(initial); setDirty(false); }}
+        onSave={async () => {
+          await onSave(draft);
+          setDirty(false);
+        }}
+        onSaveAndNext={async () => {
+          await onSaveAndNext(draft);
+          setDirty(false);
+        }}
+        onDiscard={() => {
+          setDraft(initial);
+          setDirty(false);
+        }}
         nextDisabled={position >= totalQuestions}
       />
     </div>
@@ -3469,7 +3600,13 @@ Create `components/preview/PreviewPane.tsx`:
 import { useMemo, useState } from 'react';
 import { renderQuestion, type RenderInput } from '@/lib/rendering';
 import { Markdown } from '@/lib/rendering';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import type { QuestionDraft } from '@/components/editor/EditorPane';
 
 export function PreviewPane({ draft }: { draft: QuestionDraft }) {
@@ -3498,7 +3635,9 @@ export function PreviewPane({ draft }: { draft: QuestionDraft }) {
       <div className="flex items-center gap-2">
         <span className="text-muted-foreground text-xs">Preview as</span>
         <Select value={String(seed)} onValueChange={(v) => setSeed(Number(v))}>
-          <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="w-48">
+            <SelectValue />
+          </SelectTrigger>
           <SelectContent>
             <SelectItem value="0">Author (seed=0)</SelectItem>
             <SelectItem value="1">Test student 1</SelectItem>
@@ -3512,22 +3651,20 @@ export function PreviewPane({ draft }: { draft: QuestionDraft }) {
         <>
           <Markdown source={output.rendered_stem} />
           {/* Answer surfaces come in Task 26 */}
-          <p className="text-muted-foreground text-sm">
-            Answer surface — implemented in Task 26.
-          </p>
+          <p className="text-muted-foreground text-sm">Answer surface — implemented in Task 26.</p>
           {/* Reveal panel comes in Task 25 */}
           <details className="mt-4 rounded border p-2 text-sm" open>
             <summary className="cursor-pointer font-medium">Reveal</summary>
             <pre className="mt-2 overflow-x-auto text-xs">
-{JSON.stringify(
-  {
-    materialized_values: output.materialized_values,
-    grading_target: output.grading_target,
-    validation_errors: output.validation_errors,
-  },
-  null,
-  2,
-)}
+              {JSON.stringify(
+                {
+                  materialized_values: output.materialized_values,
+                  grading_target: output.grading_target,
+                  validation_errors: output.validation_errors,
+                },
+                null,
+                2,
+              )}
             </pre>
           </details>
         </>
@@ -3544,9 +3681,7 @@ export function PreviewPane({ draft }: { draft: QuestionDraft }) {
 Edit `lib/rendering/render.call-site.test.ts` — replace `const ALLOWED_CALLERS = [];` with:
 
 ```ts
-const ALLOWED_CALLERS = [
-  'components/preview/PreviewPane.tsx',
-];
+const ALLOWED_CALLERS = ['components/preview/PreviewPane.tsx'];
 ```
 
 - [ ] **Step 6: Implement the question editor page**
@@ -3593,13 +3728,15 @@ export default function QuestionEditorPage({
   return (
     <main className="flex h-svh flex-col">
       <header className="border-b px-4 py-2">
-        <Link href={`/assessments/${params.id}` as Route}
-              className="text-muted-foreground text-sm hover:underline">
+        <Link
+          href={`/assessments/${params.id}` as Route}
+          className="text-muted-foreground text-sm hover:underline"
+        >
           ← Assessment
         </Link>
       </header>
       <div className="grid flex-1 grid-cols-1 overflow-hidden md:grid-cols-2">
-        <section aria-label="Editor" className="border-r overflow-hidden">
+        <section aria-label="Editor" className="overflow-hidden border-r">
           <EditorPane
             position={Number(searchParams.pos)}
             totalQuestions={Number(searchParams.total)}
@@ -3716,13 +3853,15 @@ export function QuestionEditorClient({
   return (
     <main className="flex h-svh flex-col">
       <header className="border-b px-4 py-2">
-        <Link href={`/assessments/${assessmentId}` as Route}
-              className="text-muted-foreground text-sm hover:underline">
+        <Link
+          href={`/assessments/${assessmentId}` as Route}
+          className="text-muted-foreground text-sm hover:underline"
+        >
           ← Assessment
         </Link>
       </header>
       <div className="grid flex-1 grid-cols-1 overflow-hidden md:grid-cols-2">
-        <section aria-label="Editor" className="border-r overflow-hidden">
+        <section aria-label="Editor" className="overflow-hidden border-r">
           <EditorPane
             position={position}
             totalQuestions={totalQuestions}
@@ -3774,6 +3913,7 @@ git commit -m "feat(authoring): split-pane editor shell (stem + action bar + ske
 ### Task 21: Scoring forms part 1 — mc, ma, tf
 
 **Files:**
+
 - Create: `components/editor/scoring-forms.tsx` (named exports `McScoringForm`, `MaScoringForm`, `TfScoringForm`; numeric/short_answer/fill_in added in Task 22)
 - Modify: `components/editor/EditorPane.tsx` (replace the scoring-forms placeholder with the type-dispatched component)
 
@@ -3791,7 +3931,9 @@ import { Button } from '@/components/ui/button';
 type Choice = { id: string; label: string };
 
 export function McScoringForm({
-  body, scoring, onChange,
+  body,
+  scoring,
+  onChange,
 }: {
   body: { choices?: Choice[] };
   scoring: { correct_id?: string };
@@ -3823,21 +3965,32 @@ export function McScoringForm({
       <ul className="flex flex-col gap-2">
         {choices.map((c) => (
           <li key={c.id} className="flex items-center gap-2">
-            <input type="radio" name="mc-correct" checked={correct === c.id}
-                   onChange={() => setCorrect(c.id)} aria-label={`Choice ${c.id} is correct`} />
-            <span className="font-mono text-xs w-6">{c.id}</span>
+            <input
+              type="radio"
+              name="mc-correct"
+              checked={correct === c.id}
+              onChange={() => setCorrect(c.id)}
+              aria-label={`Choice ${c.id} is correct`}
+            />
+            <span className="w-6 font-mono text-xs">{c.id}</span>
             <Input value={c.label} onChange={(e) => setLabel(c.id, e.target.value)} />
-            <Button type="button" variant="ghost" onClick={() => remove(c.id)} aria-label="Remove">×</Button>
+            <Button type="button" variant="ghost" onClick={() => remove(c.id)} aria-label="Remove">
+              ×
+            </Button>
           </li>
         ))}
       </ul>
-      <Button type="button" variant="outline" onClick={addChoice}>+ Add choice</Button>
+      <Button type="button" variant="outline" onClick={addChoice}>
+        + Add choice
+      </Button>
     </div>
   );
 }
 
 export function MaScoringForm({
-  body, scoring, onChange,
+  body,
+  scoring,
+  onChange,
 }: {
   body: { choices?: Choice[] };
   scoring: { correct_ids?: string[]; partial_credit?: boolean };
@@ -3874,18 +4027,29 @@ export function MaScoringForm({
       <ul className="flex flex-col gap-2">
         {choices.map((c) => (
           <li key={c.id} className="flex items-center gap-2">
-            <input type="checkbox" checked={correct.has(c.id)} onChange={() => toggle(c.id)}
-                   aria-label={`Choice ${c.id} is correct`} />
-            <span className="font-mono text-xs w-6">{c.id}</span>
+            <input
+              type="checkbox"
+              checked={correct.has(c.id)}
+              onChange={() => toggle(c.id)}
+              aria-label={`Choice ${c.id} is correct`}
+            />
+            <span className="w-6 font-mono text-xs">{c.id}</span>
             <Input value={c.label} onChange={(e) => setLabel(c.id, e.target.value)} />
-            <Button type="button" variant="ghost" onClick={() => remove(c.id)} aria-label="Remove">×</Button>
+            <Button type="button" variant="ghost" onClick={() => remove(c.id)} aria-label="Remove">
+              ×
+            </Button>
           </li>
         ))}
       </ul>
-      <Button type="button" variant="outline" onClick={addChoice}>+ Add choice</Button>
-      <label className="flex items-center gap-2 text-sm mt-2">
-        <input type="checkbox" checked={Boolean(scoring.partial_credit)}
-               onChange={(e) => onChange({ ...body }, { ...scoring, partial_credit: e.target.checked })} />
+      <Button type="button" variant="outline" onClick={addChoice}>
+        + Add choice
+      </Button>
+      <label className="mt-2 flex items-center gap-2 text-sm">
+        <input
+          type="checkbox"
+          checked={Boolean(scoring.partial_credit)}
+          onChange={(e) => onChange({ ...body }, { ...scoring, partial_credit: e.target.checked })}
+        />
         Award partial credit
       </label>
     </div>
@@ -3893,7 +4057,8 @@ export function MaScoringForm({
 }
 
 export function TfScoringForm({
-  scoring, onChange,
+  scoring,
+  onChange,
 }: {
   body: object;
   scoring: { correct?: boolean };
@@ -3905,11 +4070,19 @@ export function TfScoringForm({
       <Label>Correct answer</Label>
       <div className="flex items-center gap-4 text-sm">
         <label className="flex items-center gap-2">
-          <input type="radio" checked={correct} onChange={() => onChange({}, { ...scoring, correct: true })} />
+          <input
+            type="radio"
+            checked={correct}
+            onChange={() => onChange({}, { ...scoring, correct: true })}
+          />
           True
         </label>
         <label className="flex items-center gap-2">
-          <input type="radio" checked={!correct} onChange={() => onChange({}, { ...scoring, correct: false })} />
+          <input
+            type="radio"
+            checked={!correct}
+            onChange={() => onChange({}, { ...scoring, correct: false })}
+          />
           False
         </label>
       </div>
@@ -3923,14 +4096,18 @@ export function TfScoringForm({
 In `components/editor/EditorPane.tsx`, replace the placeholder line:
 
 ```tsx
-      <p className="text-muted-foreground text-sm">Scoring form — implemented in Tasks 21-22.</p>
+<p className="text-muted-foreground text-sm">Scoring form — implemented in Tasks 21-22.</p>
 ```
 
 with:
 
 ```tsx
-      <Scoring type={draft.type} body={draft.body} scoring={draft.scoring}
-               onChange={(body, scoring) => patch({ body: { ...draft.body, ...body }, scoring })} />
+<Scoring
+  type={draft.type}
+  body={draft.body}
+  scoring={draft.scoring}
+  onChange={(body, scoring) => patch({ body: { ...draft.body, ...body }, scoring })}
+/>
 ```
 
 And add at the top of EditorPane.tsx:
@@ -3938,17 +4115,26 @@ And add at the top of EditorPane.tsx:
 ```tsx
 import { McScoringForm, MaScoringForm, TfScoringForm } from './scoring-forms';
 
-function Scoring({ type, body, scoring, onChange }: {
+function Scoring({
+  type,
+  body,
+  scoring,
+  onChange,
+}: {
   type: QuestionType;
   body: Record<string, unknown>;
   scoring: Record<string, unknown>;
   onChange: (body: object, scoring: object) => void;
 }) {
   switch (type) {
-    case 'mc': return <McScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />;
-    case 'ma': return <MaScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />;
-    case 'tf': return <TfScoringForm body={body} scoring={scoring as never} onChange={onChange} />;
-    default: return <p className="text-muted-foreground text-sm">{type} scoring form — Task 22.</p>;
+    case 'mc':
+      return <McScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />;
+    case 'ma':
+      return <MaScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />;
+    case 'tf':
+      return <TfScoringForm body={body} scoring={scoring as never} onChange={onChange} />;
+    default:
+      return <p className="text-muted-foreground text-sm">{type} scoring form — Task 22.</p>;
   }
 }
 ```
@@ -3965,6 +4151,7 @@ git commit -m "feat(authoring): mc, ma, tf scoring forms in the editor pane"
 ### Task 22: Scoring forms part 2 — numeric, short_answer, fill_in
 
 **Files:**
+
 - Modify: `components/editor/scoring-forms.tsx` (add three more named exports)
 - Modify: `components/editor/EditorPane.tsx` (extend the `Scoring` dispatcher)
 
@@ -3974,7 +4161,9 @@ Append to `components/editor/scoring-forms.tsx`:
 
 ```tsx
 export function NumericScoringForm({
-  body, scoring, onChange,
+  body,
+  scoring,
+  onChange,
 }: {
   body: { units?: string };
   scoring: { formula?: string; tolerance?: number };
@@ -3984,44 +4173,70 @@ export function NumericScoringForm({
     <div className="grid gap-2 md:grid-cols-2">
       <div className="flex flex-col gap-1 md:col-span-2">
         <Label htmlFor="formula">Grading formula</Label>
-        <Input id="formula" value={scoring.formula ?? ''}
-               onChange={(e) => onChange({ ...body }, { ...scoring, formula: e.target.value })}
-               placeholder="e.g. m / molar_mass(c)" />
+        <Input
+          id="formula"
+          value={scoring.formula ?? ''}
+          onChange={(e) => onChange({ ...body }, { ...scoring, formula: e.target.value })}
+          placeholder="e.g. m / molar_mass(c)"
+        />
       </div>
       <div className="flex flex-col gap-1">
         <Label htmlFor="tolerance">Tolerance</Label>
-        <Input id="tolerance" type="number" step="any" min={0}
-               value={scoring.tolerance ?? 0}
-               onChange={(e) => onChange({ ...body }, { ...scoring, tolerance: Number(e.target.value) })} />
+        <Input
+          id="tolerance"
+          type="number"
+          step="any"
+          min={0}
+          value={scoring.tolerance ?? 0}
+          onChange={(e) => onChange({ ...body }, { ...scoring, tolerance: Number(e.target.value) })}
+        />
       </div>
       <div className="flex flex-col gap-1">
         <Label htmlFor="units">Units (optional)</Label>
-        <Input id="units" value={body.units ?? ''}
-               onChange={(e) => onChange({ ...body, units: e.target.value }, { ...scoring })} />
+        <Input
+          id="units"
+          value={body.units ?? ''}
+          onChange={(e) => onChange({ ...body, units: e.target.value }, { ...scoring })}
+        />
       </div>
     </div>
   );
 }
 
 export function ShortAnswerScoringForm({
-  scoring, onChange,
+  scoring,
+  onChange,
 }: {
   body: object;
   scoring: { pattern?: string; case_insensitive?: boolean };
   onChange: (body: object, scoring: object) => void;
 }) {
   let regexError: string | null = null;
-  try { new RegExp(scoring.pattern ?? ''); } catch (e) { regexError = (e as Error).message; }
+  try {
+    new RegExp(scoring.pattern ?? '');
+  } catch (e) {
+    regexError = (e as Error).message;
+  }
   return (
     <div className="flex flex-col gap-2">
       <Label htmlFor="pattern">Regex pattern</Label>
-      <Input id="pattern" value={scoring.pattern ?? ''}
-             onChange={(e) => onChange({}, { ...scoring, pattern: e.target.value })}
-             aria-invalid={regexError != null} />
-      {regexError && <p role="alert" className="text-destructive text-xs">{regexError}</p>}
+      <Input
+        id="pattern"
+        value={scoring.pattern ?? ''}
+        onChange={(e) => onChange({}, { ...scoring, pattern: e.target.value })}
+        aria-invalid={regexError != null}
+      />
+      {regexError && (
+        <p role="alert" className="text-destructive text-xs">
+          {regexError}
+        </p>
+      )}
       <label className="flex items-center gap-2 text-sm">
-        <input type="checkbox" checked={Boolean(scoring.case_insensitive)}
-               onChange={(e) => onChange({}, { ...scoring, case_insensitive: e.target.checked })} />
+        <input
+          type="checkbox"
+          checked={Boolean(scoring.case_insensitive)}
+          onChange={(e) => onChange({}, { ...scoring, case_insensitive: e.target.checked })}
+        />
         Case-insensitive
       </label>
     </div>
@@ -4029,7 +4244,9 @@ export function ShortAnswerScoringForm({
 }
 
 export function FillInScoringForm({
-  body, scoring, onChange,
+  body,
+  scoring,
+  onChange,
 }: {
   body: { stem?: string; blanks?: { id: string; prompt?: string }[] };
   scoring: { targets?: { id: string; target: string; case_insensitive?: boolean }[] };
@@ -4056,9 +4273,12 @@ export function FillInScoringForm({
       { ...body },
       {
         ...scoring,
-        targets: [...tokenIds].map(
-          (tid) => targets.find((t) => t.id === tid) ?? { id: tid, target: '', case_insensitive: false },
-        ).map((t) => (t.id === id ? { ...t, target } : t)),
+        targets: [...tokenIds]
+          .map(
+            (tid) =>
+              targets.find((t) => t.id === tid) ?? { id: tid, target: '', case_insensitive: false },
+          )
+          .map((t) => (t.id === id ? { ...t, target } : t)),
       },
     );
   }
@@ -4071,15 +4291,20 @@ export function FillInScoringForm({
           Add <code>{'{{blank:id}}'}</code> tokens in the stem to define blanks.
         </p>
       )}
-      <Button type="button" variant="outline" onClick={sync}>Sync from stem</Button>
+      <Button type="button" variant="outline" onClick={sync}>
+        Sync from stem
+      </Button>
       <ul className="flex flex-col gap-2">
         {[...tokenIds].map((id) => {
           const t = targets.find((x) => x.id === id);
           return (
             <li key={id} className="flex items-center gap-2">
-              <span className="font-mono text-xs w-16">{id}</span>
-              <Input value={t?.target ?? ''} placeholder="target answer"
-                     onChange={(e) => setTarget(id, e.target.value)} />
+              <span className="w-16 font-mono text-xs">{id}</span>
+              <Input
+                value={t?.target ?? ''}
+                placeholder="target answer"
+                onChange={(e) => setTarget(id, e.target.value)}
+              />
             </li>
           );
         })}
@@ -4095,23 +4320,42 @@ In `components/editor/EditorPane.tsx`, replace the `Scoring` function with:
 
 ```tsx
 import {
-  McScoringForm, MaScoringForm, TfScoringForm,
-  NumericScoringForm, ShortAnswerScoringForm, FillInScoringForm,
+  McScoringForm,
+  MaScoringForm,
+  TfScoringForm,
+  NumericScoringForm,
+  ShortAnswerScoringForm,
+  FillInScoringForm,
 } from './scoring-forms';
 
-function Scoring({ type, body, scoring, onChange }: {
+function Scoring({
+  type,
+  body,
+  scoring,
+  onChange,
+}: {
   type: QuestionType;
   body: Record<string, unknown>;
   scoring: Record<string, unknown>;
   onChange: (body: object, scoring: object) => void;
 }) {
   switch (type) {
-    case 'mc': return <McScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />;
-    case 'ma': return <MaScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />;
-    case 'tf': return <TfScoringForm body={body} scoring={scoring as never} onChange={onChange} />;
-    case 'numeric': return <NumericScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />;
-    case 'short_answer': return <ShortAnswerScoringForm body={body} scoring={scoring as never} onChange={onChange} />;
-    case 'fill_in': return <FillInScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />;
+    case 'mc':
+      return <McScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />;
+    case 'ma':
+      return <MaScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />;
+    case 'tf':
+      return <TfScoringForm body={body} scoring={scoring as never} onChange={onChange} />;
+    case 'numeric':
+      return (
+        <NumericScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />
+      );
+    case 'short_answer':
+      return <ShortAnswerScoringForm body={body} scoring={scoring as never} onChange={onChange} />;
+    case 'fill_in':
+      return (
+        <FillInScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />
+      );
   }
 }
 ```
@@ -4128,6 +4372,7 @@ git commit -m "feat(authoring): numeric, short_answer, fill_in scoring forms"
 ### Task 23: Variables section + scalar spec sub-forms
 
 **Files:**
+
 - Create: `components/editor/VariablesSection.tsx`
 - Create: `components/editor/variable-specs.tsx` (exports `ChoiceSpec`, `ChemistryCompoundSpec`, `RandintSpec`, `RandfloatSpec`; `DerivedSpec` added in Task 24)
 - Modify: `components/editor/EditorPane.tsx` (replace variables placeholder)
@@ -4144,7 +4389,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 
-export function ChoiceSpec({ spec, onChange }: {
+export function ChoiceSpec({
+  spec,
+  onChange,
+}: {
   spec: { values?: string[] };
   onChange: (next: object) => void;
 }) {
@@ -4152,13 +4400,19 @@ export function ChoiceSpec({ spec, onChange }: {
   return (
     <div className="flex flex-col gap-1">
       <Label>Values (one per line)</Label>
-      <Textarea rows={4} value={text}
-                onChange={(e) => onChange({ values: e.target.value.split('\n').filter(Boolean) })} />
+      <Textarea
+        rows={4}
+        value={text}
+        onChange={(e) => onChange({ values: e.target.value.split('\n').filter(Boolean) })}
+      />
     </div>
   );
 }
 
-export function ChemistryCompoundSpec({ spec, onChange }: {
+export function ChemistryCompoundSpec({
+  spec,
+  onChange,
+}: {
   spec: { values?: { label: string; smiles: string }[] };
   onChange: (next: object) => void;
 }) {
@@ -4166,67 +4420,131 @@ export function ChemistryCompoundSpec({ spec, onChange }: {
   function set(i: number, patch: Partial<{ label: string; smiles: string }>) {
     onChange({ values: values.map((v, idx) => (idx === i ? { ...v, ...patch } : v)) });
   }
-  function add() { onChange({ values: [...values, { label: '', smiles: '' }] }); }
-  function remove(i: number) { onChange({ values: values.filter((_, idx) => idx !== i) }); }
+  function add() {
+    onChange({ values: [...values, { label: '', smiles: '' }] });
+  }
+  function remove(i: number) {
+    onChange({ values: values.filter((_, idx) => idx !== i) });
+  }
   return (
     <div className="flex flex-col gap-2">
       <Label>Compounds</Label>
       <ul className="flex flex-col gap-2">
         {values.map((v, i) => (
           <li key={i} className="grid grid-cols-[1fr_2fr_auto] gap-2">
-            <Input placeholder="label (e.g. NaCl)" value={v.label}
-                   onChange={(e) => set(i, { label: e.target.value })} />
-            <Input placeholder="SMILES" value={v.smiles} className="font-mono"
-                   onChange={(e) => set(i, { smiles: e.target.value })} />
-            <Button type="button" variant="ghost" onClick={() => remove(i)}>×</Button>
+            <Input
+              placeholder="label (e.g. NaCl)"
+              value={v.label}
+              onChange={(e) => set(i, { label: e.target.value })}
+            />
+            <Input
+              placeholder="SMILES"
+              value={v.smiles}
+              className="font-mono"
+              onChange={(e) => set(i, { smiles: e.target.value })}
+            />
+            <Button type="button" variant="ghost" onClick={() => remove(i)}>
+              ×
+            </Button>
           </li>
         ))}
       </ul>
-      <Button type="button" variant="outline" onClick={add}>+ Add compound</Button>
+      <Button type="button" variant="outline" onClick={add}>
+        + Add compound
+      </Button>
     </div>
   );
 }
 
-export function RandintSpec({ spec, onChange }: {
+export function RandintSpec({
+  spec,
+  onChange,
+}: {
   spec: { min?: number; max?: number; step?: number; units?: string };
   onChange: (next: object) => void;
 }) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-      <div className="flex flex-col gap-1"><Label>Min</Label>
-        <Input type="number" value={spec.min ?? 0}
-               onChange={(e) => onChange({ ...spec, min: Number(e.target.value) })} /></div>
-      <div className="flex flex-col gap-1"><Label>Max</Label>
-        <Input type="number" value={spec.max ?? 10}
-               onChange={(e) => onChange({ ...spec, max: Number(e.target.value) })} /></div>
-      <div className="flex flex-col gap-1"><Label>Step</Label>
-        <Input type="number" min={1} value={spec.step ?? 1}
-               onChange={(e) => onChange({ ...spec, step: Number(e.target.value) })} /></div>
-      <div className="flex flex-col gap-1"><Label>Units</Label>
-        <Input value={spec.units ?? ''}
-               onChange={(e) => onChange({ ...spec, units: e.target.value })} /></div>
+    <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+      <div className="flex flex-col gap-1">
+        <Label>Min</Label>
+        <Input
+          type="number"
+          value={spec.min ?? 0}
+          onChange={(e) => onChange({ ...spec, min: Number(e.target.value) })}
+        />
+      </div>
+      <div className="flex flex-col gap-1">
+        <Label>Max</Label>
+        <Input
+          type="number"
+          value={spec.max ?? 10}
+          onChange={(e) => onChange({ ...spec, max: Number(e.target.value) })}
+        />
+      </div>
+      <div className="flex flex-col gap-1">
+        <Label>Step</Label>
+        <Input
+          type="number"
+          min={1}
+          value={spec.step ?? 1}
+          onChange={(e) => onChange({ ...spec, step: Number(e.target.value) })}
+        />
+      </div>
+      <div className="flex flex-col gap-1">
+        <Label>Units</Label>
+        <Input
+          value={spec.units ?? ''}
+          onChange={(e) => onChange({ ...spec, units: e.target.value })}
+        />
+      </div>
     </div>
   );
 }
 
-export function RandfloatSpec({ spec, onChange }: {
+export function RandfloatSpec({
+  spec,
+  onChange,
+}: {
   spec: { min?: number; max?: number; decimals?: number; units?: string };
   onChange: (next: object) => void;
 }) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-      <div className="flex flex-col gap-1"><Label>Min</Label>
-        <Input type="number" step="any" value={spec.min ?? 0}
-               onChange={(e) => onChange({ ...spec, min: Number(e.target.value) })} /></div>
-      <div className="flex flex-col gap-1"><Label>Max</Label>
-        <Input type="number" step="any" value={spec.max ?? 1}
-               onChange={(e) => onChange({ ...spec, max: Number(e.target.value) })} /></div>
-      <div className="flex flex-col gap-1"><Label>Decimals</Label>
-        <Input type="number" min={0} max={10} value={spec.decimals ?? 2}
-               onChange={(e) => onChange({ ...spec, decimals: Number(e.target.value) })} /></div>
-      <div className="flex flex-col gap-1"><Label>Units</Label>
-        <Input value={spec.units ?? ''}
-               onChange={(e) => onChange({ ...spec, units: e.target.value })} /></div>
+    <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+      <div className="flex flex-col gap-1">
+        <Label>Min</Label>
+        <Input
+          type="number"
+          step="any"
+          value={spec.min ?? 0}
+          onChange={(e) => onChange({ ...spec, min: Number(e.target.value) })}
+        />
+      </div>
+      <div className="flex flex-col gap-1">
+        <Label>Max</Label>
+        <Input
+          type="number"
+          step="any"
+          value={spec.max ?? 1}
+          onChange={(e) => onChange({ ...spec, max: Number(e.target.value) })}
+        />
+      </div>
+      <div className="flex flex-col gap-1">
+        <Label>Decimals</Label>
+        <Input
+          type="number"
+          min={0}
+          max={10}
+          value={spec.decimals ?? 2}
+          onChange={(e) => onChange({ ...spec, decimals: Number(e.target.value) })}
+        />
+      </div>
+      <div className="flex flex-col gap-1">
+        <Label>Units</Label>
+        <Input
+          value={spec.units ?? ''}
+          onChange={(e) => onChange({ ...spec, units: e.target.value })}
+        />
+      </div>
     </div>
   );
 }
@@ -4244,7 +4562,11 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
 import { ChoiceSpec, ChemistryCompoundSpec, RandintSpec, RandfloatSpec } from './variable-specs';
 
@@ -4264,7 +4586,8 @@ const DEFAULTS: Record<V['type'], object> = {
 };
 
 export function VariablesSection({
-  variables, onChange,
+  variables,
+  onChange,
 }: {
   variables: V[];
   onChange: (next: V[]) => void;
@@ -4279,8 +4602,12 @@ export function VariablesSection({
   function add() {
     onChange([
       ...variables,
-      { name: `v${variables.length + 1}`, type: 'randint', position: variables.length + 1,
-        spec: DEFAULTS.randint as Record<string, unknown> },
+      {
+        name: `v${variables.length + 1}`,
+        type: 'randint',
+        position: variables.length + 1,
+        spec: DEFAULTS.randint as Record<string, unknown>,
+      },
     ]);
   }
   function set(i: number, patch: Partial<V>) {
@@ -4290,17 +4617,22 @@ export function VariablesSection({
     set(i, { type, spec: DEFAULTS[type] as Record<string, unknown> });
   }
   function remove(i: number) {
-    onChange(variables.filter((_, idx) => idx !== i).map((v, idx) => ({ ...v, position: idx + 1 })));
+    onChange(
+      variables.filter((_, idx) => idx !== i).map((v, idx) => ({ ...v, position: idx + 1 })),
+    );
   }
 
   function renderSpec(v: V, i: number) {
     const onSpecChange = (next: object) => set(i, { spec: next as Record<string, unknown> });
     switch (v.type) {
-      case 'choice': return <ChoiceSpec spec={v.spec as never} onChange={onSpecChange} />;
+      case 'choice':
+        return <ChoiceSpec spec={v.spec as never} onChange={onSpecChange} />;
       case 'chemistry_compound':
         return <ChemistryCompoundSpec spec={v.spec as never} onChange={onSpecChange} />;
-      case 'randint': return <RandintSpec spec={v.spec as never} onChange={onSpecChange} />;
-      case 'randfloat': return <RandfloatSpec spec={v.spec as never} onChange={onSpecChange} />;
+      case 'randint':
+        return <RandintSpec spec={v.spec as never} onChange={onSpecChange} />;
+      case 'randfloat':
+        return <RandfloatSpec spec={v.spec as never} onChange={onSpecChange} />;
       case 'derived':
         return <p className="text-muted-foreground text-sm">Derived editor — Task 24.</p>;
     }
@@ -4313,11 +4645,16 @@ export function VariablesSection({
         {variables.map((v, i) => (
           <li key={i} className="rounded border p-2">
             <div className="flex items-center gap-2">
-              <Input className="w-40 font-mono text-sm" value={v.name}
-                     onChange={(e) => set(i, { name: e.target.value })}
-                     aria-label={`Variable ${i + 1} name`} />
+              <Input
+                className="w-40 font-mono text-sm"
+                value={v.name}
+                onChange={(e) => set(i, { name: e.target.value })}
+                aria-label={`Variable ${i + 1} name`}
+              />
               <Select value={v.type} onValueChange={(t) => setType(i, t as V['type'])}>
-                <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="w-48">
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="choice">choice</SelectItem>
                   <SelectItem value="chemistry_compound">chemistry_compound</SelectItem>
@@ -4326,20 +4663,30 @@ export function VariablesSection({
                   <SelectItem value="derived">derived</SelectItem>
                 </SelectContent>
               </Select>
-              <Button type="button" variant="ghost"
-                      onClick={() => toggle(i)}
-                      aria-expanded={expanded.has(i)} aria-controls={`vspec-${i}`}>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => toggle(i)}
+                aria-expanded={expanded.has(i)}
+                aria-controls={`vspec-${i}`}
+              >
                 {expanded.has(i) ? '▴' : '▾'} Configure
               </Button>
-              <Button type="button" variant="ghost" onClick={() => remove(i)} aria-label="Remove">×</Button>
+              <Button type="button" variant="ghost" onClick={() => remove(i)} aria-label="Remove">
+                ×
+              </Button>
             </div>
             {expanded.has(i) && (
-              <div id={`vspec-${i}`} className="mt-2">{renderSpec(v, i)}</div>
+              <div id={`vspec-${i}`} className="mt-2">
+                {renderSpec(v, i)}
+              </div>
             )}
           </li>
         ))}
       </ul>
-      <Button type="button" variant="outline" onClick={add}>+ Add variable</Button>
+      <Button type="button" variant="outline" onClick={add}>
+        + Add variable
+      </Button>
     </div>
   );
 }
@@ -4350,10 +4697,10 @@ export function VariablesSection({
 In `components/editor/EditorPane.tsx`, replace the variables placeholder line with:
 
 ```tsx
-      <VariablesSection
-        variables={draft.variables as never}
-        onChange={(variables) => patch({ variables: variables as typeof draft.variables })}
-      />
+<VariablesSection
+  variables={draft.variables as never}
+  onChange={(variables) => patch({ variables: variables as typeof draft.variables })}
+/>
 ```
 
 And add at top:
@@ -4374,6 +4721,7 @@ git commit -m "feat(authoring): variables section + 4 scalar spec sub-forms (cho
 ### Task 24: Derived variable spec sub-form with live evaluation
 
 **Files:**
+
 - Modify: `components/editor/variable-specs.tsx` (add `DerivedSpec`)
 - Modify: `components/editor/VariablesSection.tsx` (dispatch `derived` to `DerivedSpec`)
 
@@ -4387,7 +4735,9 @@ import { evaluate, EvalError } from '@/lib/grading';
 import type { MaterializedValues } from '@/lib/materializer/types';
 
 export function DerivedSpec({
-  spec, scope, onChange,
+  spec,
+  scope,
+  onChange,
 }: {
   spec: { expression?: string };
   scope: MaterializedValues; // variables materialized for the current preview seed
@@ -4406,15 +4756,21 @@ export function DerivedSpec({
   return (
     <div className="flex flex-col gap-1">
       <Label htmlFor="derived-expr">Expression</Label>
-      <Textarea id="derived-expr" rows={2} className="font-mono text-sm"
-                value={spec.expression ?? ''}
-                onChange={(e) => onChange({ expression: e.target.value })} />
+      <Textarea
+        id="derived-expr"
+        rows={2}
+        className="font-mono text-sm"
+        value={spec.expression ?? ''}
+        onChange={(e) => onChange({ expression: e.target.value })}
+      />
       {evalResult.ok ? (
         <p className="text-muted-foreground text-xs">
           evaluates to: <span className="text-foreground font-mono">{evalResult.value}</span>
         </p>
       ) : (
-        <p role="alert" className="text-destructive text-xs">{evalResult.msg}</p>
+        <p role="alert" className="text-destructive text-xs">
+          {evalResult.msg}
+        </p>
       )}
     </div>
   );
@@ -4423,7 +4779,7 @@ export function DerivedSpec({
 
 - [ ] **Step 2: Pipe the materialized scope into VariablesSection**
 
-The Derived spec form needs the *currently materialized values of earlier variables* to display "evaluates to: X". Materialization is already happening in `PreviewPane` via `renderQuestion`. Lift the materialized_values up so `EditorPane` can hand them to `VariablesSection`.
+The Derived spec form needs the _currently materialized values of earlier variables_ to display "evaluates to: X". Materialization is already happening in `PreviewPane` via `renderQuestion`. Lift the materialized_values up so `EditorPane` can hand them to `VariablesSection`.
 
 Modify the editor page (`client.tsx` from Task 20) — track `materialized_values` from the preview output via a callback:
 
@@ -4443,9 +4799,16 @@ import { renderQuestion } from '@/lib/rendering';
 import type { MaterializedValues } from '@/lib/materializer/types';
 
 export function QuestionEditorClient({
-  assessmentId, questionId, position, totalQuestions, initial,
+  assessmentId,
+  questionId,
+  position,
+  totalQuestions,
+  initial,
 }: {
-  assessmentId: string; questionId: string; position: number; totalQuestions: number;
+  assessmentId: string;
+  questionId: string;
+  position: number;
+  totalQuestions: number;
   initial: QuestionDraft;
 }) {
   const router = useRouter();
@@ -4457,12 +4820,16 @@ export function QuestionEditorClient({
     try {
       return renderQuestion({
         question: {
-          type: liveDraft.type, body: liveDraft.body, scoring: liveDraft.scoring,
+          type: liveDraft.type,
+          body: liveDraft.body,
+          scoring: liveDraft.scoring,
           variables: liveDraft.variables as never,
         },
         seed,
       }).materialized_values;
-    } catch { return {}; }
+    } catch {
+      return {};
+    }
   }, [liveDraft, seed]);
 
   async function doSave(draft: QuestionDraft, andNext: boolean): Promise<void> {
@@ -4472,20 +4839,33 @@ export function QuestionEditorClient({
       fd.set('payload', JSON.stringify(draft));
       await saveQuestionAction(assessmentId, questionId, fd);
       if (!andNext) router.refresh();
-    } finally { setSaving(false); }
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
     <main className="flex h-svh flex-col">
       <header className="border-b px-4 py-2">
-        <Link href={`/assessments/${assessmentId}` as Route}
-              className="text-muted-foreground text-sm hover:underline">← Assessment</Link>
+        <Link
+          href={`/assessments/${assessmentId}` as Route}
+          className="text-muted-foreground text-sm hover:underline"
+        >
+          ← Assessment
+        </Link>
       </header>
       <div className="grid flex-1 grid-cols-1 overflow-hidden md:grid-cols-2">
-        <section aria-label="Editor" className="border-r overflow-hidden">
-          <EditorPane position={position} totalQuestions={totalQuestions} initial={initial}
-                      saving={saving} onChange={setLiveDraft} materializedScope={materialized}
-                      onSave={(d) => doSave(d, false)} onSaveAndNext={(d) => doSave(d, true)} />
+        <section aria-label="Editor" className="overflow-hidden border-r">
+          <EditorPane
+            position={position}
+            totalQuestions={totalQuestions}
+            initial={initial}
+            saving={saving}
+            onChange={setLiveDraft}
+            materializedScope={materialized}
+            onSave={(d) => doSave(d, false)}
+            onSaveAndNext={(d) => doSave(d, true)}
+          />
         </section>
         <section aria-label="Preview">
           <PreviewPane draft={liveDraft} seed={seed} onSeedChange={setSeed} />
@@ -4502,14 +4882,14 @@ In `components/editor/EditorPane.tsx`, add a `materializedScope` prop and pass i
 
 ```tsx
 // Add to props
-  materializedScope: import('@/lib/materializer/types').MaterializedValues;
+materializedScope: import('@/lib/materializer/types').MaterializedValues;
 
 // And in the JSX
-      <VariablesSection
-        variables={draft.variables as never}
-        scope={materializedScope}
-        onChange={(variables) => patch({ variables: variables as typeof draft.variables })}
-      />
+<VariablesSection
+  variables={draft.variables as never}
+  scope={materializedScope}
+  onChange={(variables) => patch({ variables: variables as typeof draft.variables })}
+/>;
 ```
 
 In `components/editor/VariablesSection.tsx`, accept a `scope` prop and forward it to `DerivedSpec`:
@@ -4532,7 +4912,13 @@ export function VariablesSection({
 Add the import:
 
 ```tsx
-import { DerivedSpec, ChoiceSpec, ChemistryCompoundSpec, RandintSpec, RandfloatSpec } from './variable-specs';
+import {
+  DerivedSpec,
+  ChoiceSpec,
+  ChemistryCompoundSpec,
+  RandintSpec,
+  RandfloatSpec,
+} from './variable-specs';
 ```
 
 - [ ] **Step 3: Commit**
@@ -4547,6 +4933,7 @@ git commit -m "feat(authoring): derived variable spec with live evaluation again
 ### Task 25: Reveal panel + seed switcher polish
 
 **Files:**
+
 - Create: `components/preview/SeedSwitcher.tsx`
 - Create: `components/preview/RevealPanel.tsx`
 - Modify: `components/preview/PreviewPane.tsx` (use the two new components)
@@ -4561,7 +4948,11 @@ Create `components/preview/SeedSwitcher.tsx`:
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
 
 const PRESETS = [
@@ -4572,7 +4963,8 @@ const PRESETS = [
 ];
 
 export function SeedSwitcher({
-  seed, onSeedChange,
+  seed,
+  onSeedChange,
 }: {
   seed: number;
   onSeedChange: (next: number) => void;
@@ -4590,18 +4982,29 @@ export function SeedSwitcher({
           onSeedChange(Number(v));
         }}
       >
-        <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+        <SelectTrigger className="w-48">
+          <SelectValue />
+        </SelectTrigger>
         <SelectContent>
           {PRESETS.map((p) => (
-            <SelectItem key={p.value} value={String(p.value)}>{p.label}</SelectItem>
+            <SelectItem key={p.value} value={String(p.value)}>
+              {p.label}
+            </SelectItem>
           ))}
           <SelectItem value="custom">Custom seed…</SelectItem>
         </SelectContent>
       </Select>
       {!isPreset && (
-        <Input type="number" className="w-28" value={custom}
-               onChange={(e) => { setCustom(e.target.value); onSeedChange(Number(e.target.value) || 0); }}
-               aria-label="Custom seed" />
+        <Input
+          type="number"
+          className="w-28"
+          value={custom}
+          onChange={(e) => {
+            setCustom(e.target.value);
+            onSeedChange(Number(e.target.value) || 0);
+          }}
+          aria-label="Custom seed"
+        />
       )}
     </div>
   );
@@ -4624,17 +5027,23 @@ export function RevealPanel({ output }: { output: RenderOutput }) {
       <div className="mt-2 grid gap-2">
         <div>
           <div className="text-muted-foreground text-xs">Materialized values</div>
-          <pre className="overflow-x-auto text-xs">{JSON.stringify(output.materialized_values, null, 2)}</pre>
+          <pre className="overflow-x-auto text-xs">
+            {JSON.stringify(output.materialized_values, null, 2)}
+          </pre>
         </div>
         <div>
           <div className="text-muted-foreground text-xs">Grading target</div>
-          <pre className="overflow-x-auto text-xs">{JSON.stringify(output.grading_target, null, 2)}</pre>
+          <pre className="overflow-x-auto text-xs">
+            {JSON.stringify(output.grading_target, null, 2)}
+          </pre>
         </div>
         {output.validation_errors.length > 0 && (
           <div>
             <div className="text-destructive text-xs">Validation errors</div>
             <ul className="text-destructive text-xs">
-              {output.validation_errors.map((e, i) => <li key={i}>• {e}</li>)}
+              {output.validation_errors.map((e, i) => (
+                <li key={i}>• {e}</li>
+              ))}
             </ul>
           </div>
         )}
@@ -4658,7 +5067,9 @@ import { RevealPanel } from './RevealPanel';
 import type { QuestionDraft } from '@/components/editor/EditorPane';
 
 export function PreviewPane({
-  draft, seed, onSeedChange,
+  draft,
+  seed,
+  onSeedChange,
 }: {
   draft: QuestionDraft;
   seed: number;
@@ -4668,13 +5079,17 @@ export function PreviewPane({
     try {
       const input: RenderInput = {
         question: {
-          type: draft.type, body: draft.body, scoring: draft.scoring,
+          type: draft.type,
+          body: draft.body,
+          scoring: draft.scoring,
           variables: draft.variables as never,
         },
         seed,
       };
       return renderQuestion(input);
-    } catch { return null; }
+    } catch {
+      return null;
+    }
   }, [draft, seed]);
 
   return (
@@ -4707,6 +5122,7 @@ git commit -m "feat(authoring): seed switcher with custom-seed input + structure
 ### Task 26: Answer surfaces (6 question types)
 
 **Files:**
+
 - Create: `components/preview/answer-surfaces.tsx`
 - Modify: `components/preview/PreviewPane.tsx` (wire in the dispatcher)
 
@@ -4729,12 +5145,18 @@ export function AnswerSurface({ body }: { body: RenderedBody }) {
   const key = JSON.stringify(body);
 
   switch (body.kind) {
-    case 'mc': return <McSurface key={key} body={body} />;
-    case 'ma': return <MaSurface key={key} body={body} />;
-    case 'tf': return <TfSurface key={key} />;
-    case 'numeric': return <NumericSurface key={key} body={body} />;
-    case 'short_answer': return <ShortAnswerSurface key={key} />;
-    case 'fill_in': return <FillInSurface key={key} body={body} />;
+    case 'mc':
+      return <McSurface key={key} body={body} />;
+    case 'ma':
+      return <MaSurface key={key} body={body} />;
+    case 'tf':
+      return <TfSurface key={key} />;
+    case 'numeric':
+      return <NumericSurface key={key} body={body} />;
+    case 'short_answer':
+      return <ShortAnswerSurface key={key} />;
+    case 'fill_in':
+      return <FillInSurface key={key} body={body} />;
   }
 }
 
@@ -4745,8 +5167,12 @@ function McSurface({ body }: { body: Extract<RenderedBody, { kind: 'mc' }> }) {
       <legend className="sr-only">Answer</legend>
       {body.choices.map((c) => (
         <label key={c.id} className="flex items-center gap-2">
-          <input type="radio" name="mc-preview" checked={picked === c.id}
-                 onChange={() => setPicked(c.id)} />
+          <input
+            type="radio"
+            name="mc-preview"
+            checked={picked === c.id}
+            onChange={() => setPicked(c.id)}
+          />
           <Markdown source={c.label_substituted} />
         </label>
       ))}
@@ -4793,8 +5219,14 @@ function NumericSurface({ body }: { body: Extract<RenderedBody, { kind: 'numeric
   const [v, setV] = useState('');
   return (
     <div className="flex items-center gap-2">
-      <Input type="number" step="any" value={v} onChange={(e) => setV(e.target.value)}
-             className="w-40" aria-label="Numeric answer" />
+      <Input
+        type="number"
+        step="any"
+        value={v}
+        onChange={(e) => setV(e.target.value)}
+        className="w-40"
+        aria-label="Numeric answer"
+      />
       {body.units && <span className="text-muted-foreground text-sm">{body.units}</span>}
     </div>
   );
@@ -4811,10 +5243,12 @@ function FillInSurface({ body }: { body: Extract<RenderedBody, { kind: 'fill_in'
     <div className="flex flex-col gap-2">
       {body.blanks.map((b) => (
         <label key={b.id} className="flex items-center gap-2">
-          <span className="font-mono text-xs w-24">{b.id}</span>
-          <Input value={vals[b.id] ?? ''}
-                 onChange={(e) => setVals((p) => ({ ...p, [b.id]: e.target.value }))}
-                 placeholder={b.prompt} />
+          <span className="w-24 font-mono text-xs">{b.id}</span>
+          <Input
+            value={vals[b.id] ?? ''}
+            onChange={(e) => setVals((p) => ({ ...p, [b.id]: e.target.value }))}
+            placeholder={b.prompt}
+          />
         </label>
       ))}
     </div>
@@ -4847,9 +5281,10 @@ git commit -m "feat(authoring): answer surfaces for all 6 question types (echo-o
 
 ### Task 27: Live re-render check + integration smoke
 
-Live wiring is already in place (Task 20 + Task 24 lifted seed and live draft). This task is the *integration smoke* — a Playwright spec that confirms the preview updates as the instructor types.
+Live wiring is already in place (Task 20 + Task 24 lifted seed and live draft). This task is the _integration smoke_ — a Playwright spec that confirms the preview updates as the instructor types.
 
 **Files:**
+
 - Create: `tests/authoring/preview-seed-switch.spec.ts`
 
 - [ ] **Step 1: Write the spec**
@@ -4861,7 +5296,10 @@ import { test, expect } from '@playwright/test';
 import { adminClient, createTestUserClient, deleteTestUser } from '../helpers/auth';
 import { signInBrowser } from '../helpers/browser-session';
 
-test('typing in editor updates preview live; seed switch re-materializes', async ({ page, context }) => {
+test('typing in editor updates preview live; seed switch re-materializes', async ({
+  page,
+  context,
+}) => {
   const admin = adminClient();
   const instr = await createTestUserClient({
     email: `instr-live+${Date.now()}@test.local`,
@@ -4874,19 +5312,26 @@ test('typing in editor updates preview live; seed switch re-materializes', async
     const { data: a } = await admin
       .from('assessments')
       .insert({ owner_user_id: instr.userId, title: 'Live', slug: 'live-test', status: 'draft' })
-      .select('id').single();
+      .select('id')
+      .single();
     aid = a!.id;
     const { data: q } = await admin
       .from('questions')
       .insert({
-        assessment_id: aid, position: 1, type: 'numeric',
+        assessment_id: aid,
+        position: 1,
+        type: 'numeric',
         body: { stem: 'How many g of {{x}}?', units: 'g' },
         scoring: { formula: 'x * 2', tolerance: 0.01 },
       })
-      .select('id').single();
+      .select('id')
+      .single();
     qid = q!.id;
     await admin.from('question_variables').insert({
-      question_id: qid, name: 'x', type: 'randint', position: 1,
+      question_id: qid,
+      name: 'x',
+      type: 'randint',
+      position: 1,
       spec: { min: 1, max: 100 },
     });
 
@@ -4925,6 +5370,7 @@ git commit -m "test(authoring): live preview re-renders on edit + seed switch"
 ### Task 28: Save action with full validation
 
 **Files:**
+
 - Modify: `app/(instructor)/assessments/[id]/questions/[qid]/actions.ts`
 - Create: `tests/authoring/validation-blocks-save.spec.ts`
 - Create: `tests/authoring/edit-numeric-question.spec.ts`
@@ -4958,12 +5404,17 @@ export async function saveQuestionAction(
 ): Promise<SaveResult> {
   const rawPayload = String(formData.get('payload') ?? '');
   let parsed;
-  try { parsed = PayloadSchema.parse(JSON.parse(rawPayload)); }
-  catch (e) { return { ok: false, errors: [(e as Error).message] }; }
+  try {
+    parsed = PayloadSchema.parse(JSON.parse(rawPayload));
+  } catch (e) {
+    return { ok: false, errors: [(e as Error).message] };
+  }
 
   // Validate the question itself
   const qResult = QuestionSchema.safeParse({
-    type: parsed.type, body: parsed.body, scoring: parsed.scoring,
+    type: parsed.type,
+    body: parsed.body,
+    scoring: parsed.scoring,
   });
   if (!qResult.success) {
     return { ok: false, errors: qResult.error.issues.map((i) => i.message) };
@@ -4972,9 +5423,7 @@ export async function saveQuestionAction(
   // Validate each variable spec
   const varResults = parsed.variables.map((v) => VariableSpecSchema.safeParse(v));
   if (varResults.some((r) => !r.success)) {
-    const msgs = varResults.flatMap((r) =>
-      r.success ? [] : r.error.issues.map((i) => i.message),
-    );
+    const msgs = varResults.flatMap((r) => (r.success ? [] : r.error.issues.map((i) => i.message)));
     return { ok: false, errors: msgs };
   }
   const variables = varResults.map((r) => r.data!);
@@ -4991,8 +5440,11 @@ export async function saveQuestionAction(
     const formula = String((parsed.scoring as { formula?: string }).formula ?? '');
     const fakeScope: Record<string, number> = {};
     for (const v of variables) fakeScope[v.name] = 0;
-    try { evaluate(formula, fakeScope); }
-    catch (e) { return { ok: false, errors: [`formula error: ${(e as Error).message}`] }; }
+    try {
+      evaluate(formula, fakeScope);
+    } catch (e) {
+      return { ok: false, errors: [`formula error: ${(e as Error).message}`] };
+    }
   }
 
   // Persist
@@ -5008,7 +5460,9 @@ export async function saveQuestionAction(
     const { error: vErr } = await supabase.from('question_variables').insert(
       variables.map((v) => ({
         question_id: questionId,
-        name: v.name, type: v.type, position: v.position,
+        name: v.name,
+        type: v.type,
+        position: v.position,
         spec: v.spec as object,
       })),
     );
@@ -5039,18 +5493,29 @@ async function doSave(draft: QuestionDraft, andNext: boolean): Promise<void> {
       return;
     }
     if (!andNext) router.refresh();
-  } finally { setSaving(false); }
+  } finally {
+    setSaving(false);
+  }
 }
 ```
 
 Display the errors above the editor:
 
 ```tsx
-{errors.length > 0 && (
-  <div role="alert" className="mx-2 my-2 rounded border border-destructive/50 bg-destructive/10 p-2 text-sm text-destructive">
-    <ul>{errors.map((e, i) => <li key={i}>• {e}</li>)}</ul>
-  </div>
-)}
+{
+  errors.length > 0 && (
+    <div
+      role="alert"
+      className="border-destructive/50 bg-destructive/10 text-destructive mx-2 my-2 rounded border p-2 text-sm"
+    >
+      <ul>
+        {errors.map((e, i) => (
+          <li key={i}>• {e}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 ```
 
 - [ ] **Step 3: Write the failing happy-path E2E**
@@ -5062,7 +5527,10 @@ import { test, expect } from '@playwright/test';
 import { adminClient, createTestUserClient, deleteTestUser } from '../helpers/auth';
 import { signInBrowser } from '../helpers/browser-session';
 
-test('instructor authors a parameterized numeric question end-to-end', async ({ page, context }) => {
+test('instructor authors a parameterized numeric question end-to-end', async ({
+  page,
+  context,
+}) => {
   const admin = adminClient();
   const instr = await createTestUserClient({
     email: `instr-num+${Date.now()}@test.local`,
@@ -5073,14 +5541,19 @@ test('instructor authors a parameterized numeric question end-to-end', async ({ 
     const { data: a } = await admin
       .from('assessments')
       .insert({ owner_user_id: instr.userId, title: 'Stoich', slug: 'stoich', status: 'draft' })
-      .select('id').single();
+      .select('id')
+      .single();
     const { data: q } = await admin
       .from('questions')
       .insert({
-        assessment_id: a!.id, position: 1, type: 'numeric',
-        body: { stem: '' }, scoring: { formula: '0', tolerance: 0 },
+        assessment_id: a!.id,
+        position: 1,
+        type: 'numeric',
+        body: { stem: '' },
+        scoring: { formula: '0', tolerance: 0 },
       })
-      .select('id').single();
+      .select('id')
+      .single();
 
     await signInBrowser(context, instr);
     await page.goto(`/assessments/${a!.id}/questions/${q!.id}`);
@@ -5130,14 +5603,19 @@ test('invalid form blocks save with field-level error', async ({ page, context }
     const { data: a } = await admin
       .from('assessments')
       .insert({ owner_user_id: instr.userId, title: 'V', slug: 'val', status: 'draft' })
-      .select('id').single();
+      .select('id')
+      .single();
     const { data: q } = await admin
       .from('questions')
       .insert({
-        assessment_id: a!.id, position: 1, type: 'numeric',
-        body: { stem: 'x' }, scoring: { formula: '0', tolerance: 0 },
+        assessment_id: a!.id,
+        position: 1,
+        type: 'numeric',
+        body: { stem: 'x' },
+        scoring: { formula: '0', tolerance: 0 },
       })
-      .select('id').single();
+      .select('id')
+      .single();
 
     await signInBrowser(context, instr);
     await page.goto(`/assessments/${a!.id}/questions/${q!.id}`);
@@ -5170,6 +5648,7 @@ git commit -m "feat(authoring): saveQuestionAction with full zod validation + E2
 ### Task 29: Reorder + delete question actions
 
 **Files:**
+
 - Modify: `app/(instructor)/assessments/[id]/questions/[qid]/actions-reorder.ts`
 - Modify: `app/(instructor)/assessments/[id]/questions/[qid]/actions-delete.ts`
 
@@ -5264,7 +5743,10 @@ export async function deleteQuestionAction(formData: FormData): Promise<void> {
     .order('position');
 
   for (const r of rest ?? []) {
-    await supabase.from('questions').update({ position: r.position - 1 }).eq('id', r.id);
+    await supabase
+      .from('questions')
+      .update({ position: r.position - 1 })
+      .eq('id', r.id);
   }
   revalidatePath(`/assessments/${cur.assessment_id}`);
 }
@@ -5282,6 +5764,7 @@ git commit -m "feat(authoring): reorder (swap-adjacent) + delete question Server
 ### Task 30: Update home page with /assessments link for instructors
 
 **Files:**
+
 - Modify: `app/page.tsx`
 
 - [ ] **Step 1: Patch the home page**
@@ -5298,14 +5781,12 @@ export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) redirect('/sign-in' as Route);
 
-  const { data: profile } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single();
+  const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
@@ -5314,7 +5795,9 @@ export default async function Home() {
 
       {profile?.role === 'instructor' && (
         <p className="mt-6">
-          <Link href={'/assessments' as Route} className="underline">Go to your assessments →</Link>
+          <Link href={'/assessments' as Route} className="underline">
+            Go to your assessments →
+          </Link>
         </p>
       )}
 
@@ -5345,6 +5828,7 @@ git commit -m "feat(home): link instructors to /assessments"
 ### Task 31: Playwright RLS tests for assessments + questions + question_variables
 
 **Files:**
+
 - Create: `tests/rls/assessments-isolation.spec.ts`
 - Create: `tests/rls/questions-isolation.spec.ts`
 - Create: `tests/rls/question-variables-isolation.spec.ts`
@@ -5359,7 +5843,7 @@ Create `tests/rls/assessments-isolation.spec.ts`:
 import { test, expect } from '@playwright/test';
 import { adminClient, createTestUserClient, deleteTestUser } from '../helpers/auth';
 
-test.describe('RLS: instructor cannot reach another instructor\'s assessments', () => {
+test.describe("RLS: instructor cannot reach another instructor's assessments", () => {
   let aId: string;
   let bId: string;
   let aAssessmentId: string;
@@ -5367,16 +5851,27 @@ test.describe('RLS: instructor cannot reach another instructor\'s assessments', 
   test.beforeAll(async () => {
     const admin = adminClient();
     const a = await createTestUserClient({
-      email: `instrA+${Date.now()}@test.local`, password: 'p!', role: 'instructor',
+      email: `instrA+${Date.now()}@test.local`,
+      password: 'p!',
+      role: 'instructor',
     });
     const b = await createTestUserClient({
-      email: `instrB+${Date.now()}@test.local`, password: 'p!', role: 'instructor',
+      email: `instrB+${Date.now()}@test.local`,
+      password: 'p!',
+      role: 'instructor',
     });
     aId = a.userId;
     bId = b.userId;
-    const { data } = await admin.from('assessments').insert({
-      owner_user_id: aId, title: 'A only', slug: `a-only-${Date.now()}`, status: 'draft',
-    }).select('id').single();
+    const { data } = await admin
+      .from('assessments')
+      .insert({
+        owner_user_id: aId,
+        title: 'A only',
+        slug: `a-only-${Date.now()}`,
+        status: 'draft',
+      })
+      .select('id')
+      .single();
     aAssessmentId = data!.id;
   });
 
@@ -5387,7 +5882,9 @@ test.describe('RLS: instructor cannot reach another instructor\'s assessments', 
 
   test('instructor B SELECTs ⇒ empty', async () => {
     const { client } = await createTestUserClient({
-      email: `instrB-read+${Date.now()}@test.local`, password: 'p!', role: 'instructor',
+      email: `instrB-read+${Date.now()}@test.local`,
+      password: 'p!',
+      role: 'instructor',
     });
     const { data } = await client.from('assessments').select('*').eq('id', aAssessmentId);
     expect(data).toEqual([]);
@@ -5395,17 +5892,24 @@ test.describe('RLS: instructor cannot reach another instructor\'s assessments', 
 
   test('instructor B UPDATE ⇒ rejected (affects 0 rows under RLS)', async () => {
     const { client } = await createTestUserClient({
-      email: `instrB-upd+${Date.now()}@test.local`, password: 'p!', role: 'instructor',
+      email: `instrB-upd+${Date.now()}@test.local`,
+      password: 'p!',
+      role: 'instructor',
     });
     const { data, error } = await client
-      .from('assessments').update({ title: 'hijacked' }).eq('id', aAssessmentId).select();
+      .from('assessments')
+      .update({ title: 'hijacked' })
+      .eq('id', aAssessmentId)
+      .select();
     if (error) return; // RLS may also surface as an error
     expect(data).toEqual([]);
   });
 
   test('instructor B DELETE ⇒ rejected (affects 0 rows)', async () => {
     const { client } = await createTestUserClient({
-      email: `instrB-del+${Date.now()}@test.local`, password: 'p!', role: 'instructor',
+      email: `instrB-del+${Date.now()}@test.local`,
+      password: 'p!',
+      role: 'instructor',
     });
     const { data } = await client.from('assessments').delete().eq('id', aAssessmentId).select();
     expect(data).toEqual([]);
@@ -5418,10 +5922,17 @@ test.describe('RLS: instructor cannot reach another instructor\'s assessments', 
 Create `tests/rls/questions-isolation.spec.ts` — same pattern, but seed a question into A's assessment and test B's reads/writes against it. Adapt from Step 1 by adding:
 
 ```ts
-const { data: q } = await admin.from('questions').insert({
-  assessment_id: aAssessmentId, position: 1, type: 'tf',
-  body: { stem: 'x' }, scoring: { correct: true },
-}).select('id').single();
+const { data: q } = await admin
+  .from('questions')
+  .insert({
+    assessment_id: aAssessmentId,
+    position: 1,
+    type: 'tf',
+    body: { stem: 'x' },
+    scoring: { correct: true },
+  })
+  .select('id')
+  .single();
 // then SELECT/UPDATE/DELETE attempts by B target q.id
 ```
 
@@ -5448,6 +5959,7 @@ git commit -m "test(rls): cross-instructor isolation for assessments, questions,
 ### Task 32: axe-core a11y tests for new routes
 
 **Files:**
+
 - Create: `tests/a11y/assessments-list.spec.ts`
 - Create: `tests/a11y/assessment-new.spec.ts`
 - Create: `tests/a11y/assessment-edit.spec.ts`
@@ -5467,7 +5979,9 @@ import { assertNoSeriousAxeViolations } from '../helpers/axe';
 
 test('assessments list has no serious axe violations', async ({ page, context }) => {
   const instr = await createTestUserClient({
-    email: `a11y-list+${Date.now()}@test.local`, password: 'p!', role: 'instructor',
+    email: `a11y-list+${Date.now()}@test.local`,
+    password: 'p!',
+    role: 'instructor',
   });
   try {
     await signInBrowser(context, instr);
@@ -5489,7 +6003,9 @@ import { assertNoSeriousAxeViolations } from '../helpers/axe';
 
 test('assessment/new has no serious axe violations', async ({ page, context }) => {
   const instr = await createTestUserClient({
-    email: `a11y-new+${Date.now()}@test.local`, password: 'p!', role: 'instructor',
+    email: `a11y-new+${Date.now()}@test.local`,
+    password: 'p!',
+    role: 'instructor',
   });
   try {
     await signInBrowser(context, instr);
@@ -5512,12 +6028,21 @@ import { assertNoSeriousAxeViolations } from '../helpers/axe';
 test('assessment overview has no serious axe violations', async ({ page, context }) => {
   const admin = adminClient();
   const instr = await createTestUserClient({
-    email: `a11y-edit+${Date.now()}@test.local`, password: 'p!', role: 'instructor',
+    email: `a11y-edit+${Date.now()}@test.local`,
+    password: 'p!',
+    role: 'instructor',
   });
   try {
-    const { data } = await admin.from('assessments').insert({
-      owner_user_id: instr.userId, title: 'A11y', slug: `a11y-${Date.now()}`, status: 'draft',
-    }).select('id').single();
+    const { data } = await admin
+      .from('assessments')
+      .insert({
+        owner_user_id: instr.userId,
+        title: 'A11y',
+        slug: `a11y-${Date.now()}`,
+        status: 'draft',
+      })
+      .select('id')
+      .single();
     await signInBrowser(context, instr);
     await page.goto(`/assessments/${data!.id}`);
     await assertNoSeriousAxeViolations(page, '/assessments/[id]');
@@ -5538,18 +6063,38 @@ import { assertNoSeriousAxeViolations } from '../helpers/axe';
 test('question editor has no serious axe violations', async ({ page, context }) => {
   const admin = adminClient();
   const instr = await createTestUserClient({
-    email: `a11y-qedit+${Date.now()}@test.local`, password: 'p!', role: 'instructor',
+    email: `a11y-qedit+${Date.now()}@test.local`,
+    password: 'p!',
+    role: 'instructor',
   });
   try {
-    const { data: a } = await admin.from('assessments').insert({
-      owner_user_id: instr.userId, title: 'Q', slug: `q-${Date.now()}`, status: 'draft',
-    }).select('id').single();
-    const { data: q } = await admin.from('questions').insert({
-      assessment_id: a!.id, position: 1, type: 'numeric',
-      body: { stem: 'How many g of {{x}}?' }, scoring: { formula: 'x * 2', tolerance: 0.01 },
-    }).select('id').single();
+    const { data: a } = await admin
+      .from('assessments')
+      .insert({
+        owner_user_id: instr.userId,
+        title: 'Q',
+        slug: `q-${Date.now()}`,
+        status: 'draft',
+      })
+      .select('id')
+      .single();
+    const { data: q } = await admin
+      .from('questions')
+      .insert({
+        assessment_id: a!.id,
+        position: 1,
+        type: 'numeric',
+        body: { stem: 'How many g of {{x}}?' },
+        scoring: { formula: 'x * 2', tolerance: 0.01 },
+      })
+      .select('id')
+      .single();
     await admin.from('question_variables').insert({
-      question_id: q!.id, name: 'x', type: 'randint', position: 1, spec: { min: 1, max: 10 },
+      question_id: q!.id,
+      name: 'x',
+      type: 'randint',
+      position: 1,
+      spec: { min: 1, max: 10 },
     });
     await signInBrowser(context, instr);
     await page.goto(`/assessments/${a!.id}/questions/${q!.id}`);
@@ -5585,6 +6130,7 @@ git commit -m "test(a11y): axe-core coverage for assessments list, new, edit, qu
 ### Task 33: Append Plan 2 critical path to NVDA runbook
 
 **Files:**
+
 - Modify: `docs/runbooks/nvda-test-script.md`
 
 - [ ] **Step 1: Read the existing runbook**
@@ -5626,11 +6172,13 @@ git commit -m "docs(runbook): NVDA critical path for Plan 2 authoring surface"
 ### Task 34: Plan 2 success-criteria smoke + PR open
 
 **Files:**
+
 - None new — this task runs the success-criteria checks from spec §10 and opens the PR.
 
 - [ ] **Step 1: Run the full local test suite**
 
 Run:
+
 ```bash
 npm run lint
 npm run typecheck
@@ -5644,6 +6192,7 @@ All five must PASS. If any fails, fix root-cause and amend the relevant task's c
 - [ ] **Step 2: Run the success-criteria walkthrough (per spec §10)**
 
 Open `npm run dev`, then in a browser as the instructor:
+
 1. Create a new quiz.
 2. Author a numeric question with one `randint` variable (mass: 10–100, step 5) and one `derived` variable (`moles = mass / molar_mass("NaCl")`).
 3. Set the grading formula `moles` with tolerance `0.01`.
@@ -5700,25 +6249,25 @@ Once CI is green and any review feedback is addressed, the user merges via the G
 
 **Spec coverage check** (run after Task 34 completes; do not skip):
 
-| Spec section | Covered by task(s) |
-|---|---|
-| §1 D1–D9 decisions | Embedded throughout; D6 split pane = Task 20; D7 type-locked = Task 19's create action |
-| §2 routes & nav | Tasks 15–20 |
-| §3 editor + preview structure | Tasks 20–26 |
-| §4 assessment overview page | Task 18 |
-| §5.1 per-type schemas | Task 10 |
+| Spec section                         | Covered by task(s)                                                                      |
+| ------------------------------------ | --------------------------------------------------------------------------------------- |
+| §1 D1–D9 decisions                   | Embedded throughout; D6 split pane = Task 20; D7 type-locked = Task 19's create action  |
+| §2 routes & nav                      | Tasks 15–20                                                                             |
+| §3 editor + preview structure        | Tasks 20–26                                                                             |
+| §4 assessment overview page          | Task 18                                                                                 |
+| §5.1 per-type schemas                | Task 10                                                                                 |
 | §5.1.1 validation rules beyond shape | Task 10 (regex check, fill_in id-set equality, numeric tolerance ≥ 0, choice min-count) |
-| §5.2 variable schema | Task 5 |
-| §5.3 Server Action contract | Tasks 17, 18, 19, 28, 29 |
-| §6 rendering pipeline | Tasks 11, 12, 13 + manifest Task 14 |
-| §6.4 stableSeed | Task 4 |
-| §6.5 formula evaluator surface | Task 8 |
-| §6.6 substitution × MD × KaTeX order | Tasks 11 (substitute first) + 12 (MD second) |
-| §7 data flow | Tasks 20, 24, 28 |
-| §8 library additions | Tasks 1, 2 |
-| §9 testing strategy | Tasks 14, 27, 28, 31, 32, 33 |
-| §10 success criteria | Task 34 |
-| §11 out-of-scope | Honored — no student routes, no Storage, no Python, no DnD |
+| §5.2 variable schema                 | Task 5                                                                                  |
+| §5.3 Server Action contract          | Tasks 17, 18, 19, 28, 29                                                                |
+| §6 rendering pipeline                | Tasks 11, 12, 13 + manifest Task 14                                                     |
+| §6.4 stableSeed                      | Task 4                                                                                  |
+| §6.5 formula evaluator surface       | Task 8                                                                                  |
+| §6.6 substitution × MD × KaTeX order | Tasks 11 (substitute first) + 12 (MD second)                                            |
+| §7 data flow                         | Tasks 20, 24, 28                                                                        |
+| §8 library additions                 | Tasks 1, 2                                                                              |
+| §9 testing strategy                  | Tasks 14, 27, 28, 31, 32, 33                                                            |
+| §10 success criteria                 | Task 34                                                                                 |
+| §11 out-of-scope                     | Honored — no student routes, no Storage, no Python, no DnD                              |
 
 **Placeholder scan:** None of the steps say "TBD" / "implement later" / "similar to". Every step shows the actual code or command.
 
@@ -5737,7 +6286,3 @@ Plan complete and saved to `docs/superpowers/plans/2026-05-18-bodhilite-wave1-pl
 **2. Inline Execution** — Execute tasks in this session using `superpowers:executing-plans`, with checkpoints at task boundaries 10, 15, 20, 25, 28, 34.
 
 Which approach?
-
-
-
-

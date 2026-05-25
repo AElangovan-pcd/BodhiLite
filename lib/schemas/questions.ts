@@ -71,20 +71,18 @@ const BLANK_TOKEN = /\{\{blank:([a-zA-Z0-9_-]+)\}\}/g;
 
 const Mc = z
   .object({ type: z.literal('mc'), body: McBody, scoring: McScoring })
-  .refine(
-    (q) => q.body.choices.some((c) => c.id === q.scoring.correct_id),
-    { message: 'correct_id must match one of the choices', path: ['scoring', 'correct_id'] },
-  );
+  .refine((q) => q.body.choices.some((c) => c.id === q.scoring.correct_id), {
+    message: 'correct_id must match one of the choices',
+    path: ['scoring', 'correct_id'],
+  });
 
-const Ma = z
-  .object({ type: z.literal('ma'), body: MaBody, scoring: MaScoring })
-  .refine(
-    (q) => {
-      const ids = new Set(q.body.choices.map((c) => c.id));
-      return q.scoring.correct_ids.every((id) => ids.has(id));
-    },
-    { message: 'every correct id must match a choice', path: ['scoring', 'correct_ids'] },
-  );
+const Ma = z.object({ type: z.literal('ma'), body: MaBody, scoring: MaScoring }).refine(
+  (q) => {
+    const ids = new Set(q.body.choices.map((c) => c.id));
+    return q.scoring.correct_ids.every((id) => ids.has(id));
+  },
+  { message: 'every correct id must match a choice', path: ['scoring', 'correct_ids'] },
+);
 
 const Tf = z.object({ type: z.literal('tf'), body: TfBody, scoring: TfScoring });
 
@@ -118,7 +116,14 @@ const FillIn = z
     },
   );
 
-export const QuestionSchema = z.discriminatedUnion('type', [Mc, Ma, Tf, Numeric, ShortAnswer, FillIn]);
+export const QuestionSchema = z.discriminatedUnion('type', [
+  Mc,
+  Ma,
+  Tf,
+  Numeric,
+  ShortAnswer,
+  FillIn,
+]);
 
 export type Question = z.infer<typeof QuestionSchema>;
 export type QuestionType = Question['type'];

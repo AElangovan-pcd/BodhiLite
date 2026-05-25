@@ -67,18 +67,27 @@ export function QuestionEditorClient({
   return (
     <main className="flex h-svh flex-col">
       <header className="border-b px-4 py-2">
-        <Link href={`/assessments/${assessmentId}` as Route}
-              className="text-muted-foreground text-sm hover:underline">
+        <Link
+          href={`/assessments/${assessmentId}` as Route}
+          className="text-muted-foreground text-sm hover:underline"
+        >
           ← Assessment
         </Link>
       </header>
       {errors.length > 0 && (
-        <div role="alert" className="mx-2 my-2 rounded border border-destructive/50 bg-destructive/10 p-2 text-sm text-destructive">
-          <ul>{errors.map((e, i) => <li key={i}>• {e}</li>)}</ul>
+        <div
+          role="alert"
+          className="border-destructive/50 bg-destructive/10 text-destructive mx-2 my-2 rounded border p-2 text-sm"
+        >
+          <ul>
+            {errors.map((e, i) => (
+              <li key={i}>• {e}</li>
+            ))}
+          </ul>
         </div>
       )}
       <div className="grid flex-1 grid-cols-1 overflow-hidden md:grid-cols-2">
-        <section aria-label="Editor" className="border-r overflow-hidden">
+        <section aria-label="Editor" className="overflow-hidden border-r">
           <EditorPane
             position={position}
             totalQuestions={totalQuestions}

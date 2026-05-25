@@ -12,10 +12,7 @@ export function renderQuestion(input: RenderInput): RenderOutput {
     errors.push(`Materializer error: ${(e as Error).message}`);
   }
 
-  const stem = substitute(
-    (input.question.body['stem'] as string) ?? '',
-    materialized,
-  );
+  const stem = substitute((input.question.body['stem'] as string) ?? '', materialized);
 
   let body: RenderedBody;
   let target: GradingTarget;
@@ -24,12 +21,17 @@ export function renderQuestion(input: RenderInput): RenderOutput {
     switch (input.question.type) {
       case 'mc': {
         const rawChoices = input.question.body['choices'];
-        const choices: { id: string; label: string }[] = Array.isArray(rawChoices) ? rawChoices : [];
+        const choices: { id: string; label: string }[] = Array.isArray(rawChoices)
+          ? rawChoices
+          : [];
         body = {
           kind: 'mc',
           choices: choices.map((c) => ({
             id: typeof c?.id === 'string' ? c.id : '',
-            label_substituted: substitute(typeof c?.label === 'string' ? c.label : '', materialized),
+            label_substituted: substitute(
+              typeof c?.label === 'string' ? c.label : '',
+              materialized,
+            ),
           })),
         };
         target = {
@@ -40,12 +42,17 @@ export function renderQuestion(input: RenderInput): RenderOutput {
       }
       case 'ma': {
         const rawChoices = input.question.body['choices'];
-        const choices: { id: string; label: string }[] = Array.isArray(rawChoices) ? rawChoices : [];
+        const choices: { id: string; label: string }[] = Array.isArray(rawChoices)
+          ? rawChoices
+          : [];
         body = {
           kind: 'ma',
           choices: choices.map((c) => ({
             id: typeof c?.id === 'string' ? c.id : '',
-            label_substituted: substitute(typeof c?.label === 'string' ? c.label : '', materialized),
+            label_substituted: substitute(
+              typeof c?.label === 'string' ? c.label : '',
+              materialized,
+            ),
           })),
         };
         target = {
@@ -92,7 +99,8 @@ export function renderQuestion(input: RenderInput): RenderOutput {
         const blanks: { id: string; prompt?: string }[] = Array.isArray(rawBlanks) ? rawBlanks : [];
         body = { kind: 'fill_in', blanks };
         const rawTargetsAny = input.question.scoring['targets'];
-        const rawTargets: { id: string; target: string; case_insensitive?: boolean }[] = Array.isArray(rawTargetsAny) ? rawTargetsAny : [];
+        const rawTargets: { id: string; target: string; case_insensitive?: boolean }[] =
+          Array.isArray(rawTargetsAny) ? rawTargetsAny : [];
         target = {
           kind: 'fill_in',
           targets: rawTargets.map((t) => ({

@@ -8,7 +8,9 @@ import { AnswerSurface } from './answer-surfaces';
 import type { QuestionDraft } from '@/components/editor/EditorPane';
 
 export function PreviewPane({
-  draft, seed, onSeedChange,
+  draft,
+  seed,
+  onSeedChange,
 }: {
   draft: QuestionDraft;
   seed: number;
@@ -18,14 +20,18 @@ export function PreviewPane({
     try {
       const input: RenderInput = {
         question: {
-          type: draft.type, body: draft.body, scoring: draft.scoring,
+          type: draft.type,
+          body: draft.body,
+          scoring: draft.scoring,
           // The full VariableSpec[] typing is enforced on Save; preview is permissive.
           variables: draft.variables as never,
         },
         seed,
       };
       return renderQuestion(input);
-    } catch { return null; }
+    } catch {
+      return null;
+    }
   }, [draft, seed]);
 
   return (

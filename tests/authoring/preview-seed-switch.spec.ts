@@ -2,7 +2,10 @@ import { test, expect } from '@playwright/test';
 import { adminClient, createTestUserClient, deleteTestUser } from '../helpers/auth';
 import { signInBrowser } from '../helpers/browser-session';
 
-test('typing in editor updates preview live; seed switch re-materializes', async ({ page, context }) => {
+test('typing in editor updates preview live; seed switch re-materializes', async ({
+  page,
+  context,
+}) => {
   const admin = adminClient();
   const instr = await createTestUserClient({
     email: `instr-live+${Date.now()}@test.local`,

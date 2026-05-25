@@ -42,9 +42,7 @@ export async function saveQuestionAction(
   // Validate each variable spec
   const varResults = parsed.variables.map((v) => VariableSpecSchema.safeParse(v));
   if (varResults.some((r) => !r.success)) {
-    const msgs = varResults.flatMap((r) =>
-      r.success ? [] : r.error.issues.map((i) => i.message),
-    );
+    const msgs = varResults.flatMap((r) => (r.success ? [] : r.error.issues.map((i) => i.message)));
     return { ok: false, errors: msgs };
   }
   const variables = varResults.map((r) => r.data!);

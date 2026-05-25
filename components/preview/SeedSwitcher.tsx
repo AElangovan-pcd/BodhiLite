@@ -3,7 +3,11 @@
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
 
 const PRESETS = [
@@ -18,7 +22,8 @@ function isPreset(seed: number): boolean {
 }
 
 export function SeedSwitcher({
-  seed, onSeedChange,
+  seed,
+  onSeedChange,
 }: {
   seed: number;
   onSeedChange: (next: number) => void;
@@ -52,18 +57,26 @@ export function SeedSwitcher({
     <div className="flex items-center gap-2">
       <span className="text-muted-foreground text-xs">Preview as</span>
       <Select value={customMode ? 'custom' : String(seed)} onValueChange={onSelect}>
-        <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+        <SelectTrigger className="w-48">
+          <SelectValue />
+        </SelectTrigger>
         <SelectContent>
           {PRESETS.map((p) => (
-            <SelectItem key={p.value} value={String(p.value)}>{p.label}</SelectItem>
+            <SelectItem key={p.value} value={String(p.value)}>
+              {p.label}
+            </SelectItem>
           ))}
           <SelectItem value="custom">Custom seed…</SelectItem>
         </SelectContent>
       </Select>
       {customMode && (
-        <Input type="number" className="w-28" value={custom}
-               onChange={onCustomChange}
-               aria-label="Custom seed" />
+        <Input
+          type="number"
+          className="w-28"
+          value={custom}
+          onChange={onCustomChange}
+          aria-label="Custom seed"
+        />
       )}
     </div>
   );

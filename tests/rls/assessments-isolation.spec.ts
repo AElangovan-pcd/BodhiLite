@@ -49,10 +49,7 @@ test.describe("RLS: instructor cannot reach another instructor's assessments", (
       role: 'instructor',
     });
     perTestUserIds.push(userId);
-    const { data } = await client
-      .from('assessments')
-      .select('*')
-      .eq('id', aAssessmentId);
+    const { data } = await client.from('assessments').select('*').eq('id', aAssessmentId);
     expect(data).toEqual([]);
   });
 
@@ -79,11 +76,7 @@ test.describe("RLS: instructor cannot reach another instructor's assessments", (
       role: 'instructor',
     });
     perTestUserIds.push(userId);
-    const { data } = await client
-      .from('assessments')
-      .delete()
-      .eq('id', aAssessmentId)
-      .select();
+    const { data } = await client.from('assessments').delete().eq('id', aAssessmentId).select();
     expect(data).toEqual([]);
   });
 });

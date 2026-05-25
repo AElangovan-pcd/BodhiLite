@@ -5,9 +5,19 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
-import { ChoiceSpec, ChemistryCompoundSpec, RandintSpec, RandfloatSpec, DerivedSpec } from './variable-specs';
+import {
+  ChoiceSpec,
+  ChemistryCompoundSpec,
+  RandintSpec,
+  RandfloatSpec,
+  DerivedSpec,
+} from './variable-specs';
 import { IDENT_RE } from '@/lib/schemas/variables';
 import type { MaterializedValues } from '@/lib/materializer/types';
 
@@ -30,7 +40,9 @@ const DEFAULTS: Record<VType, Record<string, unknown>> = {
 };
 
 export function VariablesSection({
-  variables, onChange, scope,
+  variables,
+  onChange,
+  scope,
 }: {
   variables: V[];
   onChange: (next: V[]) => void;
@@ -40,14 +52,22 @@ export function VariablesSection({
 
   function toggle(i: number) {
     const next = new Set(expanded);
-    if (next.has(i)) { next.delete(i); } else { next.add(i); }
+    if (next.has(i)) {
+      next.delete(i);
+    } else {
+      next.add(i);
+    }
     setExpanded(next);
   }
   function add() {
     onChange([
       ...variables,
-      { name: `v${variables.length + 1}`, type: 'randint', position: variables.length + 1,
-        spec: DEFAULTS.randint },
+      {
+        name: `v${variables.length + 1}`,
+        type: 'randint',
+        position: variables.length + 1,
+        spec: DEFAULTS.randint,
+      },
     ]);
   }
   function set(i: number, patch: Partial<V>) {
@@ -64,17 +84,22 @@ export function VariablesSection({
       // idx === i: dropped
     }
     setExpanded(nextExpanded);
-    onChange(variables.filter((_, idx) => idx !== i).map((v, idx) => ({ ...v, position: idx + 1 })));
+    onChange(
+      variables.filter((_, idx) => idx !== i).map((v, idx) => ({ ...v, position: idx + 1 })),
+    );
   }
 
   function renderSpec(v: V, i: number) {
     const onSpecChange = (next: object) => set(i, { spec: next as Record<string, unknown> });
     switch (v.type) {
-      case 'choice': return <ChoiceSpec spec={v.spec as never} onChange={onSpecChange} />;
+      case 'choice':
+        return <ChoiceSpec spec={v.spec as never} onChange={onSpecChange} />;
       case 'chemistry_compound':
         return <ChemistryCompoundSpec spec={v.spec as never} onChange={onSpecChange} />;
-      case 'randint': return <RandintSpec spec={v.spec as never} onChange={onSpecChange} />;
-      case 'randfloat': return <RandfloatSpec spec={v.spec as never} onChange={onSpecChange} />;
+      case 'randint':
+        return <RandintSpec spec={v.spec as never} onChange={onSpecChange} />;
+      case 'randfloat':
+        return <RandfloatSpec spec={v.spec as never} onChange={onSpecChange} />;
       case 'derived':
         return <DerivedSpec spec={v.spec as never} scope={scope} onChange={onSpecChange} />;
     }
@@ -87,42 +112,57 @@ export function VariablesSection({
         {variables.map((v, i) => {
           const nameValid = IDENT_RE.test(v.name);
           return (
-          <li key={i} className="rounded border p-2">
-            <div className="flex items-center gap-2">
-              <Input className="w-40 font-mono text-sm" value={v.name}
-                     onChange={(e) => set(i, { name: e.target.value })}
-                     aria-label={`Variable ${i + 1} name`}
-                     {...(!nameValid ? { 'aria-invalid': true as const } : {})} />
-              <Select value={v.type} onValueChange={(t) => setType(i, t as VType)}>
-                <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="choice">choice</SelectItem>
-                  <SelectItem value="chemistry_compound">chemistry_compound</SelectItem>
-                  <SelectItem value="randint">randint</SelectItem>
-                  <SelectItem value="randfloat">randfloat</SelectItem>
-                  <SelectItem value="derived">derived</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button type="button" variant="ghost"
-                      onClick={() => toggle(i)}
-                      aria-expanded={expanded.has(i)} aria-controls={`vspec-${i}`}>
-                {expanded.has(i) ? '▴' : '▾'} Configure
-              </Button>
-              <Button type="button" variant="ghost" onClick={() => remove(i)} aria-label="Remove">×</Button>
-            </div>
-            {!nameValid && v.name.length > 0 && (
-              <p role="alert" className="text-destructive text-xs">
-                Must start with a letter or _, then letters/digits/_ only.
-              </p>
-            )}
-            {expanded.has(i) && (
-              <div id={`vspec-${i}`} className="mt-2">{renderSpec(v, i)}</div>
-            )}
-          </li>
+            <li key={i} className="rounded border p-2">
+              <div className="flex items-center gap-2">
+                <Input
+                  className="w-40 font-mono text-sm"
+                  value={v.name}
+                  onChange={(e) => set(i, { name: e.target.value })}
+                  aria-label={`Variable ${i + 1} name`}
+                  {...(!nameValid ? { 'aria-invalid': true as const } : {})}
+                />
+                <Select value={v.type} onValueChange={(t) => setType(i, t as VType)}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="choice">choice</SelectItem>
+                    <SelectItem value="chemistry_compound">chemistry_compound</SelectItem>
+                    <SelectItem value="randint">randint</SelectItem>
+                    <SelectItem value="randfloat">randfloat</SelectItem>
+                    <SelectItem value="derived">derived</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => toggle(i)}
+                  aria-expanded={expanded.has(i)}
+                  aria-controls={`vspec-${i}`}
+                >
+                  {expanded.has(i) ? '▴' : '▾'} Configure
+                </Button>
+                <Button type="button" variant="ghost" onClick={() => remove(i)} aria-label="Remove">
+                  ×
+                </Button>
+              </div>
+              {!nameValid && v.name.length > 0 && (
+                <p role="alert" className="text-destructive text-xs">
+                  Must start with a letter or _, then letters/digits/_ only.
+                </p>
+              )}
+              {expanded.has(i) && (
+                <div id={`vspec-${i}`} className="mt-2">
+                  {renderSpec(v, i)}
+                </div>
+              )}
+            </li>
           );
         })}
       </ul>
-      <Button type="button" variant="outline" onClick={add}>+ Add variable</Button>
+      <Button type="button" variant="outline" onClick={add}>
+        + Add variable
+      </Button>
     </div>
   );
 }

@@ -7,7 +7,9 @@ import { Button } from '@/components/ui/button';
 type Choice = { id: string; label: string };
 
 export function McScoringForm({
-  body, scoring, onChange,
+  body,
+  scoring,
+  onChange,
 }: {
   body: { choices?: Choice[] };
   scoring: { correct_id?: string };
@@ -46,21 +48,32 @@ export function McScoringForm({
       <ul className="flex flex-col gap-2">
         {choices.map((c) => (
           <li key={c.id} className="flex items-center gap-2">
-            <input type="radio" name="mc-correct" checked={correct === c.id}
-                   onChange={() => setCorrect(c.id)} aria-label={`Choice ${c.id} is correct`} />
-            <span className="font-mono text-xs w-6">{c.id}</span>
+            <input
+              type="radio"
+              name="mc-correct"
+              checked={correct === c.id}
+              onChange={() => setCorrect(c.id)}
+              aria-label={`Choice ${c.id} is correct`}
+            />
+            <span className="w-6 font-mono text-xs">{c.id}</span>
             <Input value={c.label} onChange={(e) => setLabel(c.id, e.target.value)} />
-            <Button type="button" variant="ghost" onClick={() => remove(c.id)} aria-label="Remove">×</Button>
+            <Button type="button" variant="ghost" onClick={() => remove(c.id)} aria-label="Remove">
+              ×
+            </Button>
           </li>
         ))}
       </ul>
-      <Button type="button" variant="outline" onClick={addChoice}>+ Add choice</Button>
+      <Button type="button" variant="outline" onClick={addChoice}>
+        + Add choice
+      </Button>
     </div>
   );
 }
 
 export function MaScoringForm({
-  body, scoring, onChange,
+  body,
+  scoring,
+  onChange,
 }: {
   body: { choices?: Choice[] };
   scoring: { correct_ids?: string[]; partial_credit?: boolean };
@@ -71,7 +84,11 @@ export function MaScoringForm({
 
   function toggle(id: string) {
     const next = new Set(correct);
-    if (next.has(id)) { next.delete(id); } else { next.add(id); }
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      next.add(id);
+    }
     onChange({ ...body }, { ...scoring, correct_ids: [...next] });
   }
   function addChoice() {
@@ -98,18 +115,29 @@ export function MaScoringForm({
       <ul className="flex flex-col gap-2">
         {choices.map((c) => (
           <li key={c.id} className="flex items-center gap-2">
-            <input type="checkbox" checked={correct.has(c.id)} onChange={() => toggle(c.id)}
-                   aria-label={`Choice ${c.id} is correct`} />
-            <span className="font-mono text-xs w-6">{c.id}</span>
+            <input
+              type="checkbox"
+              checked={correct.has(c.id)}
+              onChange={() => toggle(c.id)}
+              aria-label={`Choice ${c.id} is correct`}
+            />
+            <span className="w-6 font-mono text-xs">{c.id}</span>
             <Input value={c.label} onChange={(e) => setLabel(c.id, e.target.value)} />
-            <Button type="button" variant="ghost" onClick={() => remove(c.id)} aria-label="Remove">×</Button>
+            <Button type="button" variant="ghost" onClick={() => remove(c.id)} aria-label="Remove">
+              ×
+            </Button>
           </li>
         ))}
       </ul>
-      <Button type="button" variant="outline" onClick={addChoice}>+ Add choice</Button>
-      <label className="flex items-center gap-2 text-sm mt-2">
-        <input type="checkbox" checked={Boolean(scoring.partial_credit)}
-               onChange={(e) => onChange({ ...body }, { ...scoring, partial_credit: e.target.checked })} />
+      <Button type="button" variant="outline" onClick={addChoice}>
+        + Add choice
+      </Button>
+      <label className="mt-2 flex items-center gap-2 text-sm">
+        <input
+          type="checkbox"
+          checked={Boolean(scoring.partial_credit)}
+          onChange={(e) => onChange({ ...body }, { ...scoring, partial_credit: e.target.checked })}
+        />
         Award partial credit
       </label>
     </div>
@@ -117,7 +145,9 @@ export function MaScoringForm({
 }
 
 export function TfScoringForm({
-  body: _body, scoring, onChange,
+  body: _body,
+  scoring,
+  onChange,
 }: {
   body: Record<string, unknown>;
   scoring: { correct?: boolean };
@@ -130,11 +160,21 @@ export function TfScoringForm({
       <Label>Correct answer</Label>
       <div className="flex items-center gap-4 text-sm">
         <label className="flex items-center gap-2">
-          <input type="radio" name="tf-correct" checked={correct} onChange={() => onChange({}, { ...scoring, correct: true })} />
+          <input
+            type="radio"
+            name="tf-correct"
+            checked={correct}
+            onChange={() => onChange({}, { ...scoring, correct: true })}
+          />
           True
         </label>
         <label className="flex items-center gap-2">
-          <input type="radio" name="tf-correct" checked={!correct && !isUndefined} onChange={() => onChange({}, { ...scoring, correct: false })} />
+          <input
+            type="radio"
+            name="tf-correct"
+            checked={!correct && !isUndefined}
+            onChange={() => onChange({}, { ...scoring, correct: false })}
+          />
           False
         </label>
       </div>
@@ -143,7 +183,9 @@ export function TfScoringForm({
 }
 
 export function NumericScoringForm({
-  body, scoring, onChange,
+  body,
+  scoring,
+  onChange,
 }: {
   body: { units?: string };
   scoring: { formula?: string; tolerance?: number };
@@ -153,44 +195,71 @@ export function NumericScoringForm({
     <div className="grid gap-2 md:grid-cols-2">
       <div className="flex flex-col gap-1 md:col-span-2">
         <Label htmlFor="formula">Grading formula</Label>
-        <Input id="formula" value={scoring.formula ?? ''}
-               onChange={(e) => onChange({ ...body }, { ...scoring, formula: e.target.value })}
-               placeholder="e.g. m / molar_mass(c)" />
+        <Input
+          id="formula"
+          value={scoring.formula ?? ''}
+          onChange={(e) => onChange({ ...body }, { ...scoring, formula: e.target.value })}
+          placeholder="e.g. m / molar_mass(c)"
+        />
       </div>
       <div className="flex flex-col gap-1">
         <Label htmlFor="tolerance">Tolerance</Label>
-        <Input id="tolerance" type="number" step="any" min={0}
-               value={scoring.tolerance ?? 0}
-               onChange={(e) => onChange({ ...body }, { ...scoring, tolerance: Number(e.target.value) })} />
+        <Input
+          id="tolerance"
+          type="number"
+          step="any"
+          min={0}
+          value={scoring.tolerance ?? 0}
+          onChange={(e) => onChange({ ...body }, { ...scoring, tolerance: Number(e.target.value) })}
+        />
       </div>
       <div className="flex flex-col gap-1">
         <Label htmlFor="units">Units (optional)</Label>
-        <Input id="units" value={body.units ?? ''}
-               onChange={(e) => onChange({ ...body, units: e.target.value }, { ...scoring })} />
+        <Input
+          id="units"
+          value={body.units ?? ''}
+          onChange={(e) => onChange({ ...body, units: e.target.value }, { ...scoring })}
+        />
       </div>
     </div>
   );
 }
 
 export function ShortAnswerScoringForm({
-  body: _body, scoring, onChange,
+  body: _body,
+  scoring,
+  onChange,
 }: {
   body: Record<string, unknown>;
   scoring: { pattern?: string; case_insensitive?: boolean };
   onChange: (body: Record<string, unknown>, scoring: Record<string, unknown>) => void;
 }) {
   let regexError: string | null = null;
-  try { new RegExp(scoring.pattern ?? ''); } catch (e) { regexError = (e as Error).message; }
+  try {
+    new RegExp(scoring.pattern ?? '');
+  } catch (e) {
+    regexError = (e as Error).message;
+  }
   return (
     <div className="flex flex-col gap-2">
       <Label htmlFor="pattern">Regex pattern</Label>
-      <Input id="pattern" value={scoring.pattern ?? ''}
-             onChange={(e) => onChange({}, { ...scoring, pattern: e.target.value })}
-             {...(regexError != null ? { 'aria-invalid': true as const } : {})} />
-      {regexError && <p role="alert" className="text-destructive text-xs">{regexError}</p>}
+      <Input
+        id="pattern"
+        value={scoring.pattern ?? ''}
+        onChange={(e) => onChange({}, { ...scoring, pattern: e.target.value })}
+        {...(regexError != null ? { 'aria-invalid': true as const } : {})}
+      />
+      {regexError && (
+        <p role="alert" className="text-destructive text-xs">
+          {regexError}
+        </p>
+      )}
       <label className="flex items-center gap-2 text-sm">
-        <input type="checkbox" checked={Boolean(scoring.case_insensitive)}
-               onChange={(e) => onChange({}, { ...scoring, case_insensitive: e.target.checked })} />
+        <input
+          type="checkbox"
+          checked={Boolean(scoring.case_insensitive)}
+          onChange={(e) => onChange({}, { ...scoring, case_insensitive: e.target.checked })}
+        />
         Case-insensitive
       </label>
     </div>
@@ -198,7 +267,9 @@ export function ShortAnswerScoringForm({
 }
 
 export function FillInScoringForm({
-  body, scoring, onChange,
+  body,
+  scoring,
+  onChange,
 }: {
   body: { stem?: string; blanks?: { id: string; prompt?: string }[] };
   scoring: { targets?: { id: string; target: string; case_insensitive?: boolean }[] };
@@ -225,9 +296,12 @@ export function FillInScoringForm({
       { ...body },
       {
         ...scoring,
-        targets: [...tokenIds].map(
-          (tid) => targets.find((t) => t.id === tid) ?? { id: tid, target: '', case_insensitive: false },
-        ).map((t) => (t.id === id ? { ...t, target } : t)),
+        targets: [...tokenIds]
+          .map(
+            (tid) =>
+              targets.find((t) => t.id === tid) ?? { id: tid, target: '', case_insensitive: false },
+          )
+          .map((t) => (t.id === id ? { ...t, target } : t)),
       },
     );
   }
@@ -240,15 +314,20 @@ export function FillInScoringForm({
           Add <code>{'{{blank:id}}'}</code> tokens in the stem to define blanks.
         </p>
       )}
-      <Button type="button" variant="outline" onClick={sync}>Sync from stem</Button>
+      <Button type="button" variant="outline" onClick={sync}>
+        Sync from stem
+      </Button>
       <ul className="flex flex-col gap-2">
         {[...tokenIds].map((id) => {
           const t = targets.find((x) => x.id === id);
           return (
             <li key={id} className="flex items-center gap-2">
-              <span className="font-mono text-xs w-16">{id}</span>
-              <Input value={t?.target ?? ''} placeholder="target answer"
-                     onChange={(e) => setTarget(id, e.target.value)} />
+              <span className="w-16 font-mono text-xs">{id}</span>
+              <Input
+                value={t?.target ?? ''}
+                placeholder="target answer"
+                onChange={(e) => setTarget(id, e.target.value)}
+              />
             </li>
           );
         })}

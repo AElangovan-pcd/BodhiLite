@@ -36,7 +36,9 @@ export default async function AssessmentsListPage() {
         <p className="text-muted-foreground">No assessments yet. Create your first one.</p>
       ) : (
         <div className="grid gap-3">
-          {rows.map((r) => <AssessmentCard key={r.id} {...r} />)}
+          {rows.map((r) => (
+            <AssessmentCard key={r.id} {...r} />
+          ))}
         </div>
       )}
     </main>

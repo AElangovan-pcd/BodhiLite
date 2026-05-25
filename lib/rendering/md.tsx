@@ -16,7 +16,11 @@ function sanitizeUrl(href: string | null | undefined): string {
   if (!href) return '#';
   // Strip whitespace and control chars before scheme check (browsers tolerate them in URIs).
   const lower = href.replace(/[\s\x00-\x1f]/g, '').toLowerCase();
-  if (lower.startsWith('javascript:') || lower.startsWith('vbscript:') || lower.startsWith('data:')) {
+  if (
+    lower.startsWith('javascript:') ||
+    lower.startsWith('vbscript:') ||
+    lower.startsWith('data:')
+  ) {
     return '#';
   }
   return href;
@@ -39,7 +43,10 @@ marked.use({
       const titleAttr = t.title ? ` title="${escapeHtml(t.title)}"` : '';
       // Render inner tokens via the parser — preserves nested markdown (bold, code, etc.) safely.
       // Falls back to escaping the raw href if tokens aren't available.
-      const inner = (this as { parser?: { parseInline?: (toks: unknown[]) => string } }).parser?.parseInline?.(t.tokens ?? []) ?? escapeHtml(t.href);
+      const inner =
+        (this as { parser?: { parseInline?: (toks: unknown[]) => string } }).parser?.parseInline?.(
+          t.tokens ?? [],
+        ) ?? escapeHtml(t.href);
       return `<a href="${escapeHtml(safeHref)}"${titleAttr}>${inner}</a>`;
     },
     image(token) {
@@ -58,7 +65,9 @@ marked.use({
     {
       name: 'inlineMath',
       level: 'inline',
-      start(src) { return src.indexOf('$'); },
+      start(src) {
+        return src.indexOf('$');
+      },
       tokenizer(src) {
         const m = /^\$([^$\n]+)\$/.exec(src);
         if (m) return { type: 'inlineMath', raw: m[0], text: m[1]! };
@@ -66,7 +75,10 @@ marked.use({
       renderer(token) {
         const t = token as Tokens.Generic;
         try {
-          return katex.renderToString(t.text as string, { output: 'htmlAndMathml', throwOnError: false });
+          return katex.renderToString(t.text as string, {
+            output: 'htmlAndMathml',
+            throwOnError: false,
+          });
         } catch {
           return `<span class="math-error">${t.text}</span>`;
         }
@@ -75,7 +87,9 @@ marked.use({
     {
       name: 'blockMath',
       level: 'block',
-      start(src) { return src.indexOf('$$'); },
+      start(src) {
+        return src.indexOf('$$');
+      },
       tokenizer(src) {
         const m = /^\$\$([\s\S]+?)\$\$/.exec(src);
         if (m) return { type: 'blockMath', raw: m[0], text: m[1]! };

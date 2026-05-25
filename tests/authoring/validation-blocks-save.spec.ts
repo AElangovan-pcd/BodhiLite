@@ -13,14 +13,19 @@ test('invalid form blocks save with field-level error', async ({ page, context }
     const { data: a } = await admin
       .from('assessments')
       .insert({ owner_user_id: instr.userId, title: 'V', slug: 'val', status: 'draft' })
-      .select('id').single();
+      .select('id')
+      .single();
     const { data: q } = await admin
       .from('questions')
       .insert({
-        assessment_id: a!.id, position: 1, type: 'numeric',
-        body: { stem: 'x' }, scoring: { formula: '0', tolerance: 0 },
+        assessment_id: a!.id,
+        position: 1,
+        type: 'numeric',
+        body: { stem: 'x' },
+        scoring: { formula: '0', tolerance: 0 },
       })
-      .select('id').single();
+      .select('id')
+      .single();
 
     await signInBrowser(context, instr);
     await page.goto(`/assessments/${a!.id}/questions/${q!.id}`);

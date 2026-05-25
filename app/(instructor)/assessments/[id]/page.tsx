@@ -19,11 +19,7 @@ export default async function AssessmentOverviewPage({
   const { id } = await params;
   const supabase = await createServerSupabaseClient();
 
-  const { data: a } = await supabase
-    .from('assessments')
-    .select('*')
-    .eq('id', id)
-    .single();
+  const { data: a } = await supabase.from('assessments').select('*').eq('id', id).single();
   if (!a) notFound();
 
   const { data: questions } = await supabase
@@ -36,14 +32,15 @@ export default async function AssessmentOverviewPage({
     id: q.id,
     position: q.position,
     type: q.type,
-    stem_preview: String(
-      (q.body as { stem?: string })?.stem ?? '',
-    ).slice(0, 80),
+    stem_preview: String((q.body as { stem?: string })?.stem ?? '').slice(0, 80),
   }));
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-8">
-      <Link href={'/assessments' as Route} className="text-muted-foreground text-sm hover:underline">
+      <Link
+        href={'/assessments' as Route}
+        className="text-muted-foreground text-sm hover:underline"
+      >
         ← Assessments
       </Link>
 

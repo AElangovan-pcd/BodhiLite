@@ -28,7 +28,10 @@ export async function deleteQuestionAction(formData: FormData): Promise<void> {
     .order('position');
 
   for (const r of rest ?? []) {
-    await supabase.from('questions').update({ position: r.position - 1 }).eq('id', r.id);
+    await supabase
+      .from('questions')
+      .update({ position: r.position - 1 })
+      .eq('id', r.id);
   }
   revalidatePath(`/assessments/${cur.assessment_id}`);
 }

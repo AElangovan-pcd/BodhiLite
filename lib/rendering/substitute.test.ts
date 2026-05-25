@@ -30,8 +30,6 @@ describe('substitute', () => {
   });
 
   it('leaves blank tokens {{blank:id}} alone (handled later)', () => {
-    expect(substitute('Fill {{blank:x}}', { blank: 'something' })).toBe(
-      'Fill {{blank:x}}',
-    );
+    expect(substitute('Fill {{blank:x}}', { blank: 'something' })).toBe('Fill {{blank:x}}');
   });
 });

@@ -21,7 +21,9 @@ export async function updateSettingsAction(formData: FormData): Promise<void> {
   const raw = {
     id: String(formData.get('id') ?? ''),
     title: String(formData.get('title') ?? '').trim(),
-    slug: String(formData.get('slug') ?? '').trim().toLowerCase(),
+    slug: String(formData.get('slug') ?? '')
+      .trim()
+      .toLowerCase(),
     status: String(formData.get('status') ?? 'draft'),
     default_attempts: Number(formData.get('default_attempts') ?? 3),
     time_limit_seconds: formData.get('time_limit_seconds')

@@ -7,25 +7,44 @@ import { StemField } from './StemField';
 import { ActionBar } from './ActionBar';
 import type { QuestionType } from '@/lib/schemas';
 import {
-  McScoringForm, MaScoringForm, TfScoringForm,
-  NumericScoringForm, ShortAnswerScoringForm, FillInScoringForm,
+  McScoringForm,
+  MaScoringForm,
+  TfScoringForm,
+  NumericScoringForm,
+  ShortAnswerScoringForm,
+  FillInScoringForm,
 } from './scoring-forms';
 import { VariablesSection, type VariableType } from './VariablesSection';
 import type { MaterializedValues } from '@/lib/materializer/types';
 
-function Scoring({ type, body, scoring, onChange }: {
+function Scoring({
+  type,
+  body,
+  scoring,
+  onChange,
+}: {
   type: QuestionType;
   body: Record<string, unknown>;
   scoring: Record<string, unknown>;
   onChange: (body: Record<string, unknown>, scoring: Record<string, unknown>) => void;
 }) {
   switch (type) {
-    case 'mc': return <McScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />;
-    case 'ma': return <MaScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />;
-    case 'tf': return <TfScoringForm body={body} scoring={scoring as never} onChange={onChange} />;
-    case 'numeric': return <NumericScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />;
-    case 'short_answer': return <ShortAnswerScoringForm body={body} scoring={scoring as never} onChange={onChange} />;
-    case 'fill_in': return <FillInScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />;
+    case 'mc':
+      return <McScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />;
+    case 'ma':
+      return <MaScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />;
+    case 'tf':
+      return <TfScoringForm body={body} scoring={scoring as never} onChange={onChange} />;
+    case 'numeric':
+      return (
+        <NumericScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />
+      );
+    case 'short_answer':
+      return <ShortAnswerScoringForm body={body} scoring={scoring as never} onChange={onChange} />;
+    case 'fill_in':
+      return (
+        <FillInScoringForm body={body as never} scoring={scoring as never} onChange={onChange} />
+      );
   }
 }
 
@@ -33,7 +52,12 @@ export type QuestionDraft = {
   type: QuestionType;
   body: Record<string, unknown>;
   scoring: Record<string, unknown>;
-  variables: { name: string; type: VariableType; position: number; spec: Record<string, unknown> }[];
+  variables: {
+    name: string;
+    type: VariableType;
+    position: number;
+    spec: Record<string, unknown>;
+  }[];
 };
 
 export function EditorPane({
@@ -82,7 +106,9 @@ export function EditorPane({
   return (
     <div className="flex h-full flex-col gap-4 overflow-y-auto px-2 pb-16">
       <div className="flex items-center gap-2 text-sm">
-        <span className="text-muted-foreground">Q{position} / {totalQuestions}</span>
+        <span className="text-muted-foreground">
+          Q{position} / {totalQuestions}
+        </span>
         <Badge variant="outline">{draft.type}</Badge>
       </div>
 
@@ -93,8 +119,12 @@ export function EditorPane({
 
       <Separator />
 
-      <Scoring type={draft.type} body={draft.body} scoring={draft.scoring}
-               onChange={(body, scoring) => patch({ body: { ...draft.body, ...body }, scoring })} />
+      <Scoring
+        type={draft.type}
+        body={draft.body}
+        scoring={draft.scoring}
+        onChange={(body, scoring) => patch({ body: { ...draft.body, ...body }, scoring })}
+      />
 
       <Separator />
 
@@ -123,7 +153,10 @@ export function EditorPane({
             return current;
           });
         }}
-        onDiscard={() => { setDraft(initial); setDirty(false); }}
+        onDiscard={() => {
+          setDraft(initial);
+          setDirty(false);
+        }}
         nextDisabled={position >= totalQuestions}
       />
     </div>

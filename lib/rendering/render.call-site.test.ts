@@ -13,11 +13,16 @@ const REPO_ROOT = path.resolve(__dirname, '..', '..');
 
 function walkDir(dir: string, out: string[] = []): string[] {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (entry.name === 'node_modules' || entry.name === '.next' || entry.name.startsWith('.')) continue;
+    if (entry.name === 'node_modules' || entry.name === '.next' || entry.name.startsWith('.'))
+      continue;
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) walkDir(full, out);
-    else if (/\.(ts|tsx|js|jsx)$/.test(entry.name) && !entry.name.endsWith('.test.ts') &&
-             !entry.name.endsWith('.test.tsx') && !entry.name.endsWith('.call-site.test.ts')) {
+    else if (
+      /\.(ts|tsx|js|jsx)$/.test(entry.name) &&
+      !entry.name.endsWith('.test.ts') &&
+      !entry.name.endsWith('.test.tsx') &&
+      !entry.name.endsWith('.call-site.test.ts')
+    ) {
       out.push(full);
     }
   }

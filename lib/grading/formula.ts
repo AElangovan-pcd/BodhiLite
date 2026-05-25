@@ -94,19 +94,32 @@ function walk(node: Node, vars: Vars): unknown {
       const l = asNumber(walk(n.left, vars));
       const r = asNumber(walk(n.right, vars));
       switch (n.operator) {
-        case '+': return l + r;
-        case '-': return l - r;
-        case '*': return l * r;
-        case '/': return l / r;
-        case '**': return l ** r;
-        case '%': return l % r;
-        case '<': return l < r ? 1 : 0;
-        case '<=': return l <= r ? 1 : 0;
-        case '>': return l > r ? 1 : 0;
-        case '>=': return l >= r ? 1 : 0;
-        case '==': return l === r ? 1 : 0;
-        case '!=': return l !== r ? 1 : 0;
-        default: throw new EvalError(`Unsupported operator: ${n.operator}`);
+        case '+':
+          return l + r;
+        case '-':
+          return l - r;
+        case '*':
+          return l * r;
+        case '/':
+          return l / r;
+        case '**':
+          return l ** r;
+        case '%':
+          return l % r;
+        case '<':
+          return l < r ? 1 : 0;
+        case '<=':
+          return l <= r ? 1 : 0;
+        case '>':
+          return l > r ? 1 : 0;
+        case '>=':
+          return l >= r ? 1 : 0;
+        case '==':
+          return l === r ? 1 : 0;
+        case '!=':
+          return l !== r ? 1 : 0;
+        default:
+          throw new EvalError(`Unsupported operator: ${n.operator}`);
       }
     }
     case 'UnaryExpression': {
