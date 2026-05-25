@@ -65,3 +65,20 @@ When Wave 2-4 ship, add tests here for:
 - Wave 4 (chem rich modes): structure-tree navigation via screen reader; substructure-match feedback
 
 Each Wave's NVDA pass is a hard gate before that Wave's launch.
+
+## Plan 2 — Authoring critical path (added 2026-05-25)
+
+Before merging Plan 2 to `main`, run this script with NVDA on Windows. Target time: ~20 minutes. If any step fails, fix in code (not the runbook) and re-run.
+
+1. **Sign in as the instructor.** Magic link → land on home. NVDA announces "BodhiLite" heading + "Signed in as <email>" + "Go to your assessments →" link.
+2. **Open the assessments list.** Tab to the link, Enter. NVDA reads the page heading "Assessments" + "+ New assessment" button.
+3. **Create an assessment.** Activate "+ New assessment". Tab through title, slug, type, time-limit. Every input must announce its label. Submit. NVDA announces navigation to the new assessment's overview page.
+4. **Edit settings.** Tab into the Settings form. Change the title. Tab to "Save settings". Confirm a screen-reader-perceivable confirmation (page re-renders with updated title).
+5. **Add a question.** Activate "+ Add question". NVDA reads "New question" heading + 6 cards. Tab through; activate "Numeric (with tolerance)".
+6. **Author the question.** In the editor, type a stem with a variable token (`{{m}}`). Tab to the variables section, activate "+ Add variable", set name to `m`, type to `randint`, expand "Configure", set min=10 / max=100. Tab to the formula field, type `m / 58.44`. Tab to tolerance, type 0.01.
+7. **Verify preview is keyboard-accessible.** Use Tab/Shift+Tab to navigate to the preview pane's seed switcher. Activate it (Enter), pick "Test student 2" with arrow keys + Enter. Confirm the materialized values in the Reveal panel change.
+8. **Save.** Tab to "Save", activate. No errors. Reload the page; the values persist.
+9. **Reorder.** Back on the assessment overview, use Tab to reach the ↑ / ↓ buttons. Confirm the order changes and that the "disabled" state on the topmost ↑ / bottom-most ↓ is announced.
+10. **Delete.** Activate the × button on a question. Confirm the question is removed and other positions compact.
+
+**Pass criteria:** every interactive element is reachable and labeled; no NVDA "unlabeled button"/"unlabeled edit field" announcements; the preview pane and form remain readable when zoomed to 200%.
