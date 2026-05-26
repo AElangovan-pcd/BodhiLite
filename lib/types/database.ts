@@ -229,6 +229,7 @@ export type Database = {
           status: Database["public"]["Enums"]["attempt_status"]
           student_user_id: string
           submitted_at: string | null
+          summary: Json | null
         }
         Insert: {
           assessment_id: string
@@ -241,6 +242,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["attempt_status"]
           student_user_id: string
           submitted_at?: string | null
+          summary?: Json | null
         }
         Update: {
           assessment_id?: string
@@ -253,6 +255,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["attempt_status"]
           student_user_id?: string
           submitted_at?: string | null
+          summary?: Json | null
         }
         Relationships: [
           {
@@ -452,10 +455,72 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      gradebook_rows: {
+        Row: {
+          assessment_id: string | null
+          attempts_used: number | null
+          best_attempt_id: string | null
+          best_max: number | null
+          best_pct: number | null
+          best_raw: number | null
+          last_submitted_at: string | null
+          student_email: string | null
+          student_user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attempts_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attempts_student_user_id_fkey"
+            columns: ["student_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
+      instructor_owns_assessment: {
+        Args: { p_assessment_id: string; p_user_id: string }
+        Returns: boolean
+      }
+      instructor_owns_attempt_assessment: {
+        Args: { p_attempt_id: string; p_user_id: string }
+        Returns: boolean
+      }
+      instructor_owns_override_assessment: {
+        Args: { p_assessment_id: string; p_user_id: string }
+        Returns: boolean
+      }
       is_instructor: { Args: never; Returns: boolean }
+      start_attempt: {
+        Args: {
+          p_assessment_id: string
+          p_attempt_no: number
+          p_seed: number
+          p_snapshots: Json
+          p_student_user_id: string
+        }
+        Returns: string
+      }
+      student_has_attempt: {
+        Args: { p_assessment_id: string; p_user_id: string }
+        Returns: boolean
+      }
+      student_owns_in_progress_attempt: {
+        Args: { p_attempt_id: string; p_user_id: string }
+        Returns: boolean
+      }
+      submit_attempt: {
+        Args: { p_attempt_id: string; p_grades: Json; p_summary: Json }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "instructor" | "student"
