@@ -3,12 +3,10 @@
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
-import { requireInstructor } from '@/lib/auth/require';
 
 const Schema = z.object({ qid: z.string().uuid() });
 
 export async function deleteQuestionAction(formData: FormData): Promise<void> {
-  await requireInstructor();
   const { qid } = Schema.parse({ qid: String(formData.get('qid') ?? '') });
   const supabase = await createServerSupabaseClient();
 

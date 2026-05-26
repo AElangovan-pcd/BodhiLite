@@ -3,7 +3,6 @@
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
-import { requireInstructor } from '@/lib/auth/require';
 
 const Schema = z.object({ qid: z.string().uuid() });
 
@@ -38,13 +37,11 @@ async function moveBy(qid: string, direction: -1 | 1): Promise<void> {
 }
 
 export async function moveQuestionUpAction(formData: FormData): Promise<void> {
-  await requireInstructor();
   const { qid } = Schema.parse({ qid: String(formData.get('qid') ?? '') });
   await moveBy(qid, -1);
 }
 
 export async function moveQuestionDownAction(formData: FormData): Promise<void> {
-  await requireInstructor();
   const { qid } = Schema.parse({ qid: String(formData.get('qid') ?? '') });
   await moveBy(qid, +1);
 }

@@ -4,7 +4,6 @@ import { z } from 'zod';
 import { redirect } from 'next/navigation';
 import type { Route } from 'next';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
-import { requireInstructor } from '@/lib/auth/require';
 
 const CreateSchema = z.object({
   title: z.string().min(1).max(200),
@@ -15,7 +14,6 @@ const CreateSchema = z.object({
 });
 
 export async function createAssessmentAction(formData: FormData): Promise<void> {
-  await requireInstructor();
   const raw = {
     title: String(formData.get('title') ?? '').trim(),
     slug: String(formData.get('slug') ?? '')

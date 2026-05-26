@@ -5,7 +5,6 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import type { Route } from 'next';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
-import { requireInstructor } from '@/lib/auth/require';
 
 const SettingsSchema = z.object({
   id: z.string().uuid(),
@@ -19,7 +18,6 @@ const SettingsSchema = z.object({
 });
 
 export async function updateSettingsAction(formData: FormData): Promise<void> {
-  await requireInstructor();
   const raw = {
     id: String(formData.get('id') ?? ''),
     title: String(formData.get('title') ?? '').trim(),
