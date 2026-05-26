@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import type { Route } from 'next';
 import type { Json } from '@/lib/types/database';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { requireInstructor } from '@/lib/auth/require';
 
 const PathSchema = z.object({
   assessmentId: z.string().uuid(),
@@ -43,6 +44,7 @@ export async function createQuestionAction(
   assessmentId: string,
   formData: FormData,
 ): Promise<void> {
+  await requireInstructor();
   const parsed = PathSchema.safeParse({
     assessmentId,
     type: String(formData.get('type') ?? ''),

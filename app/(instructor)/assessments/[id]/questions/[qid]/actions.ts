@@ -3,6 +3,7 @@
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { requireInstructor } from '@/lib/auth/require';
 import { QuestionSchema, VariableSpecSchema } from '@/lib/schemas';
 import { evaluate } from '@/lib/grading';
 import type { Json } from '@/lib/types/database';
@@ -21,6 +22,7 @@ export async function saveQuestionAction(
   questionId: string,
   formData: FormData,
 ): Promise<SaveResult> {
+  await requireInstructor();
   const rawPayload = String(formData.get('payload') ?? '');
   let parsed;
   try {
