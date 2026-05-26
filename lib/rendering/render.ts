@@ -58,6 +58,7 @@ export function renderQuestion(input: RenderInput): RenderOutput {
         target = {
           kind: 'ma',
           correct_ids: (input.question.scoring['correct_ids'] as string[]) ?? [],
+          partial_credit: Boolean(input.question.scoring['partial_credit']),
         };
         break;
       }
@@ -89,7 +90,7 @@ export function renderQuestion(input: RenderInput): RenderOutput {
         body = { kind: 'short_answer' };
         target = {
           kind: 'short_answer',
-          pattern: (input.question.scoring['pattern'] as string) ?? '',
+          pattern: substitute((input.question.scoring['pattern'] as string) ?? '', materialized),
           case_insensitive: Boolean(input.question.scoring['case_insensitive']),
         };
         break;

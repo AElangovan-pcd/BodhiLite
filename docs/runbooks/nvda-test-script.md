@@ -82,3 +82,29 @@ Before merging Plan 2 to `main`, run this script with NVDA on Windows. Target ti
 10. **Delete.** Activate the × button on a question. Confirm the question is removed and other positions compact.
 
 **Pass criteria:** every interactive element is reachable and labeled; no NVDA "unlabeled button"/"unlabeled edit field" announcements; the preview pane and form remain readable when zoomed to 200%.
+
+## Plan 3 — Student attempt + result + gradebook critical path (added 2026-05-26)
+
+**Setup:** local Supabase up; seed one published assessment with 3 questions (one mc, one numeric, one tf). Seed a student account.
+
+**Steps (with NVDA running, Firefox or Chrome):**
+
+1. Navigate to `/sign-in`. Tab into the email field — NVDA reads "Email, edit text". Enter the student email; submit. Navigate to the magic-link in the mock inbox; land on `/`.
+2. On `/`: tab to "Your assessments" list. Read the row → "Not yet attempted, Start link". Activate "Start" with Enter.
+3. Landing on `/attempts/[aid]`: NVDA reads "Attempt 1 of 3, Saved" (the header). Heading-jump (H) skims Q1, Q2, Q3.
+4. Q1 (mc): tab to radios; Up/Down arrows move between choices and read labels. Pick the correct choice.
+5. Q2 (numeric): tab to the input; NVDA reads "Numeric answer, edit text". Type the right value.
+6. Q3 (tf): radios; pick True or False as appropriate.
+7. After each input change, the header should announce "Saving…" then "Saved 0s ago" within ~1 second. Confirm with NVDA's read-current-line (Insert+Up).
+8. Activate "Submit attempt" via Tab + Enter. Dialog opens — NVDA reads "Submit attempt? This will end your attempt…". Activate "Submit".
+9. Land on `/attempts/[aid]/result`. NVDA reads the score banner. Heading-jump confirms each question card has H2 "Q1", "Q2", "Q3". The "Correct answer" reveal block is read via Tab into the card region.
+10. Navigate back to `/`. NVDA reads "Your assessments" with "Best: N/M" status. Activate "Retake" → starts a fresh attempt with new materialization.
+
+**Pass criteria:**
+
+- All form controls have non-default accessible names.
+- The autosave indicator change is read by NVDA on each save.
+- The submit dialog announces unanswered counts when applicable.
+- Per-question correctness badges (Correct / Incorrect / Partial) are read inline with the heading.
+
+**Run before merging Plan 3.**

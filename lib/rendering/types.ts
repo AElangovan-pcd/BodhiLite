@@ -22,7 +22,7 @@ export type RenderedBody =
 
 export type GradingTarget =
   | { kind: 'mc'; correct_id: string }
-  | { kind: 'ma'; correct_ids: string[] }
+  | { kind: 'ma'; correct_ids: string[]; partial_credit: boolean }
   | { kind: 'tf'; correct: boolean }
   | { kind: 'numeric'; value: number; tolerance: number }
   | { kind: 'short_answer'; pattern: string; case_insensitive: boolean }
