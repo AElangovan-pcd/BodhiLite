@@ -26,7 +26,7 @@ export type ResultPageProps = {
   summary: { raw_score: number; max_score: number; percentage: number } | null;
   bestRaw: number | null;
   rows: ResultRow[];
-  onStartNew?: () => void;
+  onStartNew?: () => void | Promise<void>;
   attemptsRemaining: number;
   studentEmail?: string;
 };
