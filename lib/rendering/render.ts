@@ -58,6 +58,7 @@ export function renderQuestion(input: RenderInput): RenderOutput {
         target = {
           kind: 'ma',
           correct_ids: (input.question.scoring['correct_ids'] as string[]) ?? [],
+          partial_credit: Boolean(input.question.scoring['partial_credit']),
         };
         break;
       }

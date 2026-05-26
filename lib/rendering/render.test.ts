@@ -109,6 +109,54 @@ describe('renderQuestion — determinism', () => {
   });
 });
 
+describe('renderQuestion — ma partial_credit', () => {
+  it('copies partial_credit=true from question.scoring into grading_target', () => {
+    const out = renderQuestion({
+      question: {
+        type: 'ma',
+        body: {
+          stem: 'Pick all primes',
+          choices: [
+            { id: 'a', label: '2' },
+            { id: 'b', label: '4' },
+            { id: 'c', label: '3' },
+          ],
+        },
+        scoring: { correct_ids: ['a', 'c'], partial_credit: true },
+        variables: [],
+      },
+      seed: 0,
+    });
+    expect(out.grading_target).toEqual({
+      kind: 'ma',
+      correct_ids: ['a', 'c'],
+      partial_credit: true,
+    });
+  });
+
+  it('defaults partial_credit to false when omitted', () => {
+    const out = renderQuestion({
+      question: {
+        type: 'ma',
+        body: {
+          stem: 'Pick',
+          choices: [
+            { id: 'a', label: 'A' },
+            { id: 'b', label: 'B' },
+          ],
+        },
+        scoring: { correct_ids: ['a'] },
+        variables: [],
+      },
+      seed: 0,
+    });
+    expect(out.grading_target).toMatchObject({
+      kind: 'ma',
+      partial_credit: false,
+    });
+  });
+});
+
 describe('renderQuestion — never throws contract', () => {
   it('returns sensible output when choices is not an array', () => {
     const out = renderQuestion({
