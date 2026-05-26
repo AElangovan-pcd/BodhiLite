@@ -9,10 +9,7 @@ test.describe('result page a11y', () => {
     for (const id of cleanupIds) await deleteTestUser(id);
   });
 
-  test('no critical violations on a seeded submitted attempt', async ({
-    page,
-    context,
-  }) => {
+  test('no critical violations on a seeded submitted attempt', async ({ page, context }) => {
     const admin = adminClient();
     const stamp = Date.now();
     const inst = await createTestUserClient({
@@ -94,9 +91,7 @@ test.describe('result page a11y', () => {
     await page.goto(`/attempts/${at.id}/result`);
     const results = await new AxeBuilder({ page }).analyze();
     expect(
-      results.violations.filter(
-        (v) => v.impact === 'critical' || v.impact === 'serious',
-      ),
+      results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious'),
     ).toEqual([]);
   });
 });

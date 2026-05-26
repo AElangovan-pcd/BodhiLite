@@ -466,17 +466,22 @@ describe('renderQuestion — ma partial_credit', () => {
       question: {
         id: 'q1',
         type: 'ma',
-        body: { stem: 'Pick all primes', choices: [
-          { id: 'a', label: '2' }, { id: 'b', label: '4' }, { id: 'c', label: '3' }
-        ]},
-        scoring: { correct_ids: ['a','c'], partial_credit: true },
+        body: {
+          stem: 'Pick all primes',
+          choices: [
+            { id: 'a', label: '2' },
+            { id: 'b', label: '4' },
+            { id: 'c', label: '3' },
+          ],
+        },
+        scoring: { correct_ids: ['a', 'c'], partial_credit: true },
         variables: [],
       },
       seed: 0,
     });
     expect(out.grading_target).toEqual({
       kind: 'ma',
-      correct_ids: ['a','c'],
+      correct_ids: ['a', 'c'],
       partial_credit: true,
     });
   });
@@ -486,9 +491,13 @@ describe('renderQuestion — ma partial_credit', () => {
       question: {
         id: 'q2',
         type: 'ma',
-        body: { stem: 'Pick', choices: [
-          { id: 'a', label: 'A' }, { id: 'b', label: 'B' }
-        ]},
+        body: {
+          stem: 'Pick',
+          choices: [
+            { id: 'a', label: 'A' },
+            { id: 'b', label: 'B' },
+          ],
+        },
         scoring: { correct_ids: ['a'] },
         variables: [],
       },
@@ -544,9 +553,14 @@ describe('buildSnapshot', () => {
       question: {
         id: 'q1',
         type: 'mc',
-        body: { stem: 'What is 2+2?', choices: [
-          { id: 'a', label: '3' }, { id: 'b', label: '4' }, { id: 'c', label: '5' }
-        ]},
+        body: {
+          stem: 'What is 2+2?',
+          choices: [
+            { id: 'a', label: '3' },
+            { id: 'b', label: '4' },
+            { id: 'c', label: '5' },
+          ],
+        },
         scoring: { correct_id: 'b' },
         variables: [],
       },
@@ -586,9 +600,7 @@ describe('buildSnapshot', () => {
         type: 'short_answer',
         body: { stem: 'Name the compound' },
         scoring: { pattern: '^{{compound}}$', case_insensitive: true },
-        variables: [
-          { name: 'compound', type: 'choice', spec: { values: [{ label: 'NaCl' }] } }
-        ],
+        variables: [{ name: 'compound', type: 'choice', spec: { values: [{ label: 'NaCl' }] } }],
       },
       seed: 0,
     });
@@ -745,12 +757,12 @@ Create `lib/grading/response.ts`:
 import { z } from 'zod';
 
 export const ResponseSchema = z.discriminatedUnion('type', [
-  z.object({ type: z.literal('mc'),           choice_id: z.string().nullable() }),
-  z.object({ type: z.literal('ma'),           choice_ids: z.array(z.string()) }),
-  z.object({ type: z.literal('tf'),           value: z.boolean().nullable() }),
-  z.object({ type: z.literal('numeric'),      value: z.string() }),
+  z.object({ type: z.literal('mc'), choice_id: z.string().nullable() }),
+  z.object({ type: z.literal('ma'), choice_ids: z.array(z.string()) }),
+  z.object({ type: z.literal('tf'), value: z.boolean().nullable() }),
+  z.object({ type: z.literal('numeric'), value: z.string() }),
   z.object({ type: z.literal('short_answer'), value: z.string() }),
-  z.object({ type: z.literal('fill_in'),      blanks: z.record(z.string(), z.string()) }),
+  z.object({ type: z.literal('fill_in'), blanks: z.record(z.string(), z.string()) }),
 ]);
 
 export type Response = z.infer<typeof ResponseSchema>;
@@ -759,12 +771,18 @@ export type Response = z.infer<typeof ResponseSchema>;
 export function isResponseEmpty(r: Response | null): boolean {
   if (r == null) return true;
   switch (r.type) {
-    case 'mc':           return r.choice_id == null;
-    case 'ma':           return r.choice_ids.length === 0;
-    case 'tf':           return r.value == null;
-    case 'numeric':      return r.value.trim() === '';
-    case 'short_answer': return r.value.trim() === '';
-    case 'fill_in':      return Object.values(r.blanks).every((v) => (v ?? '').trim() === '');
+    case 'mc':
+      return r.choice_id == null;
+    case 'ma':
+      return r.choice_ids.length === 0;
+    case 'tf':
+      return r.value == null;
+    case 'numeric':
+      return r.value.trim() === '';
+    case 'short_answer':
+      return r.value.trim() === '';
+    case 'fill_in':
+      return Object.values(r.blanks).every((v) => (v ?? '').trim() === '');
   }
 }
 ```
@@ -801,7 +819,11 @@ import { describe, it, expect } from 'vitest';
 import { gradeAnswer } from './grade';
 import type { AnswerSnapshot } from './snapshot';
 
-function snap(grading_target: AnswerSnapshot['render']['grading_target'], type: AnswerSnapshot['question_type'], body: AnswerSnapshot['render']['rendered_body'] = { kind: 'tf' } as any): AnswerSnapshot {
+function snap(
+  grading_target: AnswerSnapshot['render']['grading_target'],
+  type: AnswerSnapshot['question_type'],
+  body: AnswerSnapshot['render']['rendered_body'] = { kind: 'tf' } as any,
+): AnswerSnapshot {
   return {
     question_id: 'q',
     question_type: type,
@@ -818,15 +840,33 @@ function snap(grading_target: AnswerSnapshot['render']['grading_target'], type: 
 }
 
 describe('gradeAnswer — mc', () => {
-  const s = snap({ kind: 'mc', correct_id: 'b' }, 'mc', { kind: 'mc', choices: [{id:'a',label_substituted:'A'},{id:'b',label_substituted:'B'}] });
+  const s = snap({ kind: 'mc', correct_id: 'b' }, 'mc', {
+    kind: 'mc',
+    choices: [
+      { id: 'a', label_substituted: 'A' },
+      { id: 'b', label_substituted: 'B' },
+    ],
+  });
   it('scores 1 for matching choice', () => {
-    expect(gradeAnswer(s, { type: 'mc', choice_id: 'b' })).toEqual({ ok: true, auto_score: 1, score_method: 'auto' });
+    expect(gradeAnswer(s, { type: 'mc', choice_id: 'b' })).toEqual({
+      ok: true,
+      auto_score: 1,
+      score_method: 'auto',
+    });
   });
   it('scores 0 for wrong choice', () => {
-    expect(gradeAnswer(s, { type: 'mc', choice_id: 'a' })).toEqual({ ok: true, auto_score: 0, score_method: 'auto' });
+    expect(gradeAnswer(s, { type: 'mc', choice_id: 'a' })).toEqual({
+      ok: true,
+      auto_score: 0,
+      score_method: 'auto',
+    });
   });
   it('scores 0 for null choice (unanswered)', () => {
-    expect(gradeAnswer(s, { type: 'mc', choice_id: null })).toEqual({ ok: true, auto_score: 0, score_method: 'auto' });
+    expect(gradeAnswer(s, { type: 'mc', choice_id: null })).toEqual({
+      ok: true,
+      auto_score: 0,
+      score_method: 'auto',
+    });
   });
   it('scores 0 for null response', () => {
     expect(gradeAnswer(s, null)).toEqual({ ok: true, auto_score: 0, score_method: 'auto' });
@@ -834,16 +874,22 @@ describe('gradeAnswer — mc', () => {
 });
 
 describe('gradeAnswer — ma strict', () => {
-  const s = snap({ kind: 'ma', correct_ids: ['a','c'], partial_credit: false }, 'ma',
-    { kind: 'ma', choices: [{id:'a',label_substituted:'A'},{id:'b',label_substituted:'B'},{id:'c',label_substituted:'C'}] });
+  const s = snap({ kind: 'ma', correct_ids: ['a', 'c'], partial_credit: false }, 'ma', {
+    kind: 'ma',
+    choices: [
+      { id: 'a', label_substituted: 'A' },
+      { id: 'b', label_substituted: 'B' },
+      { id: 'c', label_substituted: 'C' },
+    ],
+  });
   it('1 when set equals', () => {
-    expect(gradeAnswer(s, { type: 'ma', choice_ids: ['a','c'] }).auto_score).toBe(1);
+    expect(gradeAnswer(s, { type: 'ma', choice_ids: ['a', 'c'] }).auto_score).toBe(1);
   });
   it('0 when subset', () => {
     expect(gradeAnswer(s, { type: 'ma', choice_ids: ['a'] }).auto_score).toBe(0);
   });
   it('0 when superset', () => {
-    expect(gradeAnswer(s, { type: 'ma', choice_ids: ['a','b','c'] }).auto_score).toBe(0);
+    expect(gradeAnswer(s, { type: 'ma', choice_ids: ['a', 'b', 'c'] }).auto_score).toBe(0);
   });
   it('0 when disjoint', () => {
     expect(gradeAnswer(s, { type: 'ma', choice_ids: ['b'] }).auto_score).toBe(0);
@@ -851,16 +897,22 @@ describe('gradeAnswer — ma strict', () => {
 });
 
 describe('gradeAnswer — ma partial credit', () => {
-  const s = snap({ kind: 'ma', correct_ids: ['a','c'], partial_credit: true }, 'ma',
-    { kind: 'ma', choices: [{id:'a',label_substituted:'A'},{id:'b',label_substituted:'B'},{id:'c',label_substituted:'C'}] });
+  const s = snap({ kind: 'ma', correct_ids: ['a', 'c'], partial_credit: true }, 'ma', {
+    kind: 'ma',
+    choices: [
+      { id: 'a', label_substituted: 'A' },
+      { id: 'b', label_substituted: 'B' },
+      { id: 'c', label_substituted: 'C' },
+    ],
+  });
   it('1.0 when all correct picked, none wrong', () => {
-    expect(gradeAnswer(s, { type: 'ma', choice_ids: ['a','c'] }).auto_score).toBe(1);
+    expect(gradeAnswer(s, { type: 'ma', choice_ids: ['a', 'c'] }).auto_score).toBe(1);
   });
   it('0.5 when half correct picked', () => {
     expect(gradeAnswer(s, { type: 'ma', choice_ids: ['a'] }).auto_score).toBe(0.5);
   });
   it('0 when one wrong cancels one right', () => {
-    expect(gradeAnswer(s, { type: 'ma', choice_ids: ['a','b'] }).auto_score).toBe(0);
+    expect(gradeAnswer(s, { type: 'ma', choice_ids: ['a', 'b'] }).auto_score).toBe(0);
   });
   it('floors at 0 when wrongs exceed rights', () => {
     expect(gradeAnswer(s, { type: 'ma', choice_ids: ['b'] }).auto_score).toBe(0);
@@ -893,12 +945,20 @@ describe('gradeAnswer — numeric', () => {
     expect(out).toMatchObject({ ok: false, auto_score: 0, score_method: 'auto_error' });
   });
   it('empty string → 0, no error', () => {
-    expect(gradeAnswer(s, { type: 'numeric', value: '' })).toEqual({ ok: true, auto_score: 0, score_method: 'auto' });
+    expect(gradeAnswer(s, { type: 'numeric', value: '' })).toEqual({
+      ok: true,
+      auto_score: 0,
+      score_method: 'auto',
+    });
   });
 });
 
 describe('gradeAnswer — short_answer', () => {
-  const s = snap({ kind: 'short_answer', pattern: '^NaCl$', case_insensitive: true }, 'short_answer', { kind: 'short_answer' });
+  const s = snap(
+    { kind: 'short_answer', pattern: '^NaCl$', case_insensitive: true },
+    'short_answer',
+    { kind: 'short_answer' },
+  );
   it('1 on match (case-insensitive)', () => {
     expect(gradeAnswer(s, { type: 'short_answer', value: 'nacl' }).auto_score).toBe(1);
   });
@@ -906,24 +966,43 @@ describe('gradeAnswer — short_answer', () => {
     expect(gradeAnswer(s, { type: 'short_answer', value: 'KCl' }).auto_score).toBe(0);
   });
   it('0 on empty (no error)', () => {
-    expect(gradeAnswer(s, { type: 'short_answer', value: '   ' })).toEqual({ ok: true, auto_score: 0, score_method: 'auto' });
+    expect(gradeAnswer(s, { type: 'short_answer', value: '   ' })).toEqual({
+      ok: true,
+      auto_score: 0,
+      score_method: 'auto',
+    });
   });
   it('auto_error on invalid regex (defense)', () => {
-    const bad = snap({ kind: 'short_answer', pattern: '([', case_insensitive: false }, 'short_answer', { kind: 'short_answer' });
+    const bad = snap(
+      { kind: 'short_answer', pattern: '([', case_insensitive: false },
+      'short_answer',
+      { kind: 'short_answer' },
+    );
     expect(gradeAnswer(bad, { type: 'short_answer', value: 'x' }).ok).toBe(false);
   });
 });
 
 describe('gradeAnswer — fill_in', () => {
-  const s = snap({ kind: 'fill_in', targets: [
-    { id: 'b1', target: 'NaCl', case_insensitive: true },
-    { id: 'b2', target: '58.44', case_insensitive: false },
-  ]}, 'fill_in', { kind: 'fill_in', blanks: [{ id: 'b1' }, { id: 'b2' }] });
+  const s = snap(
+    {
+      kind: 'fill_in',
+      targets: [
+        { id: 'b1', target: 'NaCl', case_insensitive: true },
+        { id: 'b2', target: '58.44', case_insensitive: false },
+      ],
+    },
+    'fill_in',
+    { kind: 'fill_in', blanks: [{ id: 'b1' }, { id: 'b2' }] },
+  );
   it('1 when all blanks match', () => {
-    expect(gradeAnswer(s, { type: 'fill_in', blanks: { b1: 'NaCl', b2: '58.44' } }).auto_score).toBe(1);
+    expect(
+      gradeAnswer(s, { type: 'fill_in', blanks: { b1: 'NaCl', b2: '58.44' } }).auto_score,
+    ).toBe(1);
   });
   it('0.5 when one of two blanks match', () => {
-    expect(gradeAnswer(s, { type: 'fill_in', blanks: { b1: 'nacl', b2: 'wrong' } }).auto_score).toBe(0.5);
+    expect(
+      gradeAnswer(s, { type: 'fill_in', blanks: { b1: 'nacl', b2: 'wrong' } }).auto_score,
+    ).toBe(0.5);
   });
   it('0 when no blanks match', () => {
     expect(gradeAnswer(s, { type: 'fill_in', blanks: { b1: 'x', b2: 'y' } }).auto_score).toBe(0);
@@ -949,11 +1028,15 @@ import type { Response } from './response';
 import { isResponseEmpty } from './response';
 
 export type GradeResult =
-  | { ok: true;  auto_score: number; score_method: 'auto' }
-  | { ok: false; auto_score: 0;      score_method: 'auto_error'; error: string };
+  | { ok: true; auto_score: number; score_method: 'auto' }
+  | { ok: false; auto_score: 0; score_method: 'auto_error'; error: string };
 
-function ok(score: number): GradeResult { return { ok: true, auto_score: score, score_method: 'auto' }; }
-function err(message: string): GradeResult { return { ok: false, auto_score: 0, score_method: 'auto_error', error: message }; }
+function ok(score: number): GradeResult {
+  return { ok: true, auto_score: score, score_method: 'auto' };
+}
+function err(message: string): GradeResult {
+  return { ok: false, auto_score: 0, score_method: 'auto_error', error: message };
+}
 
 export function gradeAnswer(snapshot: AnswerSnapshot, response: Response | null): GradeResult {
   try {
@@ -971,8 +1054,10 @@ export function gradeAnswer(snapshot: AnswerSnapshot, response: Response | null)
         const picks = new Set(response!.choice_ids);
         const correct = new Set(target.correct_ids);
         const total_correct = correct.size;
-        const total_choices = snapshot.render.rendered_body.kind === 'ma'
-          ? snapshot.render.rendered_body.choices.length : 0;
+        const total_choices =
+          snapshot.render.rendered_body.kind === 'ma'
+            ? snapshot.render.rendered_body.choices.length
+            : 0;
         const total_wrong = Math.max(0, total_choices - total_correct);
 
         if (!target.partial_credit) {
@@ -982,9 +1067,9 @@ export function gradeAnswer(snapshot: AnswerSnapshot, response: Response | null)
         }
 
         const correct_picks = [...picks].filter((id) => correct.has(id)).length;
-        const wrong_picks   = [...picks].filter((id) => !correct.has(id)).length;
+        const wrong_picks = [...picks].filter((id) => !correct.has(id)).length;
         const rightScore = total_correct > 0 ? correct_picks / total_correct : 0;
-        const wrongScore = total_wrong   > 0 ? wrong_picks   / total_wrong   : 0;
+        const wrongScore = total_wrong > 0 ? wrong_picks / total_wrong : 0;
         return ok(Math.max(0, rightScore - wrongScore));
       }
 
@@ -1103,7 +1188,7 @@ import type { GradeResult } from './grade';
 export type AttemptSummary = {
   raw_score: number;
   max_score: number;
-  percentage: number;  // 0..100, rounded to 2 decimals
+  percentage: number; // 0..100, rounded to 2 decimals
 };
 
 export function computeAttemptSummary(results: readonly GradeResult[]): AttemptSummary {
@@ -1161,8 +1246,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock next/navigation
 vi.mock('next/navigation', () => ({
-  redirect: vi.fn((url: string) => { throw new Error(`REDIRECT:${url}`); }),
-  notFound: vi.fn(() => { throw new Error('NOT_FOUND'); }),
+  redirect: vi.fn((url: string) => {
+    throw new Error(`REDIRECT:${url}`);
+  }),
+  notFound: vi.fn(() => {
+    throw new Error('NOT_FOUND');
+  }),
 }));
 
 // Mock the Supabase server client
@@ -1370,10 +1459,7 @@ type ControlledProps = {
   disabled?: boolean;
 };
 
-export function AnswerSurface({
-  body,
-  ...controlled
-}: { body: RenderedBody } & ControlledProps) {
+export function AnswerSurface({ body, ...controlled }: { body: RenderedBody } & ControlledProps) {
   const key = JSON.stringify(body);
   switch (body.kind) {
     case 'mc':
@@ -1396,11 +1482,14 @@ function isControlled(p: ControlledProps): boolean {
 }
 
 function McSurface({
-  body, value, onChange, disabled,
+  body,
+  value,
+  onChange,
+  disabled,
 }: { body: Extract<RenderedBody, { kind: 'mc' }> } & ControlledProps) {
   const [local, setLocal] = useState<string | null>(null);
   const controlled = isControlled({ value, onChange });
-  const picked = controlled ? (value as Response & { type: 'mc' })?.choice_id ?? null : local;
+  const picked = controlled ? ((value as Response & { type: 'mc' })?.choice_id ?? null) : local;
   const set = (id: string) => {
     if (controlled) onChange!({ type: 'mc', choice_id: id });
     else setLocal(id);
@@ -1425,7 +1514,10 @@ function McSurface({
 }
 
 function MaSurface({
-  body, value, onChange, disabled,
+  body,
+  value,
+  onChange,
+  disabled,
 }: { body: Extract<RenderedBody, { kind: 'ma' }> } & ControlledProps) {
   const [local, setLocal] = useState<Set<string>>(new Set());
   const controlled = isControlled({ value, onChange });
@@ -1462,7 +1554,7 @@ function MaSurface({
 function TfSurface({ value, onChange, disabled }: ControlledProps) {
   const [local, setLocal] = useState<boolean | null>(null);
   const controlled = isControlled({ value, onChange });
-  const v = controlled ? (value as Response & { type: 'tf' })?.value ?? null : local;
+  const v = controlled ? ((value as Response & { type: 'tf' })?.value ?? null) : local;
   const set = (b: boolean) => {
     if (controlled) onChange!({ type: 'tf', value: b });
     else setLocal(b);
@@ -1471,21 +1563,38 @@ function TfSurface({ value, onChange, disabled }: ControlledProps) {
     <fieldset className="flex items-center gap-4" disabled={disabled}>
       <legend className="sr-only">Answer</legend>
       <label className="flex items-center gap-2">
-        <input type="radio" name="tf" checked={v === true} onChange={() => set(true)} disabled={disabled} /> True
+        <input
+          type="radio"
+          name="tf"
+          checked={v === true}
+          onChange={() => set(true)}
+          disabled={disabled}
+        />{' '}
+        True
       </label>
       <label className="flex items-center gap-2">
-        <input type="radio" name="tf" checked={v === false} onChange={() => set(false)} disabled={disabled} /> False
+        <input
+          type="radio"
+          name="tf"
+          checked={v === false}
+          onChange={() => set(false)}
+          disabled={disabled}
+        />{' '}
+        False
       </label>
     </fieldset>
   );
 }
 
 function NumericSurface({
-  body, value, onChange, disabled,
+  body,
+  value,
+  onChange,
+  disabled,
 }: { body: Extract<RenderedBody, { kind: 'numeric' }> } & ControlledProps) {
   const [local, setLocal] = useState('');
   const controlled = isControlled({ value, onChange });
-  const v = controlled ? (value as Response & { type: 'numeric' })?.value ?? '' : local;
+  const v = controlled ? ((value as Response & { type: 'numeric' })?.value ?? '') : local;
   const set = (s: string) => {
     if (controlled) onChange!({ type: 'numeric', value: s });
     else setLocal(s);
@@ -1509,22 +1618,30 @@ function NumericSurface({
 function ShortAnswerSurface({ value, onChange, disabled }: ControlledProps) {
   const [local, setLocal] = useState('');
   const controlled = isControlled({ value, onChange });
-  const v = controlled ? (value as Response & { type: 'short_answer' })?.value ?? '' : local;
+  const v = controlled ? ((value as Response & { type: 'short_answer' })?.value ?? '') : local;
   const set = (s: string) => {
     if (controlled) onChange!({ type: 'short_answer', value: s });
     else setLocal(s);
   };
-  return <Input value={v} onChange={(e) => set(e.target.value)} aria-label="Short answer" disabled={disabled} />;
+  return (
+    <Input
+      value={v}
+      onChange={(e) => set(e.target.value)}
+      aria-label="Short answer"
+      disabled={disabled}
+    />
+  );
 }
 
 function FillInSurface({
-  body, value, onChange, disabled,
+  body,
+  value,
+  onChange,
+  disabled,
 }: { body: Extract<RenderedBody, { kind: 'fill_in' }> } & ControlledProps) {
   const [local, setLocal] = useState<Record<string, string>>({});
   const controlled = isControlled({ value, onChange });
-  const vals = controlled
-    ? (value as Response & { type: 'fill_in' })?.blanks ?? {}
-    : local;
+  const vals = controlled ? ((value as Response & { type: 'fill_in' })?.blanks ?? {}) : local;
   const set = (id: string, s: string) => {
     const next = { ...vals, [id]: s };
     if (controlled) onChange!({ type: 'fill_in', blanks: next });
@@ -1559,10 +1676,13 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { AnswerSurface } from './answer-surfaces';
 import type { RenderedBody } from '@/lib/rendering';
 
-const mcBody: RenderedBody = { kind: 'mc', choices: [
-  { id: 'a', label_substituted: 'Alpha' },
-  { id: 'b', label_substituted: 'Beta' },
-]};
+const mcBody: RenderedBody = {
+  kind: 'mc',
+  choices: [
+    { id: 'a', label_substituted: 'Alpha' },
+    { id: 'b', label_substituted: 'Beta' },
+  ],
+};
 
 describe('AnswerSurface — uncontrolled (Plan 2 preview path)', () => {
   it('renders without controlled props and tracks local state', () => {
@@ -1577,21 +1697,26 @@ describe('AnswerSurface — controlled', () => {
   it('reflects external value and calls onChange', () => {
     const onChange = vi.fn();
     const { rerender } = render(
-      <AnswerSurface body={mcBody} value={{ type: 'mc', choice_id: 'a' }} onChange={onChange} />
+      <AnswerSurface body={mcBody} value={{ type: 'mc', choice_id: 'a' }} onChange={onChange} />,
     );
     expect((screen.getByLabelText('Alpha') as HTMLInputElement).checked).toBe(true);
     fireEvent.click(screen.getByLabelText('Beta'));
     expect(onChange).toHaveBeenCalledWith({ type: 'mc', choice_id: 'b' });
 
     rerender(
-      <AnswerSurface body={mcBody} value={{ type: 'mc', choice_id: 'b' }} onChange={onChange} />
+      <AnswerSurface body={mcBody} value={{ type: 'mc', choice_id: 'b' }} onChange={onChange} />,
     );
     expect((screen.getByLabelText('Beta') as HTMLInputElement).checked).toBe(true);
   });
 
   it('disabled prop disables inputs', () => {
     render(
-      <AnswerSurface body={mcBody} value={{ type: 'mc', choice_id: 'a' }} onChange={() => {}} disabled />
+      <AnswerSurface
+        body={mcBody}
+        value={{ type: 'mc', choice_id: 'a' }}
+        onChange={() => {}}
+        disabled
+      />,
     );
     expect((screen.getByLabelText('Alpha') as HTMLInputElement).disabled).toBe(true);
   });
@@ -1635,8 +1760,12 @@ import { requireStudent } from '@/lib/auth/require';
 import { buildSnapshot } from '@/lib/grading';
 
 export type StartResult =
-  | { ok: true;  attemptId: string }
-  | { ok: false; error: 'not_published' | 'closed' | 'no_attempts_remaining' | 'unknown'; message?: string };
+  | { ok: true; attemptId: string }
+  | {
+      ok: false;
+      error: 'not_published' | 'closed' | 'no_attempts_remaining' | 'unknown';
+      message?: string;
+    };
 
 export async function startAttemptAction(assessmentId: string): Promise<StartResult> {
   const { user } = await requireStudent();
@@ -1652,8 +1781,10 @@ export async function startAttemptAction(assessmentId: string): Promise<StartRes
   if (assessment.status !== 'published') return { ok: false, error: 'not_published' };
 
   const now = new Date();
-  if (assessment.opens_at && new Date(assessment.opens_at) > now) return { ok: false, error: 'closed' };
-  if (assessment.closes_at && new Date(assessment.closes_at) < now) return { ok: false, error: 'closed' };
+  if (assessment.opens_at && new Date(assessment.opens_at) > now)
+    return { ok: false, error: 'closed' };
+  if (assessment.closes_at && new Date(assessment.closes_at) < now)
+    return { ok: false, error: 'closed' };
 
   // 2. Resume in-progress attempt if any.
   const { data: inProg } = await supabase
@@ -1708,7 +1839,12 @@ export async function startAttemptAction(assessmentId: string): Promise<StartRes
         scoring: q.scoring as Record<string, unknown>,
         variables: (q.question_variables ?? []).map((v) => ({
           name: v.name,
-          type: (v.spec as { type: string }).type as 'choice' | 'chemistry_compound' | 'randint' | 'randfloat' | 'derived',
+          type: (v.spec as { type: string }).type as
+            | 'choice'
+            | 'chemistry_compound'
+            | 'randint'
+            | 'randfloat'
+            | 'derived',
           spec: v.spec as Record<string, unknown>,
         })),
       },
@@ -1762,13 +1898,15 @@ export default async function TakeEntryPage({ params }: Props) {
   return (
     <main className="mx-auto max-w-md p-8">
       <h1 className="text-2xl font-semibold">Can&apos;t start attempt</h1>
-      <p className="mt-2 text-muted-foreground">
+      <p className="text-muted-foreground mt-2">
         {result.error === 'not_published' && 'This assessment is not available.'}
         {result.error === 'closed' && 'This assessment is not open at this time.'}
         {result.error === 'no_attempts_remaining' && 'You have used all available attempts.'}
         {result.error === 'unknown' && (result.message ?? 'An unexpected error occurred.')}
       </p>
-      <a href="/" className="mt-4 inline-block text-sm underline">← Back to home</a>
+      <a href="/" className="mt-4 inline-block text-sm underline">
+        ← Back to home
+      </a>
     </main>
   );
 }
@@ -1807,7 +1945,11 @@ import { ResponseSchema, type Response } from '@/lib/grading';
 
 export type SaveResult =
   | { ok: true }
-  | { ok: false; error: 'not_yours' | 'already_submitted' | 'invalid_response' | 'unknown'; message?: string };
+  | {
+      ok: false;
+      error: 'not_yours' | 'already_submitted' | 'invalid_response' | 'unknown';
+      message?: string;
+    };
 
 export async function saveAnswerAction(input: {
   attemptId: string;
@@ -1878,7 +2020,7 @@ import { gradeAnswer, computeAttemptSummary, type AnswerSnapshot } from '@/lib/g
 import type { GradeResult } from '@/lib/grading';
 
 export type SubmitResult =
-  | { ok: true;  summary: { raw_score: number; max_score: number; percentage: number } }
+  | { ok: true; summary: { raw_score: number; max_score: number; percentage: number } }
   | { ok: false; error: 'not_yours' | 'already_submitted' | 'unknown'; message?: string };
 
 export async function submitAttemptAction(attemptId: string): Promise<SubmitResult> {
@@ -1970,15 +2112,24 @@ import { renderHook, act, waitFor } from '@testing-library/react';
 import { useAutosave } from './use-autosave';
 import type { Response } from '@/lib/grading';
 
-beforeEach(() => { vi.useFakeTimers(); });
-afterEach(() => { vi.useRealTimers(); });
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 describe('useAutosave', () => {
   it('starts idle when nothing changes', () => {
     const onSave = vi.fn();
-    const { result } = renderHook(() => useAutosave({
-      attemptId: 'a', questionId: 'q', response: null, onSave,
-    }));
+    const { result } = renderHook(() =>
+      useAutosave({
+        attemptId: 'a',
+        questionId: 'q',
+        response: null,
+        onSave,
+      }),
+    );
     expect(result.current.status).toBe('idle');
     expect(onSave).not.toHaveBeenCalled();
   });
@@ -1987,21 +2138,28 @@ describe('useAutosave', () => {
     const onSave = vi.fn().mockResolvedValue({ ok: true });
     const initialResponse: Response = { type: 'mc', choice_id: 'a' };
     const { result, rerender } = renderHook(
-      ({ response }) => useAutosave({ attemptId: 'a', questionId: 'q', response, onSave, debounceMs: 500 }),
-      { initialProps: { response: initialResponse } }
+      ({ response }) =>
+        useAutosave({ attemptId: 'a', questionId: 'q', response, onSave, debounceMs: 500 }),
+      { initialProps: { response: initialResponse } },
     );
 
     rerender({ response: { type: 'mc', choice_id: 'b' } });
 
     // Before debounce fires
-    act(() => { vi.advanceTimersByTime(300); });
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
     expect(onSave).not.toHaveBeenCalled();
 
     // Debounce fires
-    await act(async () => { vi.advanceTimersByTime(200); });
+    await act(async () => {
+      vi.advanceTimersByTime(200);
+    });
     expect(onSave).toHaveBeenCalledTimes(1);
     expect(onSave).toHaveBeenCalledWith({
-      attemptId: 'a', questionId: 'q', response: { type: 'mc', choice_id: 'b' },
+      attemptId: 'a',
+      questionId: 'q',
+      response: { type: 'mc', choice_id: 'b' },
     });
     await waitFor(() => expect(result.current.status).toBe('saved'));
   });
@@ -2009,11 +2167,14 @@ describe('useAutosave', () => {
   it('reports error status on save failure', async () => {
     const onSave = vi.fn().mockResolvedValue({ ok: false, error: 'unknown' });
     const { result, rerender } = renderHook(
-      ({ response }) => useAutosave({ attemptId: 'a', questionId: 'q', response, onSave, debounceMs: 100 }),
-      { initialProps: { response: { type: 'mc', choice_id: 'a' } as Response } }
+      ({ response }) =>
+        useAutosave({ attemptId: 'a', questionId: 'q', response, onSave, debounceMs: 100 }),
+      { initialProps: { response: { type: 'mc', choice_id: 'a' } as Response } },
     );
     rerender({ response: { type: 'mc', choice_id: 'b' } });
-    await act(async () => { vi.advanceTimersByTime(150); });
+    await act(async () => {
+      vi.advanceTimersByTime(150);
+    });
     await waitFor(() => expect(result.current.status).toBe('error'));
   });
 });
@@ -2041,7 +2202,11 @@ export type UseAutosaveInput = {
   attemptId: string;
   questionId: string;
   response: Response | null;
-  onSave: (input: { attemptId: string; questionId: string; response: Response }) => Promise<SaveResult>;
+  onSave: (input: {
+    attemptId: string;
+    questionId: string;
+    response: Response;
+  }) => Promise<SaveResult>;
   debounceMs?: number;
 };
 
@@ -2067,7 +2232,7 @@ export function useAutosave(input: UseAutosaveInput) {
       const p = onSave({ attemptId, questionId, response });
       inflightRef.current = p;
       const result = await p;
-      if (inflightRef.current !== p) return;  // a newer save has started
+      if (inflightRef.current !== p) return; // a newer save has started
       if (result.ok) {
         setStatus('saved');
         setLastSavedAt(new Date());
@@ -2127,21 +2292,31 @@ Create `components/attempt/SubmitDialog.tsx`:
 'use client';
 
 import {
-  AlertDialog, AlertDialogContent, AlertDialogTitle, AlertDialogDescription,
-  AlertDialogFooter, AlertDialogCancel, AlertDialogAction,
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
 } from '@/components/ui/alert-dialog';
 
 export type SubmitDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   unansweredCount: number;
-  unansweredLabels: string[];   // e.g. ['Q2', 'Q5']
+  unansweredLabels: string[]; // e.g. ['Q2', 'Q5']
   onConfirm: () => void;
   submitting: boolean;
 };
 
 export function SubmitDialog({
-  open, onOpenChange, unansweredCount, unansweredLabels, onConfirm, submitting,
+  open,
+  onOpenChange,
+  unansweredCount,
+  unansweredLabels,
+  onConfirm,
+  submitting,
 }: SubmitDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -2155,7 +2330,7 @@ export function SubmitDialog({
         <AlertDialogFooter>
           <AlertDialogCancel disabled={submitting}>Cancel</AlertDialogCancel>
           <AlertDialogAction onClick={onConfirm} disabled={submitting}>
-            {submitting ? 'Submitting…' : (unansweredCount === 0 ? 'Submit' : 'Submit anyway')}
+            {submitting ? 'Submitting…' : unansweredCount === 0 ? 'Submit' : 'Submit anyway'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -2178,7 +2353,7 @@ export type AttemptHeaderProps = {
   title: string;
   attemptNo: number;
   maxAttempts: number;
-  overallStatus: AutosaveStatus;     // worst-of across cards
+  overallStatus: AutosaveStatus; // worst-of across cards
   lastSavedAt: Date | null;
   onSubmit: () => void;
   submitDisabled: boolean;
@@ -2186,7 +2361,7 @@ export type AttemptHeaderProps = {
 
 function indicatorLabel(s: AutosaveStatus, lastSavedAt: Date | null): string {
   if (s === 'saving') return 'Saving…';
-  if (s === 'error')  return 'Save failed';
+  if (s === 'error') return 'Save failed';
   if (s === 'saved' && lastSavedAt) return `Saved ${secondsAgo(lastSavedAt)}s ago`;
   return 'Saved';
 }
@@ -2197,14 +2372,17 @@ function secondsAgo(d: Date): number {
 
 export function AttemptHeader(p: AttemptHeaderProps) {
   return (
-    <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-background/95 px-4 py-3 backdrop-blur">
+    <div className="bg-background/95 sticky top-0 z-10 flex items-center justify-between border-b px-4 py-3 backdrop-blur">
       <div>
         <h1 className="text-lg font-semibold">{p.title}</h1>
-        <p className="text-xs text-muted-foreground">
-          Attempt {p.attemptNo} of {p.maxAttempts} · {indicatorLabel(p.overallStatus, p.lastSavedAt)}
+        <p className="text-muted-foreground text-xs">
+          Attempt {p.attemptNo} of {p.maxAttempts} ·{' '}
+          {indicatorLabel(p.overallStatus, p.lastSavedAt)}
         </p>
       </div>
-      <Button onClick={p.onSubmit} disabled={p.submitDisabled}>Submit attempt</Button>
+      <Button onClick={p.onSubmit} disabled={p.submitDisabled}>
+        Submit attempt
+      </Button>
     </div>
   );
 }
@@ -2231,7 +2409,13 @@ export type QuestionCardProps = {
   anchor?: string;
 };
 
-export function QuestionCard({ position, snapshot, response, onChange, anchor }: QuestionCardProps) {
+export function QuestionCard({
+  position,
+  snapshot,
+  response,
+  onChange,
+  anchor,
+}: QuestionCardProps) {
   return (
     <Card id={anchor} className="p-4">
       <div className="mb-2 flex items-center gap-2">
@@ -2241,11 +2425,7 @@ export function QuestionCard({ position, snapshot, response, onChange, anchor }:
       <div className="prose mb-3 max-w-none">
         <Markdown source={snapshot.render.rendered_stem} />
       </div>
-      <AnswerSurface
-        body={snapshot.render.rendered_body}
-        value={response}
-        onChange={onChange}
-      />
+      <AnswerSurface body={snapshot.render.rendered_body} value={response} onChange={onChange} />
     </Card>
   );
 }
@@ -2294,12 +2474,18 @@ export default async function AttemptPage({ params }: Props) {
   // Attempt + owning assessment metadata.
   const { data: attempt, error: aErr } = await supabase
     .from('attempts')
-    .select('id, status, attempt_no, student_user_id, assessment_id, assessments(id, title, default_attempts)')
+    .select(
+      'id, status, attempt_no, student_user_id, assessment_id, assessments(id, title, default_attempts)',
+    )
     .eq('id', aid)
     .maybeSingle();
   if (aErr || !attempt) notFound();
   if (attempt.student_user_id !== user.id) notFound();
-  if (attempt.status === 'submitted' || attempt.status === 'auto_submitted' || attempt.status === 'graded') {
+  if (
+    attempt.status === 'submitted' ||
+    attempt.status === 'auto_submitted' ||
+    attempt.status === 'graded'
+  ) {
     redirect(`/attempts/${aid}/result` as Route);
   }
 
@@ -2310,7 +2496,11 @@ export default async function AttemptPage({ params }: Props) {
     .eq('assessment_id', attempt.assessment_id)
     .eq('student_user_id', user.id)
     .maybeSingle();
-  const assessment = attempt.assessments as unknown as { id: string; title: string; default_attempts: number };
+  const assessment = attempt.assessments as unknown as {
+    id: string;
+    title: string;
+    default_attempts: number;
+  };
   const maxAttempts = (assessment.default_attempts ?? 1) + (override?.extra_attempts ?? 0);
 
   // All answer rows.
@@ -2399,9 +2589,9 @@ export function AttemptClient({ attemptId, title, attemptNo, maxAttempts, cards 
   // We can't call useAutosave per card in a loop, so each QuestionCardWrapper instantiates its own.
   const overallStatus: AutosaveStatus = useMemo(() => {
     const vals = Object.values(statuses);
-    if (vals.includes('error'))  return 'error';
+    if (vals.includes('error')) return 'error';
     if (vals.includes('saving')) return 'saving';
-    if (vals.includes('saved'))  return 'saved';
+    if (vals.includes('saved')) return 'saved';
     return 'idle';
   }, [statuses]);
 
@@ -2450,9 +2640,13 @@ export function AttemptClient({ attemptId, title, attemptNo, maxAttempts, cards 
           />
         ))}
       </div>
-      <div className="mx-4 mt-6 flex items-center justify-between text-sm text-muted-foreground">
-        <span>{cards.length - unanswered.length} of {cards.length} answered</span>
-        <a href="/" className="underline">Save and continue later</a>
+      <div className="text-muted-foreground mx-4 mt-6 flex items-center justify-between text-sm">
+        <span>
+          {cards.length - unanswered.length} of {cards.length} answered
+        </span>
+        <a href="/" className="underline">
+          Save and continue later
+        </a>
       </div>
       <SubmitDialog
         open={dialogOpen}
@@ -2467,7 +2661,11 @@ export function AttemptClient({ attemptId, title, attemptNo, maxAttempts, cards 
 }
 
 function CardWithAutosave({
-  card, attemptId, response, onChange, onStatusChange,
+  card,
+  attemptId,
+  response,
+  onChange,
+  onStatusChange,
 }: {
   card: Card;
   attemptId: string;
@@ -2498,9 +2696,11 @@ import { useEffect } from 'react';
 function useStatusEffect(
   status: AutosaveStatus,
   lastSavedAt: Date | null,
-  cb: (s: AutosaveStatus, when: Date | null) => void
+  cb: (s: AutosaveStatus, when: Date | null) => void,
 ) {
-  useEffect(() => { cb(status, lastSavedAt); }, [status, lastSavedAt, cb]);
+  useEffect(() => {
+    cb(status, lastSavedAt);
+  }, [status, lastSavedAt, cb]);
 }
 ```
 
@@ -2537,45 +2737,74 @@ Create `components/result/CorrectAnswerReveal.tsx`:
 import type { AnswerSnapshot, Response } from '@/lib/grading';
 
 export function CorrectAnswerReveal({
-  snapshot, response,
-}: { snapshot: AnswerSnapshot; response: Response | null }) {
+  snapshot,
+  response,
+}: {
+  snapshot: AnswerSnapshot;
+  response: Response | null;
+}) {
   const target = snapshot.render.grading_target;
   switch (target.kind) {
     case 'mc': {
       const body = snapshot.render.rendered_body;
-      const correctLabel = body.kind === 'mc'
-        ? body.choices.find((c) => c.id === target.correct_id)?.label_substituted ?? target.correct_id
-        : target.correct_id;
-      return <p className="text-sm"><strong>Correct answer:</strong> {correctLabel}</p>;
+      const correctLabel =
+        body.kind === 'mc'
+          ? (body.choices.find((c) => c.id === target.correct_id)?.label_substituted ??
+            target.correct_id)
+          : target.correct_id;
+      return (
+        <p className="text-sm">
+          <strong>Correct answer:</strong> {correctLabel}
+        </p>
+      );
     }
     case 'ma': {
       const body = snapshot.render.rendered_body;
-      const labels = body.kind === 'ma'
-        ? target.correct_ids.map((id) => body.choices.find((c) => c.id === id)?.label_substituted ?? id)
-        : target.correct_ids;
-      return <p className="text-sm"><strong>Correct answers:</strong> {labels.join(', ')}</p>;
+      const labels =
+        body.kind === 'ma'
+          ? target.correct_ids.map(
+              (id) => body.choices.find((c) => c.id === id)?.label_substituted ?? id,
+            )
+          : target.correct_ids;
+      return (
+        <p className="text-sm">
+          <strong>Correct answers:</strong> {labels.join(', ')}
+        </p>
+      );
     }
     case 'tf':
-      return <p className="text-sm"><strong>Correct:</strong> {target.correct ? 'True' : 'False'}</p>;
+      return (
+        <p className="text-sm">
+          <strong>Correct:</strong> {target.correct ? 'True' : 'False'}
+        </p>
+      );
     case 'numeric': {
       const out = `${target.value} ± ${target.tolerance}`;
-      return <p className="text-sm"><strong>Expected:</strong> {out}{response?.type === 'numeric' && !Number.isFinite(Number(response.value)) ? ' — your answer was not a number' : ''}</p>;
+      return (
+        <p className="text-sm">
+          <strong>Expected:</strong> {out}
+          {response?.type === 'numeric' && !Number.isFinite(Number(response.value))
+            ? ' — your answer was not a number'
+            : ''}
+        </p>
+      );
     }
     case 'short_answer':
       return (
         <p className="text-sm">
-          <strong>Pattern:</strong> <code>{target.pattern}</code>{' '}
-          ({target.case_insensitive ? 'case-insensitive' : 'case-sensitive'})
+          <strong>Pattern:</strong> <code>{target.pattern}</code> (
+          {target.case_insensitive ? 'case-insensitive' : 'case-sensitive'})
         </p>
       );
     case 'fill_in':
       return (
         <ul className="text-sm">
           {target.targets.map((t) => {
-            const yours = response?.type === 'fill_in' ? response.blanks[t.id] ?? '' : '';
+            const yours = response?.type === 'fill_in' ? (response.blanks[t.id] ?? '') : '';
             return (
               <li key={t.id}>
-                <strong>Blank {t.id}:</strong> expected <code>{t.target}</code> — your answer: <code>{yours || '(blank)'}</code>
+                <strong>Blank {t.id}:</strong> expected <code>{t.target}</code> — your answer:{' '}
+                <code>{yours || '(blank)'}</code>
               </li>
             );
           })}
@@ -2615,7 +2844,7 @@ export type ResultPageProps = {
   maxAttempts: number;
   submittedAt: string | null;
   summary: { raw_score: number; max_score: number; percentage: number } | null;
-  bestRaw: number | null;       // student's best raw across attempts
+  bestRaw: number | null; // student's best raw across attempts
   rows: ResultRow[];
   /** Student-only: callback to start a new attempt. */
   onStartNew?: () => void;
@@ -2624,7 +2853,10 @@ export type ResultPageProps = {
   studentEmail?: string;
 };
 
-function badge(auto: number | null, scoreMethod: string | null): { label: string; tone: 'ok' | 'warn' | 'err' } {
+function badge(
+  auto: number | null,
+  scoreMethod: string | null,
+): { label: string; tone: 'ok' | 'warn' | 'err' } {
   if (auto == null) return { label: 'Not graded', tone: 'warn' };
   if (scoreMethod === 'auto_error') return { label: 'Could not auto-grade', tone: 'err' };
   if (auto === 1) return { label: `Correct (${auto.toFixed(2)}/1)`, tone: 'ok' };
@@ -2636,11 +2868,13 @@ export function ResultPage(p: ResultPageProps) {
   return (
     <main className="mx-auto max-w-3xl p-6 pb-24">
       <header className="mb-6">
-        <p className="text-xs text-muted-foreground">
-          <a href="/" className="underline">← Home</a>
+        <p className="text-muted-foreground text-xs">
+          <a href="/" className="underline">
+            ← Home
+          </a>
         </p>
         <h1 className="mt-2 text-2xl font-semibold">{p.title}</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {p.actor === 'instructor' && p.studentEmail
             ? `Attempt ${p.attemptNo} by ${p.studentEmail}`
             : `Attempt ${p.attemptNo} of ${p.maxAttempts}`}
@@ -2649,22 +2883,26 @@ export function ResultPage(p: ResultPageProps) {
       </header>
 
       {p.summary && (
-        <section className="mb-6 rounded-lg border bg-card p-4">
-          <p className="text-3xl font-bold">{p.summary.raw_score} / {p.summary.max_score}</p>
-          <p className="text-sm text-muted-foreground">{p.summary.percentage.toFixed(2)}%</p>
+        <section className="bg-card mb-6 rounded-lg border p-4">
+          <p className="text-3xl font-bold">
+            {p.summary.raw_score} / {p.summary.max_score}
+          </p>
+          <p className="text-muted-foreground text-sm">{p.summary.percentage.toFixed(2)}%</p>
           {p.bestRaw != null && p.summary.raw_score < p.bestRaw && (
-            <p className="mt-2 text-xs text-muted-foreground">Highest score on this assessment: {p.bestRaw}</p>
+            <p className="text-muted-foreground mt-2 text-xs">
+              Highest score on this assessment: {p.bestRaw}
+            </p>
           )}
           {p.actor === 'student' && p.attemptsRemaining > 0 && p.onStartNew && (
             <button
               onClick={p.onStartNew}
-              className="mt-3 rounded bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+              className="bg-primary text-primary-foreground mt-3 rounded px-4 py-2 text-sm font-medium"
             >
               Start new attempt ({p.attemptsRemaining} remaining)
             </button>
           )}
           {p.actor === 'student' && p.attemptsRemaining === 0 && (
-            <p className="mt-3 text-xs text-muted-foreground">No attempts remaining.</p>
+            <p className="text-muted-foreground mt-3 text-xs">No attempts remaining.</p>
           )}
         </section>
       )}
@@ -2677,7 +2915,11 @@ export function ResultPage(p: ResultPageProps) {
               <div className="mb-2 flex items-center gap-2">
                 <h2 className="font-semibold">Q{row.position + 1}</h2>
                 <Badge variant="secondary">{row.snapshot.question_type}</Badge>
-                <Badge variant={b.tone === 'ok' ? 'default' : b.tone === 'err' ? 'destructive' : 'outline'}>
+                <Badge
+                  variant={
+                    b.tone === 'ok' ? 'default' : b.tone === 'err' ? 'destructive' : 'outline'
+                  }
+                >
                   {b.label}
                 </Badge>
               </div>
@@ -2685,7 +2927,7 @@ export function ResultPage(p: ResultPageProps) {
                 <Markdown source={row.snapshot.render.rendered_stem} />
               </div>
               <div className="mb-3">
-                <p className="mb-1 text-xs font-medium text-muted-foreground">Your response</p>
+                <p className="text-muted-foreground mb-1 text-xs font-medium">Your response</p>
                 <AnswerSurface
                   body={row.snapshot.render.rendered_body}
                   value={row.response}
@@ -2693,7 +2935,7 @@ export function ResultPage(p: ResultPageProps) {
                   disabled
                 />
               </div>
-              <div className="rounded bg-muted p-2">
+              <div className="bg-muted rounded p-2">
                 <CorrectAnswerReveal snapshot={row.snapshot} response={row.response} />
               </div>
             </Card>
@@ -2747,14 +2989,20 @@ export default async function StudentResultPage({ params }: Props) {
 
   const { data: attempt, error: aErr } = await supabase
     .from('attempts')
-    .select('id, status, attempt_no, summary, submitted_at, student_user_id, assessment_id, assessments(id, title, default_attempts)')
+    .select(
+      'id, status, attempt_no, summary, submitted_at, student_user_id, assessment_id, assessments(id, title, default_attempts)',
+    )
     .eq('id', aid)
     .maybeSingle();
   if (aErr || !attempt) notFound();
   if (attempt.student_user_id !== user.id) notFound();
   if (attempt.status === 'in_progress') redirect(`/attempts/${aid}` as Route);
 
-  const assessment = attempt.assessments as unknown as { id: string; title: string; default_attempts: number };
+  const assessment = attempt.assessments as unknown as {
+    id: string;
+    title: string;
+    default_attempts: number;
+  };
 
   // Effective cap.
   const { data: override } = await supabase
@@ -2797,24 +3045,33 @@ export default async function StudentResultPage({ params }: Props) {
     .eq('assessment_id', attempt.assessment_id);
   const posByQid = new Map((qPos ?? []).map((q) => [q.id, q.position]));
 
-  const rows: ResultRow[] = (answers ?? []).map((row) => ({
-    question_id: row.question_id,
-    position: posByQid.get(row.question_id) ?? 0,
-    snapshot: row.rendered_question_snapshot as unknown as AnswerSnapshot,
-    response: (row.response ?? null) as Response | null,
-    auto_score: (row.auto_score as number | null),
-    score_method: (row.score_method as string | null),
-  })).sort((a, b) => a.position - b.position);
+  const rows: ResultRow[] = (answers ?? [])
+    .map((row) => ({
+      question_id: row.question_id,
+      position: posByQid.get(row.question_id) ?? 0,
+      snapshot: row.rendered_question_snapshot as unknown as AnswerSnapshot,
+      response: (row.response ?? null) as Response | null,
+      auto_score: row.auto_score as number | null,
+      score_method: row.score_method as string | null,
+    }))
+    .sort((a, b) => a.position - b.position);
 
   return (
-    <form action={async () => { 'use server'; await startAttemptAction(attempt.assessment_id); }}>
+    <form
+      action={async () => {
+        'use server';
+        await startAttemptAction(attempt.assessment_id);
+      }}
+    >
       <ResultPage
         actor="student"
         title={assessment.title}
         attemptNo={attempt.attempt_no}
         maxAttempts={maxAttempts}
         submittedAt={attempt.submitted_at}
-        summary={attempt.summary as { raw_score: number; max_score: number; percentage: number } | null}
+        summary={
+          attempt.summary as { raw_score: number; max_score: number; percentage: number } | null
+        }
         bestRaw={bestRaw}
         rows={rows}
         attemptsRemaining={attemptsRemaining}
@@ -2893,14 +3150,12 @@ import { redirect } from 'next/navigation';
 
 export default async function Home() {
   const supabase = createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) redirect('/sign-in');
 
-  const { data: me } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single();
+  const { data: me } = await supabase.from('users').select('role').eq('id', user.id).single();
   const role = me?.role ?? 'student';
 
   // Published assessments the user can see (RLS scopes the read).
@@ -2911,28 +3166,51 @@ export default async function Home() {
     .order('opens_at', { ascending: false, nullsFirst: false });
 
   // For each, compute the student's per-assessment status.
-  type Row = { id: string; title: string; status: 'not_started' | 'in_progress' | 'best'; bestRaw?: number; bestMax?: number; attemptId?: string };
+  type Row = {
+    id: string;
+    title: string;
+    status: 'not_started' | 'in_progress' | 'best';
+    bestRaw?: number;
+    bestMax?: number;
+    attemptId?: string;
+  };
   const rows: Row[] = [];
   for (const a of assessments ?? []) {
     const { data: inProg } = await supabase
-      .from('attempts').select('id')
-      .eq('assessment_id', a.id).eq('student_user_id', user.id)
-      .eq('status', 'in_progress').maybeSingle();
-    if (inProg) { rows.push({ id: a.id, title: a.title, status: 'in_progress', attemptId: inProg.id }); continue; }
+      .from('attempts')
+      .select('id')
+      .eq('assessment_id', a.id)
+      .eq('student_user_id', user.id)
+      .eq('status', 'in_progress')
+      .maybeSingle();
+    if (inProg) {
+      rows.push({ id: a.id, title: a.title, status: 'in_progress', attemptId: inProg.id });
+      continue;
+    }
 
     const { data: subs } = await supabase
-      .from('attempts').select('summary')
-      .eq('assessment_id', a.id).eq('student_user_id', user.id)
+      .from('attempts')
+      .select('summary')
+      .eq('assessment_id', a.id)
+      .eq('student_user_id', user.id)
       .eq('status', 'submitted');
     if (subs && subs.length > 0) {
-      let bestRaw: number | null = null, bestMax: number | null = null;
+      let bestRaw: number | null = null,
+        bestMax: number | null = null;
       for (const s of subs) {
         const sum = s.summary as { raw_score?: number; max_score?: number } | null;
         if (sum?.raw_score != null && (bestRaw == null || sum.raw_score > bestRaw)) {
-          bestRaw = sum.raw_score; bestMax = sum.max_score ?? null;
+          bestRaw = sum.raw_score;
+          bestMax = sum.max_score ?? null;
         }
       }
-      rows.push({ id: a.id, title: a.title, status: 'best', bestRaw: bestRaw ?? 0, bestMax: bestMax ?? 0 });
+      rows.push({
+        id: a.id,
+        title: a.title,
+        status: 'best',
+        bestRaw: bestRaw ?? 0,
+        bestMax: bestMax ?? 0,
+      });
     } else {
       rows.push({ id: a.id, title: a.title, status: 'not_started' });
     }
@@ -2943,33 +3221,43 @@ export default async function Home() {
       <header className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-semibold">BodhiLite</h1>
         <form action="/sign-out" method="post">
-          <button type="submit" className="text-sm underline">Sign out</button>
+          <button type="submit" className="text-sm underline">
+            Sign out
+          </button>
         </form>
       </header>
 
       {role === 'instructor' && (
-        <section className="mb-8 rounded border bg-card p-4">
+        <section className="bg-card mb-8 rounded border p-4">
           <h2 className="mb-2 text-lg font-semibold">Instructor</h2>
-          <a href={'/assessments' as Route} className="text-sm underline">Manage assessments →</a>
+          <a href={'/assessments' as Route} className="text-sm underline">
+            Manage assessments →
+          </a>
         </section>
       )}
 
       <section>
         <h2 className="mb-2 text-lg font-semibold">Your assessments</h2>
         {rows.length === 0 && (
-          <p className="text-sm text-muted-foreground">No assessments available right now.</p>
+          <p className="text-muted-foreground text-sm">No assessments available right now.</p>
         )}
         <ul className="flex flex-col gap-2">
           {rows.map((r) => (
             <li key={r.id} className="flex items-center justify-between rounded border p-3">
               <span className="font-medium">{r.title}</span>
               <span className="flex items-center gap-3 text-sm">
-                {r.status === 'not_started' && <span className="text-muted-foreground">Not yet attempted</span>}
+                {r.status === 'not_started' && (
+                  <span className="text-muted-foreground">Not yet attempted</span>
+                )}
                 {r.status === 'in_progress' && <span className="text-amber-700">In progress</span>}
-                {r.status === 'best' && <span>Best: {r.bestRaw}/{r.bestMax}</span>}
+                {r.status === 'best' && (
+                  <span>
+                    Best: {r.bestRaw}/{r.bestMax}
+                  </span>
+                )}
                 <a
                   href={`/take/${r.id}` as Route}
-                  className="rounded bg-primary px-3 py-1 text-primary-foreground"
+                  className="bg-primary text-primary-foreground rounded px-3 py-1"
                 >
                   {r.status === 'in_progress' ? 'Resume' : r.status === 'best' ? 'Retake' : 'Start'}
                 </a>
@@ -3011,7 +3299,12 @@ Create `components/gradebook/GradebookTable.tsx`:
 ```tsx
 import type { Route } from 'next';
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/ui/table';
 
 export type GradebookRow = {
@@ -3030,7 +3323,11 @@ type SortDir = 'asc' | 'desc';
 type SortKey = 'student_email' | 'attempts_used' | 'best_pct' | 'last_submitted_at';
 
 export function GradebookTable({
-  assessmentId, rows, maxAttempts, sort, dir,
+  assessmentId,
+  rows,
+  maxAttempts,
+  sort,
+  dir,
 }: {
   assessmentId: string;
   rows: GradebookRow[];
@@ -3061,7 +3358,7 @@ export function GradebookTable({
       <TableBody>
         {rows.length === 0 && (
           <TableRow>
-            <TableCell colSpan={6} className="text-center text-muted-foreground">
+            <TableCell colSpan={6} className="text-muted-foreground text-center">
               No students have attempted this assessment yet.
             </TableCell>
           </TableRow>
@@ -3069,10 +3366,14 @@ export function GradebookTable({
         {rows.map((r) => (
           <TableRow key={r.student_user_id}>
             <TableCell>{r.student_email}</TableCell>
-            <TableCell>{r.attempts_used} of {maxAttempts}</TableCell>
+            <TableCell>
+              {r.attempts_used} of {maxAttempts}
+            </TableCell>
             <TableCell>{r.best_raw != null ? `${r.best_raw} / ${r.best_max}` : '—'}</TableCell>
             <TableCell>{r.best_pct != null ? `${r.best_pct.toFixed(2)}%` : '—'}</TableCell>
-            <TableCell>{r.last_submitted_at ? new Date(r.last_submitted_at).toLocaleString() : '—'}</TableCell>
+            <TableCell>
+              {r.last_submitted_at ? new Date(r.last_submitted_at).toLocaleString() : '—'}
+            </TableCell>
             <TableCell>
               {r.best_attempt_id ? (
                 <a
@@ -3081,7 +3382,9 @@ export function GradebookTable({
                 >
                   View best
                 </a>
-              ) : '—'}
+              ) : (
+                '—'
+              )}
             </TableCell>
           </TableRow>
         ))}
@@ -3143,12 +3446,14 @@ export default async function GradebookPage({ params, searchParams }: Props) {
   return (
     <main className="mx-auto max-w-5xl p-6">
       <header className="mb-4">
-        <p className="text-xs text-muted-foreground">
-          <a href={`/assessments/${id}`} className="underline">← {assessment.title}</a>
+        <p className="text-muted-foreground text-xs">
+          <a href={`/assessments/${id}`} className="underline">
+            ← {assessment.title}
+          </a>
         </p>
         <h1 className="mt-2 text-2xl font-semibold">Attempts</h1>
         {(inProgress ?? 0) > 0 && (
-          <p className="mt-1 text-xs text-muted-foreground">{inProgress} in progress</p>
+          <p className="text-muted-foreground mt-1 text-xs">{inProgress} in progress</p>
         )}
       </header>
       <GradebookTable
@@ -3204,13 +3509,19 @@ export default async function InstructorDrilldownPage({ params }: Props) {
   // RLS scopes to instructor-owned assessments.
   const { data: attempt } = await supabase
     .from('attempts')
-    .select('id, attempt_no, status, submitted_at, summary, student_user_id, assessment_id, assessments(id, title, default_attempts), users:student_user_id(email)')
+    .select(
+      'id, attempt_no, status, submitted_at, summary, student_user_id, assessment_id, assessments(id, title, default_attempts), users:student_user_id(email)',
+    )
     .eq('id', aid)
     .eq('assessment_id', id)
     .maybeSingle();
   if (!attempt) notFound();
 
-  const assessment = attempt.assessments as unknown as { id: string; title: string; default_attempts: number };
+  const assessment = attempt.assessments as unknown as {
+    id: string;
+    title: string;
+    default_attempts: number;
+  };
   const studentEmail = (attempt.users as unknown as { email: string } | null)?.email ?? 'unknown';
 
   // Best raw across this student's attempts (for the badge).
@@ -3236,14 +3547,16 @@ export default async function InstructorDrilldownPage({ params }: Props) {
     .eq('assessment_id', id);
   const posByQid = new Map((qPos ?? []).map((q) => [q.id, q.position]));
 
-  const rows: ResultRow[] = (answers ?? []).map((row) => ({
-    question_id: row.question_id,
-    position: posByQid.get(row.question_id) ?? 0,
-    snapshot: row.rendered_question_snapshot as unknown as AnswerSnapshot,
-    response: (row.response ?? null) as Response | null,
-    auto_score: row.auto_score as number | null,
-    score_method: row.score_method as string | null,
-  })).sort((a, b) => a.position - b.position);
+  const rows: ResultRow[] = (answers ?? [])
+    .map((row) => ({
+      question_id: row.question_id,
+      position: posByQid.get(row.question_id) ?? 0,
+      snapshot: row.rendered_question_snapshot as unknown as AnswerSnapshot,
+      response: (row.response ?? null) as Response | null,
+      auto_score: row.auto_score as number | null,
+      score_method: row.score_method as string | null,
+    }))
+    .sort((a, b) => a.position - b.position);
 
   return (
     <ResultPage
@@ -3252,7 +3565,9 @@ export default async function InstructorDrilldownPage({ params }: Props) {
       attemptNo={attempt.attempt_no}
       maxAttempts={assessment.default_attempts ?? 1}
       submittedAt={attempt.submitted_at}
-      summary={attempt.summary as { raw_score: number; max_score: number; percentage: number } | null}
+      summary={
+        attempt.summary as { raw_score: number; max_score: number; percentage: number } | null
+      }
       bestRaw={bestRaw}
       rows={rows}
       attemptsRemaining={0}
@@ -3370,20 +3685,35 @@ test.describe('attempts RLS isolation', () => {
     const studentB = await createTestUserClient('student', perTestUserIds);
 
     // Seed assessment + a student-B attempt as admin.
-    const { data: a } = await admin.from('assessments').insert({
-      owner_user_id: inst.id, title: 'A', slug: `a-${Date.now()}`,
-      status: 'published', assessment_type: 'quiz', default_attempts: 3,
-    }).select('id').single();
+    const { data: a } = await admin
+      .from('assessments')
+      .insert({
+        owner_user_id: inst.id,
+        title: 'A',
+        slug: `a-${Date.now()}`,
+        status: 'published',
+        assessment_type: 'quiz',
+        default_attempts: 3,
+      })
+      .select('id')
+      .single();
     if (!a) throw new Error('seed failed');
 
-    const { data: at } = await admin.from('attempts').insert({
-      assessment_id: a.id, student_user_id: studentB.id, attempt_no: 1, seed: 1, status: 'in_progress',
-    }).select('id').single();
+    const { data: at } = await admin
+      .from('attempts')
+      .insert({
+        assessment_id: a.id,
+        student_user_id: studentB.id,
+        attempt_no: 1,
+        seed: 1,
+        status: 'in_progress',
+      })
+      .select('id')
+      .single();
     if (!at) throw new Error('seed attempts failed');
 
     // A reads → 0 rows.
-    const { data: visible } = await studentA.client
-      .from('attempts').select('id').eq('id', at.id);
+    const { data: visible } = await studentA.client.from('attempts').select('id').eq('id', at.id);
     expect(visible).toEqual([]);
   });
 
@@ -3393,16 +3723,28 @@ test.describe('attempts RLS isolation', () => {
     const studentA = await createTestUserClient('student', perTestUserIds);
     const studentB = await createTestUserClient('student', perTestUserIds);
 
-    const { data: a } = await admin.from('assessments').insert({
-      owner_user_id: inst.id, title: 'A', slug: `a-${Date.now()}`,
-      status: 'published', assessment_type: 'quiz', default_attempts: 3,
-    }).select('id').single();
+    const { data: a } = await admin
+      .from('assessments')
+      .insert({
+        owner_user_id: inst.id,
+        title: 'A',
+        slug: `a-${Date.now()}`,
+        status: 'published',
+        assessment_type: 'quiz',
+        default_attempts: 3,
+      })
+      .select('id')
+      .single();
     if (!a) throw new Error('seed failed');
 
     const { error } = await studentA.client.from('attempts').insert({
-      assessment_id: a.id, student_user_id: studentB.id, attempt_no: 1, seed: 1, status: 'in_progress',
+      assessment_id: a.id,
+      student_user_id: studentB.id,
+      attempt_no: 1,
+      seed: 1,
+      status: 'in_progress',
     });
-    expect(error).not.toBeNull();   // RLS rejects
+    expect(error).not.toBeNull(); // RLS rejects
   });
 
   test('instructor cannot read attempts on non-owned assessment', async () => {
@@ -3411,15 +3753,31 @@ test.describe('attempts RLS isolation', () => {
     const inst2 = await createTestUserClient('instructor', perTestUserIds);
     const student = await createTestUserClient('student', perTestUserIds);
 
-    const { data: a } = await admin.from('assessments').insert({
-      owner_user_id: inst1.id, title: 'A', slug: `a-${Date.now()}`,
-      status: 'published', assessment_type: 'quiz', default_attempts: 3,
-    }).select('id').single();
+    const { data: a } = await admin
+      .from('assessments')
+      .insert({
+        owner_user_id: inst1.id,
+        title: 'A',
+        slug: `a-${Date.now()}`,
+        status: 'published',
+        assessment_type: 'quiz',
+        default_attempts: 3,
+      })
+      .select('id')
+      .single();
     if (!a) throw new Error('seed failed');
 
-    const { data: at } = await admin.from('attempts').insert({
-      assessment_id: a.id, student_user_id: student.id, attempt_no: 1, seed: 1, status: 'in_progress',
-    }).select('id').single();
+    const { data: at } = await admin
+      .from('attempts')
+      .insert({
+        assessment_id: a.id,
+        student_user_id: student.id,
+        attempt_no: 1,
+        seed: 1,
+        status: 'in_progress',
+      })
+      .select('id')
+      .single();
     if (!at) throw new Error('seed attempt failed');
 
     const { data } = await inst2.client.from('attempts').select('id').eq('id', at.id);
@@ -3473,24 +3831,58 @@ test.describe('answers RLS isolation', () => {
     const sA = await createTestUserClient('student', perTestUserIds);
     const sB = await createTestUserClient('student', perTestUserIds);
 
-    const { data: a } = await admin.from('assessments').insert({
-      owner_user_id: inst.id, title: 'A', slug: `a-${Date.now()}`,
-      status: 'published', assessment_type: 'quiz', default_attempts: 3,
-    }).select('id').single();
+    const { data: a } = await admin
+      .from('assessments')
+      .insert({
+        owner_user_id: inst.id,
+        title: 'A',
+        slug: `a-${Date.now()}`,
+        status: 'published',
+        assessment_type: 'quiz',
+        default_attempts: 3,
+      })
+      .select('id')
+      .single();
     if (!a) throw new Error('assess seed failed');
-    const { data: q } = await admin.from('questions').insert({
-      assessment_id: a.id, position: 0, type: 'tf',
-      body: { stem: 'T' }, scoring: { correct: true },
-    }).select('id').single();
+    const { data: q } = await admin
+      .from('questions')
+      .insert({
+        assessment_id: a.id,
+        position: 0,
+        type: 'tf',
+        body: { stem: 'T' },
+        scoring: { correct: true },
+      })
+      .select('id')
+      .single();
     if (!q) throw new Error('question seed failed');
-    const { data: at } = await admin.from('attempts').insert({
-      assessment_id: a.id, student_user_id: sB.id, attempt_no: 1, seed: 1, status: 'in_progress',
-    }).select('id').single();
+    const { data: at } = await admin
+      .from('attempts')
+      .insert({
+        assessment_id: a.id,
+        student_user_id: sB.id,
+        attempt_no: 1,
+        seed: 1,
+        status: 'in_progress',
+      })
+      .select('id')
+      .single();
     if (!at) throw new Error('attempt seed failed');
-    const { data: ans } = await admin.from('answers').insert({
-      attempt_id: at.id, question_id: q.id,
-      rendered_question_snapshot: { question_id: q.id, question_type: 'tf', seed: 1, rendered_at: 'x', render: {} },
-    }).select('id').single();
+    const { data: ans } = await admin
+      .from('answers')
+      .insert({
+        attempt_id: at.id,
+        question_id: q.id,
+        rendered_question_snapshot: {
+          question_id: q.id,
+          question_type: 'tf',
+          seed: 1,
+          rendered_at: 'x',
+          render: {},
+        },
+      })
+      .select('id')
+      .single();
     if (!ans) throw new Error('answer seed failed');
 
     const { data } = await sA.client.from('answers').select('id').eq('id', ans.id);
@@ -3503,26 +3895,62 @@ test.describe('answers RLS isolation', () => {
     const sA = await createTestUserClient('student', perTestUserIds);
     const sB = await createTestUserClient('student', perTestUserIds);
 
-    const { data: a } = await admin.from('assessments').insert({
-      owner_user_id: inst.id, title: 'A', slug: `a-${Date.now()}`,
-      status: 'published', assessment_type: 'quiz', default_attempts: 3,
-    }).select('id').single();
+    const { data: a } = await admin
+      .from('assessments')
+      .insert({
+        owner_user_id: inst.id,
+        title: 'A',
+        slug: `a-${Date.now()}`,
+        status: 'published',
+        assessment_type: 'quiz',
+        default_attempts: 3,
+      })
+      .select('id')
+      .single();
     if (!a) throw new Error('seed failed');
-    const { data: q } = await admin.from('questions').insert({
-      assessment_id: a.id, position: 0, type: 'tf', body: { stem: 'T' }, scoring: { correct: true },
-    }).select('id').single();
+    const { data: q } = await admin
+      .from('questions')
+      .insert({
+        assessment_id: a.id,
+        position: 0,
+        type: 'tf',
+        body: { stem: 'T' },
+        scoring: { correct: true },
+      })
+      .select('id')
+      .single();
     if (!q) throw new Error('seed q failed');
-    const { data: at } = await admin.from('attempts').insert({
-      assessment_id: a.id, student_user_id: sB.id, attempt_no: 1, seed: 1, status: 'in_progress',
-    }).select('id').single();
+    const { data: at } = await admin
+      .from('attempts')
+      .insert({
+        assessment_id: a.id,
+        student_user_id: sB.id,
+        attempt_no: 1,
+        seed: 1,
+        status: 'in_progress',
+      })
+      .select('id')
+      .single();
     if (!at) throw new Error('seed at failed');
-    const { data: ans } = await admin.from('answers').insert({
-      attempt_id: at.id, question_id: q.id,
-      rendered_question_snapshot: { question_id: q.id, question_type: 'tf', seed: 1, rendered_at: 'x', render: {} },
-    }).select('id').single();
+    const { data: ans } = await admin
+      .from('answers')
+      .insert({
+        attempt_id: at.id,
+        question_id: q.id,
+        rendered_question_snapshot: {
+          question_id: q.id,
+          question_type: 'tf',
+          seed: 1,
+          rendered_at: 'x',
+          render: {},
+        },
+      })
+      .select('id')
+      .single();
     if (!ans) throw new Error('seed ans failed');
 
-    const { data, error } = await sA.client.from('answers')
+    const { data, error } = await sA.client
+      .from('answers')
       .update({ response: { type: 'tf', value: true } })
       .eq('id', ans.id)
       .select('id');
@@ -3555,27 +3983,64 @@ test.describe('answers.rendered_question_snapshot is immutable (Plan 3 regressio
     const admin = createClient(SUPABASE_URL, SERVICE_KEY);
     const inst = await createTestUserClient('instructor', perTestUserIds);
     const student = await createTestUserClient('student', perTestUserIds);
-    const { data: a } = await admin.from('assessments').insert({
-      owner_user_id: inst.id, title: 'A', slug: `a-${Date.now()}`,
-      status: 'published', assessment_type: 'quiz', default_attempts: 3,
-    }).select('id').single();
+    const { data: a } = await admin
+      .from('assessments')
+      .insert({
+        owner_user_id: inst.id,
+        title: 'A',
+        slug: `a-${Date.now()}`,
+        status: 'published',
+        assessment_type: 'quiz',
+        default_attempts: 3,
+      })
+      .select('id')
+      .single();
     if (!a) throw new Error('seed failed');
-    const { data: q } = await admin.from('questions').insert({
-      assessment_id: a.id, position: 0, type: 'tf', body: { stem: 'T' }, scoring: { correct: true },
-    }).select('id').single();
+    const { data: q } = await admin
+      .from('questions')
+      .insert({
+        assessment_id: a.id,
+        position: 0,
+        type: 'tf',
+        body: { stem: 'T' },
+        scoring: { correct: true },
+      })
+      .select('id')
+      .single();
     if (!q) throw new Error('seed q failed');
-    const { data: at } = await admin.from('attempts').insert({
-      assessment_id: a.id, student_user_id: student.id, attempt_no: 1, seed: 1, status: 'in_progress',
-    }).select('id').single();
+    const { data: at } = await admin
+      .from('attempts')
+      .insert({
+        assessment_id: a.id,
+        student_user_id: student.id,
+        attempt_no: 1,
+        seed: 1,
+        status: 'in_progress',
+      })
+      .select('id')
+      .single();
     if (!at) throw new Error('seed at failed');
-    const original = { question_id: q.id, question_type: 'tf', seed: 1, rendered_at: 'x', render: { v: 1 } };
-    const { data: ans } = await admin.from('answers').insert({
-      attempt_id: at.id, question_id: q.id, rendered_question_snapshot: original,
-    }).select('id').single();
+    const original = {
+      question_id: q.id,
+      question_type: 'tf',
+      seed: 1,
+      rendered_at: 'x',
+      render: { v: 1 },
+    };
+    const { data: ans } = await admin
+      .from('answers')
+      .insert({
+        attempt_id: at.id,
+        question_id: q.id,
+        rendered_question_snapshot: original,
+      })
+      .select('id')
+      .single();
     if (!ans) throw new Error('seed ans failed');
 
     const mutated = { ...original, render: { v: 999 } };
-    const { error } = await admin.from('answers')
+    const { error } = await admin
+      .from('answers')
       .update({ rendered_question_snapshot: mutated })
       .eq('id', ans.id);
     expect(error).not.toBeNull();
@@ -3607,33 +4072,66 @@ test.describe('submit_attempt is idempotent (cannot submit twice)', () => {
     const admin = createClient(SUPABASE_URL, SERVICE_KEY);
     const inst = await createTestUserClient('instructor', perTestUserIds);
     const student = await createTestUserClient('student', perTestUserIds);
-    const { data: a } = await admin.from('assessments').insert({
-      owner_user_id: inst.id, title: 'A', slug: `a-${Date.now()}`,
-      status: 'published', assessment_type: 'quiz', default_attempts: 3,
-    }).select('id').single();
+    const { data: a } = await admin
+      .from('assessments')
+      .insert({
+        owner_user_id: inst.id,
+        title: 'A',
+        slug: `a-${Date.now()}`,
+        status: 'published',
+        assessment_type: 'quiz',
+        default_attempts: 3,
+      })
+      .select('id')
+      .single();
     if (!a) throw new Error('seed failed');
-    const { data: q } = await admin.from('questions').insert({
-      assessment_id: a.id, position: 0, type: 'tf', body: { stem: 'T' }, scoring: { correct: true },
-    }).select('id').single();
+    const { data: q } = await admin
+      .from('questions')
+      .insert({
+        assessment_id: a.id,
+        position: 0,
+        type: 'tf',
+        body: { stem: 'T' },
+        scoring: { correct: true },
+      })
+      .select('id')
+      .single();
     if (!q) throw new Error('seed q failed');
 
     // Start as student via RPC.
-    const snapshots = [{ question_id: q.id, snapshot: { question_id: q.id, question_type: 'tf', seed: 1, rendered_at: 'x', render: { grading_target: { kind: 'tf', correct: true } } } }];
+    const snapshots = [
+      {
+        question_id: q.id,
+        snapshot: {
+          question_id: q.id,
+          question_type: 'tf',
+          seed: 1,
+          rendered_at: 'x',
+          render: { grading_target: { kind: 'tf', correct: true } },
+        },
+      },
+    ];
     const { data: aid } = await student.client.rpc('start_attempt', {
-      p_assessment_id: a.id, p_student_user_id: student.id, p_attempt_no: 1, p_seed: 1, p_snapshots: snapshots,
+      p_assessment_id: a.id,
+      p_student_user_id: student.id,
+      p_attempt_no: 1,
+      p_seed: 1,
+      p_snapshots: snapshots,
     });
     if (!aid) throw new Error('start_attempt failed');
 
     // First submit OK.
     const { error: e1 } = await student.client.rpc('submit_attempt', {
-      p_attempt_id: aid, p_grades: [{ question_id: q.id, auto_score: 1, score_method: 'auto' }],
+      p_attempt_id: aid,
+      p_grades: [{ question_id: q.id, auto_score: 1, score_method: 'auto' }],
       p_summary: { raw_score: 1, max_score: 1, percentage: 100 },
     });
     expect(e1).toBeNull();
 
     // Second submit must error.
     const { error: e2 } = await student.client.rpc('submit_attempt', {
-      p_attempt_id: aid, p_grades: [{ question_id: q.id, auto_score: 0, score_method: 'auto' }],
+      p_attempt_id: aid,
+      p_grades: [{ question_id: q.id, auto_score: 0, score_method: 'auto' }],
       p_summary: { raw_score: 0, max_score: 1, percentage: 0 },
     });
     expect(e2).not.toBeNull();
@@ -3684,23 +4182,45 @@ test.describe('take page (in-progress attempt) a11y', () => {
     const inst = await createTestUserClient('instructor', perTestUserIds);
     const student = await createTestUserClient('student', perTestUserIds);
 
-    const { data: a } = await admin.from('assessments').insert({
-      owner_user_id: inst.id, title: 'a11y take', slug: `at-${Date.now()}`,
-      status: 'published', assessment_type: 'quiz', default_attempts: 1,
-    }).select('id').single();
+    const { data: a } = await admin
+      .from('assessments')
+      .insert({
+        owner_user_id: inst.id,
+        title: 'a11y take',
+        slug: `at-${Date.now()}`,
+        status: 'published',
+        assessment_type: 'quiz',
+        default_attempts: 1,
+      })
+      .select('id')
+      .single();
     if (!a) throw new Error('seed failed');
-    const { data: q } = await admin.from('questions').insert({
-      assessment_id: a.id, position: 0, type: 'mc',
-      body: { stem: 'Pick A', choices: [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }] },
-      scoring: { correct_id: 'a' },
-    }).select('id').single();
+    const { data: q } = await admin
+      .from('questions')
+      .insert({
+        assessment_id: a.id,
+        position: 0,
+        type: 'mc',
+        body: {
+          stem: 'Pick A',
+          choices: [
+            { id: 'a', label: 'A' },
+            { id: 'b', label: 'B' },
+          ],
+        },
+        scoring: { correct_id: 'a' },
+      })
+      .select('id')
+      .single();
     if (!q) throw new Error('seed q failed');
 
     await signInBrowser(context, student);
     await page.goto(`/take/${a.id}`);
     await page.waitForURL(/\/attempts\//);
     const results = await new AxeBuilder({ page }).analyze();
-    expect(results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious')).toEqual([]);
+    expect(
+      results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious'),
+    ).toEqual([]);
   });
 });
 ```
@@ -3731,37 +4251,75 @@ test.describe('result page a11y', () => {
     const inst = await createTestUserClient('instructor', perTestUserIds);
     const student = await createTestUserClient('student', perTestUserIds);
 
-    const { data: a } = await admin.from('assessments').insert({
-      owner_user_id: inst.id, title: 'a11y result', slug: `ar-${Date.now()}`,
-      status: 'published', assessment_type: 'quiz', default_attempts: 1,
-    }).select('id').single();
+    const { data: a } = await admin
+      .from('assessments')
+      .insert({
+        owner_user_id: inst.id,
+        title: 'a11y result',
+        slug: `ar-${Date.now()}`,
+        status: 'published',
+        assessment_type: 'quiz',
+        default_attempts: 1,
+      })
+      .select('id')
+      .single();
     if (!a) throw new Error('seed failed');
-    const { data: q } = await admin.from('questions').insert({
-      assessment_id: a.id, position: 0, type: 'tf', body: { stem: 'T?' }, scoring: { correct: true },
-    }).select('id').single();
+    const { data: q } = await admin
+      .from('questions')
+      .insert({
+        assessment_id: a.id,
+        position: 0,
+        type: 'tf',
+        body: { stem: 'T?' },
+        scoring: { correct: true },
+      })
+      .select('id')
+      .single();
     if (!q) throw new Error('seed q failed');
 
-    const snap = { question_id: q.id, question_type: 'tf', seed: 1, rendered_at: 'x', render: {
-      materialized_values: {}, rendered_stem: 'T?', rendered_body: { kind: 'tf' },
-      grading_target: { kind: 'tf', correct: true }, validation_errors: [],
-    }};
-    const { data: at } = await admin.from('attempts').insert({
-      assessment_id: a.id, student_user_id: student.id, attempt_no: 1, seed: 1,
-      status: 'submitted', submitted_at: new Date().toISOString(),
-      summary: { raw_score: 1, max_score: 1, percentage: 100 },
-    }).select('id').single();
+    const snap = {
+      question_id: q.id,
+      question_type: 'tf',
+      seed: 1,
+      rendered_at: 'x',
+      render: {
+        materialized_values: {},
+        rendered_stem: 'T?',
+        rendered_body: { kind: 'tf' },
+        grading_target: { kind: 'tf', correct: true },
+        validation_errors: [],
+      },
+    };
+    const { data: at } = await admin
+      .from('attempts')
+      .insert({
+        assessment_id: a.id,
+        student_user_id: student.id,
+        attempt_no: 1,
+        seed: 1,
+        status: 'submitted',
+        submitted_at: new Date().toISOString(),
+        summary: { raw_score: 1, max_score: 1, percentage: 100 },
+      })
+      .select('id')
+      .single();
     if (!at) throw new Error('seed at failed');
     await admin.from('answers').insert({
-      attempt_id: at.id, question_id: q.id,
+      attempt_id: at.id,
+      question_id: q.id,
       rendered_question_snapshot: snap,
       response: { type: 'tf', value: true },
-      auto_score: 1, score_method: 'auto', graded_at: new Date().toISOString(),
+      auto_score: 1,
+      score_method: 'auto',
+      graded_at: new Date().toISOString(),
     });
 
     await signInBrowser(context, student);
     await page.goto(`/attempts/${at.id}/result`);
     const results = await new AxeBuilder({ page }).analyze();
-    expect(results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious')).toEqual([]);
+    expect(
+      results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious'),
+    ).toEqual([]);
   });
 });
 ```
@@ -3791,16 +4349,26 @@ test.describe('gradebook page a11y', () => {
     const admin = createClient(SUPABASE_URL, SERVICE_KEY);
     const inst = await createTestUserClient('instructor', perTestUserIds);
 
-    const { data: a } = await admin.from('assessments').insert({
-      owner_user_id: inst.id, title: 'a11y gb', slug: `gb-${Date.now()}`,
-      status: 'published', assessment_type: 'quiz', default_attempts: 3,
-    }).select('id').single();
+    const { data: a } = await admin
+      .from('assessments')
+      .insert({
+        owner_user_id: inst.id,
+        title: 'a11y gb',
+        slug: `gb-${Date.now()}`,
+        status: 'published',
+        assessment_type: 'quiz',
+        default_attempts: 3,
+      })
+      .select('id')
+      .single();
     if (!a) throw new Error('seed failed');
 
     await signInBrowser(context, inst);
     await page.goto(`/assessments/${a.id}/attempts`);
     const results = await new AxeBuilder({ page }).analyze();
-    expect(results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious')).toEqual([]);
+    expect(
+      results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious'),
+    ).toEqual([]);
   });
 });
 ```
@@ -3845,16 +4413,31 @@ test.describe('student take + submit happy path', () => {
     const inst = await createTestUserClient('instructor', perTestUserIds);
     const student = await createTestUserClient('student', perTestUserIds);
 
-    const { data: a } = await admin.from('assessments').insert({
-      owner_user_id: inst.id, title: 'E2E take', slug: `tas-${Date.now()}`,
-      status: 'published', assessment_type: 'quiz', default_attempts: 3,
-    }).select('id').single();
+    const { data: a } = await admin
+      .from('assessments')
+      .insert({
+        owner_user_id: inst.id,
+        title: 'E2E take',
+        slug: `tas-${Date.now()}`,
+        status: 'published',
+        assessment_type: 'quiz',
+        default_attempts: 3,
+      })
+      .select('id')
+      .single();
     if (!a) throw new Error('seed failed');
     await admin.from('questions').insert({
-      assessment_id: a.id, position: 0, type: 'mc',
-      body: { stem: 'What is 2+2?', choices: [
-        { id: 'a', label: '3' }, { id: 'b', label: '4' }, { id: 'c', label: '5' }
-      ]},
+      assessment_id: a.id,
+      position: 0,
+      type: 'mc',
+      body: {
+        stem: 'What is 2+2?',
+        choices: [
+          { id: 'a', label: '3' },
+          { id: 'b', label: '4' },
+          { id: 'c', label: '5' },
+        ],
+      },
       scoring: { correct_id: 'b' },
     });
 
@@ -3911,19 +4494,38 @@ test.describe('student resume in-progress attempt', () => {
     for (const id of perTestUserIds) await admin.auth.admin.deleteUser(id);
   });
 
-  test('navigates back to same /attempts/[aid] and restores response', async ({ page, context }) => {
+  test('navigates back to same /attempts/[aid] and restores response', async ({
+    page,
+    context,
+  }) => {
     const admin = createClient(SUPABASE_URL, SERVICE_KEY);
     const inst = await createTestUserClient('instructor', perTestUserIds);
     const student = await createTestUserClient('student', perTestUserIds);
 
-    const { data: a } = await admin.from('assessments').insert({
-      owner_user_id: inst.id, title: 'Resume', slug: `r-${Date.now()}`,
-      status: 'published', assessment_type: 'quiz', default_attempts: 3,
-    }).select('id').single();
+    const { data: a } = await admin
+      .from('assessments')
+      .insert({
+        owner_user_id: inst.id,
+        title: 'Resume',
+        slug: `r-${Date.now()}`,
+        status: 'published',
+        assessment_type: 'quiz',
+        default_attempts: 3,
+      })
+      .select('id')
+      .single();
     if (!a) throw new Error('seed failed');
     await admin.from('questions').insert({
-      assessment_id: a.id, position: 0, type: 'mc',
-      body: { stem: 'pick', choices: [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }] },
+      assessment_id: a.id,
+      position: 0,
+      type: 'mc',
+      body: {
+        stem: 'pick',
+        choices: [
+          { id: 'a', label: 'A' },
+          { id: 'b', label: 'B' },
+        ],
+      },
       scoring: { correct_id: 'a' },
     });
 
@@ -3940,7 +4542,7 @@ test.describe('student resume in-progress attempt', () => {
     await page.goto('/');
     await page.goto(`/take/${a.id}`);
     await page.waitForURL(/\/attempts\//);
-    expect(page.url()).toBe(url1);   // same attempt id, not a new one
+    expect(page.url()).toBe(url1); // same attempt id, not a new one
     await expect(page.getByLabel('A')).toBeChecked();
   });
 });
@@ -3986,18 +4588,36 @@ test.describe('retake uses a different seed → different materialized values', 
     const inst = await createTestUserClient('instructor', perTestUserIds);
     const student = await createTestUserClient('student', perTestUserIds);
 
-    const { data: a } = await admin.from('assessments').insert({
-      owner_user_id: inst.id, title: 'Retake', slug: `rt-${Date.now()}`,
-      status: 'published', assessment_type: 'quiz', default_attempts: 3,
-    }).select('id').single();
+    const { data: a } = await admin
+      .from('assessments')
+      .insert({
+        owner_user_id: inst.id,
+        title: 'Retake',
+        slug: `rt-${Date.now()}`,
+        status: 'published',
+        assessment_type: 'quiz',
+        default_attempts: 3,
+      })
+      .select('id')
+      .single();
     if (!a) throw new Error('seed failed');
-    const { data: q } = await admin.from('questions').insert({
-      assessment_id: a.id, position: 0, type: 'numeric',
-      body: { stem: 'mass = {{m}}; answer m+1' }, scoring: { formula: 'm + 1', tolerance: 0.01 },
-    }).select('id').single();
+    const { data: q } = await admin
+      .from('questions')
+      .insert({
+        assessment_id: a.id,
+        position: 0,
+        type: 'numeric',
+        body: { stem: 'mass = {{m}}; answer m+1' },
+        scoring: { formula: 'm + 1', tolerance: 0.01 },
+      })
+      .select('id')
+      .single();
     if (!q) throw new Error('seed q failed');
     await admin.from('question_variables').insert({
-      question_id: q.id, name: 'm', type: 'randint', spec: { type: 'randint', min: 10, max: 999 },
+      question_id: q.id,
+      name: 'm',
+      type: 'randint',
+      spec: { type: 'randint', min: 10, max: 999 },
     });
 
     await signInBrowser(context, student);
@@ -4005,7 +4625,11 @@ test.describe('retake uses a different seed → different materialized values', 
     // Attempt 1
     await page.goto(`/take/${a.id}`);
     await page.waitForURL(/\/attempts\//);
-    const stem1 = await page.locator('h2:has-text("Q1")').locator('xpath=following-sibling::div[1]').first().textContent();
+    const stem1 = await page
+      .locator('h2:has-text("Q1")')
+      .locator('xpath=following-sibling::div[1]')
+      .first()
+      .textContent();
 
     // Submit attempt 1 (any value)
     await page.getByLabel('Numeric answer').fill('0');
@@ -4017,9 +4641,13 @@ test.describe('retake uses a different seed → different materialized values', 
     // Start attempt 2
     await page.goto(`/take/${a.id}`);
     await page.waitForURL(/\/attempts\//);
-    const stem2 = await page.locator('h2:has-text("Q1")').locator('xpath=following-sibling::div[1]').first().textContent();
+    const stem2 = await page
+      .locator('h2:has-text("Q1")')
+      .locator('xpath=following-sibling::div[1]')
+      .first()
+      .textContent();
 
-    expect(stem2).not.toBe(stem1);   // materialized {{m}} differs
+    expect(stem2).not.toBe(stem1); // materialized {{m}} differs
   });
 });
 ```
@@ -4065,41 +4693,71 @@ test.describe('instructor gradebook shows submitted attempts', () => {
     const s1 = await createTestUserClient('student', perTestUserIds);
     const s2 = await createTestUserClient('student', perTestUserIds);
 
-    const { data: a } = await admin.from('assessments').insert({
-      owner_user_id: inst.id, title: 'GB E2E', slug: `gbe-${Date.now()}`,
-      status: 'published', assessment_type: 'quiz', default_attempts: 3,
-    }).select('id').single();
+    const { data: a } = await admin
+      .from('assessments')
+      .insert({
+        owner_user_id: inst.id,
+        title: 'GB E2E',
+        slug: `gbe-${Date.now()}`,
+        status: 'published',
+        assessment_type: 'quiz',
+        default_attempts: 3,
+      })
+      .select('id')
+      .single();
     if (!a) throw new Error('seed failed');
-    const { data: q } = await admin.from('questions').insert({
-      assessment_id: a.id, position: 0, type: 'tf', body: { stem: 'T?' }, scoring: { correct: true },
-    }).select('id').single();
+    const { data: q } = await admin
+      .from('questions')
+      .insert({
+        assessment_id: a.id,
+        position: 0,
+        type: 'tf',
+        body: { stem: 'T?' },
+        scoring: { correct: true },
+      })
+      .select('id')
+      .single();
     if (!q) throw new Error('seed q failed');
 
     const snap = (correct: boolean) => ({
-      question_id: q.id, question_type: 'tf', seed: 1, rendered_at: 'x',
+      question_id: q.id,
+      question_type: 'tf',
+      seed: 1,
+      rendered_at: 'x',
       render: {
-        materialized_values: {}, rendered_stem: 'T?',
+        materialized_values: {},
+        rendered_stem: 'T?',
         rendered_body: { kind: 'tf' },
         grading_target: { kind: 'tf', correct },
         validation_errors: [],
-      }
+      },
     });
 
     for (const { sid, score, raw } of [
       { sid: s1.id, score: 1, raw: snap(true) },
       { sid: s2.id, score: 0, raw: snap(true) },
     ]) {
-      const { data: at } = await admin.from('attempts').insert({
-        assessment_id: a.id, student_user_id: sid, attempt_no: 1, seed: 1,
-        status: 'submitted', submitted_at: new Date().toISOString(),
-        summary: { raw_score: score, max_score: 1, percentage: score * 100 },
-      }).select('id').single();
+      const { data: at } = await admin
+        .from('attempts')
+        .insert({
+          assessment_id: a.id,
+          student_user_id: sid,
+          attempt_no: 1,
+          seed: 1,
+          status: 'submitted',
+          submitted_at: new Date().toISOString(),
+          summary: { raw_score: score, max_score: 1, percentage: score * 100 },
+        })
+        .select('id')
+        .single();
       if (!at) throw new Error('seed at failed');
       await admin.from('answers').insert({
-        attempt_id: at.id, question_id: q.id,
+        attempt_id: at.id,
+        question_id: q.id,
         rendered_question_snapshot: raw,
         response: { type: 'tf', value: score === 1 },
-        auto_score: score, score_method: 'auto',
+        auto_score: score,
+        score_method: 'auto',
         graded_at: new Date().toISOString(),
       });
     }
@@ -4145,7 +4803,6 @@ Open `docs/runbooks/nvda-test-script.md` and locate the end of the Plan 2 sectio
 Append to `docs/runbooks/nvda-test-script.md`:
 
 ```markdown
-
 ## Plan 3 — Student attempt + result + gradebook critical path (added 2026-05-26)
 
 **Setup:** local Supabase up; seed one published assessment with 3 questions (one mc, one numeric, one tf). Seed a student account.
@@ -4353,6 +5010,7 @@ Spec-coverage scan (each spec section → task that implements it):
 Placeholder scan — no "TBD", "TODO", or "see spec §X" placeholders in the plan. Every step shows the actual code.
 
 Type-consistency scan:
+
 - `AnswerSnapshot`, `Response`, `GradeResult`, `AttemptSummary` defined in lib/grading; consumed identically in Tasks 12, 14, 17, 18, 19, 22. ✓
 - `SaveResult`, `SubmitResult`, `StartResult` defined in actions; consumed in client.tsx (Task 17) and the result page form action (Task 19). ✓
 - `requireStudent` returns `{user, role}`; `requireInstructor` returns `{user}`. Used consistently in Tasks 12, 13, 14, 17, 19, 21, 22. ✓

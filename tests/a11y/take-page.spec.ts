@@ -61,9 +61,7 @@ test.describe('take page (in-progress attempt) a11y', () => {
     await page.waitForURL(/\/attempts\//);
     const results = await new AxeBuilder({ page }).analyze();
     expect(
-      results.violations.filter(
-        (v) => v.impact === 'critical' || v.impact === 'serious',
-      ),
+      results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious'),
     ).toEqual([]);
   });
 });

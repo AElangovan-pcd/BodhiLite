@@ -21,11 +21,7 @@ export default async function Home() {
   } = await supabase.auth.getUser();
   if (!user) redirect('/sign-in' as Route);
 
-  const { data: profile } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single();
+  const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
   const role = profile?.role ?? 'student';
 
   const { data: assessments } = await supabase
@@ -89,10 +85,7 @@ export default async function Home() {
           <p className="text-muted-foreground mt-2 text-sm">Signed in as {user.email}.</p>
         </div>
         <form action="/sign-out" method="post">
-          <button
-            type="submit"
-            className="hover:bg-muted rounded border px-3 py-1.5 text-sm"
-          >
+          <button type="submit" className="hover:bg-muted rounded border px-3 py-1.5 text-sm">
             Sign out
           </button>
         </form>
@@ -110,24 +103,17 @@ export default async function Home() {
       <section>
         <h2 className="mb-2 text-lg font-semibold">Your assessments</h2>
         {rows.length === 0 && (
-          <p className="text-muted-foreground text-sm">
-            No assessments available right now.
-          </p>
+          <p className="text-muted-foreground text-sm">No assessments available right now.</p>
         )}
         <ul className="flex flex-col gap-2">
           {rows.map((r) => (
-            <li
-              key={r.id}
-              className="flex items-center justify-between rounded border p-3"
-            >
+            <li key={r.id} className="flex items-center justify-between rounded border p-3">
               <span className="font-medium">{r.title}</span>
               <span className="flex items-center gap-3 text-sm">
                 {r.status === 'not_started' && (
                   <span className="text-muted-foreground">Not yet attempted</span>
                 )}
-                {r.status === 'in_progress' && (
-                  <span className="text-amber-700">In progress</span>
-                )}
+                {r.status === 'in_progress' && <span className="text-amber-700">In progress</span>}
                 {r.status === 'best' && (
                   <span>
                     Best: {r.bestRaw}/{r.bestMax}
@@ -137,11 +123,7 @@ export default async function Home() {
                   href={`/take/${r.id}` as Route}
                   className="bg-primary text-primary-foreground rounded px-3 py-1"
                 >
-                  {r.status === 'in_progress'
-                    ? 'Resume'
-                    : r.status === 'best'
-                      ? 'Retake'
-                      : 'Start'}
+                  {r.status === 'in_progress' ? 'Resume' : r.status === 'best' ? 'Retake' : 'Start'}
                 </Link>
               </span>
             </li>

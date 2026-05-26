@@ -12,10 +12,7 @@ type ControlledProps = {
   disabled?: boolean;
 };
 
-export function AnswerSurface({
-  body,
-  ...controlled
-}: { body: RenderedBody } & ControlledProps) {
+export function AnswerSurface({ body, ...controlled }: { body: RenderedBody } & ControlledProps) {
   const key = JSON.stringify(body);
   switch (body.kind) {
     case 'mc':
@@ -42,9 +39,7 @@ function McSurface({
   const groupId = useId();
   const [local, setLocal] = useState<string | null>(null);
   const controlled = value !== undefined && onChange !== undefined;
-  const picked = controlled
-    ? ((value as Response & { type: 'mc' })?.choice_id ?? null)
-    : local;
+  const picked = controlled ? ((value as Response & { type: 'mc' })?.choice_id ?? null) : local;
   const set = (id: string) => {
     if (controlled) onChange!({ type: 'mc', choice_id: id });
     else setLocal(id);
@@ -110,9 +105,7 @@ function TfSurface({ value, onChange, disabled }: ControlledProps) {
   const groupId = useId();
   const [local, setLocal] = useState<boolean | null>(null);
   const controlled = value !== undefined && onChange !== undefined;
-  const v = controlled
-    ? ((value as Response & { type: 'tf' })?.value ?? null)
-    : local;
+  const v = controlled ? ((value as Response & { type: 'tf' })?.value ?? null) : local;
   const set = (b: boolean) => {
     if (controlled) onChange!({ type: 'tf', value: b });
     else setLocal(b);
@@ -152,9 +145,7 @@ function NumericSurface({
 }: { body: Extract<RenderedBody, { kind: 'numeric' }> } & ControlledProps) {
   const [local, setLocal] = useState('');
   const controlled = value !== undefined && onChange !== undefined;
-  const v = controlled
-    ? ((value as Response & { type: 'numeric' })?.value ?? '')
-    : local;
+  const v = controlled ? ((value as Response & { type: 'numeric' })?.value ?? '') : local;
   const set = (s: string) => {
     if (controlled) onChange!({ type: 'numeric', value: s });
     else setLocal(s);
@@ -178,9 +169,7 @@ function NumericSurface({
 function ShortAnswerSurface({ value, onChange, disabled }: ControlledProps) {
   const [local, setLocal] = useState('');
   const controlled = value !== undefined && onChange !== undefined;
-  const v = controlled
-    ? ((value as Response & { type: 'short_answer' })?.value ?? '')
-    : local;
+  const v = controlled ? ((value as Response & { type: 'short_answer' })?.value ?? '') : local;
   const set = (s: string) => {
     if (controlled) onChange!({ type: 'short_answer', value: s });
     else setLocal(s);
@@ -203,9 +192,7 @@ function FillInSurface({
 }: { body: Extract<RenderedBody, { kind: 'fill_in' }> } & ControlledProps) {
   const [local, setLocal] = useState<Record<string, string>>({});
   const controlled = value !== undefined && onChange !== undefined;
-  const vals = controlled
-    ? ((value as Response & { type: 'fill_in' })?.blanks ?? {})
-    : local;
+  const vals = controlled ? ((value as Response & { type: 'fill_in' })?.blanks ?? {}) : local;
   const set = (id: string, s: string) => {
     const next = { ...vals, [id]: s };
     if (controlled) onChange!({ type: 'fill_in', blanks: next });

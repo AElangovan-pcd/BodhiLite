@@ -14,10 +14,7 @@ function err(message: string): GradeResult {
   return { ok: false, auto_score: 0, score_method: 'auto_error', error: message };
 }
 
-export function gradeAnswer(
-  snapshot: AnswerSnapshot,
-  response: Response | null,
-): GradeResult {
+export function gradeAnswer(snapshot: AnswerSnapshot, response: Response | null): GradeResult {
   try {
     if (isResponseEmpty(response)) return ok(0);
     const r = response!;

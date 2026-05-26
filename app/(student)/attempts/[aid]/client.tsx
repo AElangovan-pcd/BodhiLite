@@ -81,10 +81,7 @@ export function AttemptClient({ attemptId, title, attemptNo, maxAttempts, cards 
         submitDisabled={overallStatus === 'saving' || submitting}
       />
       {submitError && (
-        <div
-          role="alert"
-          className="mx-4 mt-4 rounded border border-red-300 bg-red-50 p-3 text-sm"
-        >
+        <div role="alert" className="mx-4 mt-4 rounded border border-red-300 bg-red-50 p-3 text-sm">
           Submit failed: {submitError}
         </div>
       )}
@@ -148,10 +145,10 @@ function CardWithAutosave({
     if (autosave.lastSavedAt) setLastSavedAt(autosave.lastSavedAt);
   }, [autosave.status, autosave.lastSavedAt, card.questionId, setCardStatus, setLastSavedAt]);
 
-  const handleChange = useCallback((r: Response) => onChange(card.questionId, r), [
-    onChange,
-    card.questionId,
-  ]);
+  const handleChange = useCallback(
+    (r: Response) => onChange(card.questionId, r),
+    [onChange, card.questionId],
+  );
 
   return (
     <QuestionCard

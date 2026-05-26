@@ -8,10 +8,7 @@ test.describe('instructor gradebook shows submitted attempts', () => {
     for (const id of cleanupIds) await deleteTestUser(id);
   });
 
-  test('two students with attempts both appear with best scores', async ({
-    page,
-    context,
-  }) => {
+  test('two students with attempts both appear with best scores', async ({ page, context }) => {
     const admin = adminClient();
     const stamp = Date.now();
     const inst = await createTestUserClient({

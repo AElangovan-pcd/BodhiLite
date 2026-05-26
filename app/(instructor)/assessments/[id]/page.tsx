@@ -46,10 +46,7 @@ export default async function AssessmentOverviewPage({
 
       <div className="mt-2 flex items-baseline justify-between">
         <h1 className="text-3xl font-semibold">{a.title}</h1>
-        <Link
-          href={`/assessments/${id}/attempts` as Route}
-          className="text-sm underline"
-        >
+        <Link href={`/assessments/${id}/attempts` as Route} className="text-sm underline">
           View attempts →
         </Link>
       </div>

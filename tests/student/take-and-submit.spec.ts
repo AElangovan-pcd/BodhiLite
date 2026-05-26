@@ -8,10 +8,7 @@ test.describe('student take + submit happy path', () => {
     for (const id of cleanupIds) await deleteTestUser(id);
   });
 
-  test('answer one mc question, submit, see score and reveal', async ({
-    page,
-    context,
-  }) => {
+  test('answer one mc question, submit, see score and reveal', async ({ page, context }) => {
     const admin = adminClient();
     const stamp = Date.now();
     const inst = await createTestUserClient({

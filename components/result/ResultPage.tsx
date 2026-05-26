@@ -36,8 +36,7 @@ function badge(
   scoreMethod: string | null,
 ): { label: string; tone: 'ok' | 'warn' | 'err' } {
   if (auto == null) return { label: 'Not graded', tone: 'warn' };
-  if (scoreMethod === 'auto_error')
-    return { label: 'Could not auto-grade', tone: 'err' };
+  if (scoreMethod === 'auto_error') return { label: 'Could not auto-grade', tone: 'err' };
   if (auto === 1) return { label: `Correct (${auto.toFixed(2)}/1)`, tone: 'ok' };
   if (auto === 0) return { label: `Incorrect (0/1)`, tone: 'err' };
   return { label: `Partial credit (${auto.toFixed(2)}/1)`, tone: 'warn' };
@@ -66,9 +65,7 @@ export function ResultPage(p: ResultPageProps) {
           <p className="text-3xl font-bold">
             {p.summary.raw_score} / {p.summary.max_score}
           </p>
-          <p className="text-muted-foreground text-sm">
-            {p.summary.percentage.toFixed(2)}%
-          </p>
+          <p className="text-muted-foreground text-sm">{p.summary.percentage.toFixed(2)}%</p>
           {p.bestRaw != null && p.summary.raw_score < p.bestRaw && (
             <p className="text-muted-foreground mt-2 text-xs">
               Highest score on this assessment: {p.bestRaw}
@@ -98,11 +95,7 @@ export function ResultPage(p: ResultPageProps) {
                 <Badge variant="secondary">{row.snapshot.question_type}</Badge>
                 <Badge
                   variant={
-                    b.tone === 'ok'
-                      ? 'default'
-                      : b.tone === 'err'
-                        ? 'destructive'
-                        : 'outline'
+                    b.tone === 'ok' ? 'default' : b.tone === 'err' ? 'destructive' : 'outline'
                   }
                 >
                   {b.label}
@@ -112,9 +105,7 @@ export function ResultPage(p: ResultPageProps) {
                 <Markdown source={row.snapshot.render.rendered_stem} />
               </div>
               <div className="mb-3">
-                <p className="text-muted-foreground mb-1 text-xs font-medium">
-                  Your response
-                </p>
+                <p className="text-muted-foreground mb-1 text-xs font-medium">Your response</p>
                 <AnswerSurface
                   body={row.snapshot.render.rendered_body}
                   value={row.response}

@@ -80,9 +80,7 @@ export async function startAttemptAction(assessmentId: string): Promise<StartRes
 
   const { data: questions, error: qErr } = await supabase
     .from('questions')
-    .select(
-      'id, type, body, scoring, position, question_variables(id, name, type, spec, position)',
-    )
+    .select('id, type, body, scoring, position, question_variables(id, name, type, spec, position)')
     .eq('assessment_id', assessmentId)
     .order('position', { ascending: true });
   if (qErr || !questions) {

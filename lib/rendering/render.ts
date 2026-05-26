@@ -90,10 +90,7 @@ export function renderQuestion(input: RenderInput): RenderOutput {
         body = { kind: 'short_answer' };
         target = {
           kind: 'short_answer',
-          pattern: substitute(
-            (input.question.scoring['pattern'] as string) ?? '',
-            materialized,
-          ),
+          pattern: substitute((input.question.scoring['pattern'] as string) ?? '', materialized),
           case_insensitive: Boolean(input.question.scoring['case_insensitive']),
         };
         break;

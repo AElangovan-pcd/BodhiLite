@@ -26,8 +26,7 @@ export default async function InstructorDrilldownPage({ params }: Props) {
     title: string;
     default_attempts: number;
   };
-  const studentEmail =
-    (attempt.users as unknown as { email: string } | null)?.email ?? 'unknown';
+  const studentEmail = (attempt.users as unknown as { email: string } | null)?.email ?? 'unknown';
 
   const { data: allAttempts } = await supabase
     .from('attempts')

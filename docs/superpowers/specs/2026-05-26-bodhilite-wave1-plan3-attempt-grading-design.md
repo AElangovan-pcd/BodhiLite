@@ -5,6 +5,7 @@
 **Status:** Draft — awaiting user sign-off before plan-writing
 **Parent spec:** [`2026-05-16-bodhilite-phase1-design.md`](2026-05-16-bodhilite-phase1-design.md) (locked)
 **Predecessor plans:**
+
 - [`2026-05-16-bodhilite-wave1-foundation.md`](../plans/2026-05-16-bodhilite-wave1-foundation.md) (Plan 1 — merged `eb9e319`)
 - [`2026-05-18-bodhilite-wave1-plan2-authoring.md`](../plans/2026-05-18-bodhilite-wave1-plan2-authoring.md) (Plan 2 — merged `694e5c3`)
 
@@ -39,20 +40,20 @@ This document describes WHAT Plan 3 delivers and HOW the modules fit together. T
 
 These are the design-shaping decisions made before plan-writing. Each is recorded here so the implementation plan can flow from them without re-litigation.
 
-| #   | Decision                                                                                                                       | Why                                                                                                                                                                                                                          |
-| --- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| D1  | **Plan 3 includes the full instructor gradebook UI.** Plan 4 only handles CSV export + Storage/images + ops/backups.           | Bold scope choice — instructor sees grades inside BodhiLite before the Jul 27 mid-term success criterion, no waiting on Plan 4. Gradebook table = ~3 tasks; small relative to total Plan 3 size.                             |
-| D2  | **Single-page-scroll attempt UI.** All questions on one route; snapshots captured eagerly in the start-attempt transaction.    | Cleanest state model; matches Canvas/Moodle quiz conventions; resume is trivial; doesn't preclude per-page navigation as a Wave 3 polish for exam mode.                                                                      |
-| D3  | **Highest score counts; auto-resume in-progress.** At most one in-progress attempt per (student, assessment).                  | LMS-standard. Simplest mental model for students. Avoids "which one do I count?" disputes.                                                                                                                                   |
-| D4  | **Full reveal on result page.** Score + per-question right/wrong + correct answer extracted from the snapshot's scoring. Same view on revisit. | Quizzes are formative (homework-style, 3 attempts); reveal supports the learning loop. Wave 3 exam mode will have a separate, reveal-locked result page.                                                                     |
-| D5  | **Snapshot stores precomputed grading targets, not just materialized variables.** Numeric target value, regex source (post-substitution), correct choice IDs all baked in at snapshot time. | Grading becomes pure `compare(snapshot, response)`; no formula re-evaluation at grade time; faster + safer for dispute review; failure modes shrink to "is the response parseable" plus "does it match."                     |
-| D6  | **All writes via Server Actions** (Shape A). `startAttemptAction`, `saveAnswerAction` (debounced ~500ms on client), `submitAttemptAction`. | Matches Plan 2 pattern; no Route Handler tier needed at Phase 1 volume (~25 students × ~10 questions/quiz); auth gating free via the `(student)` route group.                                                                |
-| D7  | **Auto-grade runs synchronously on submit** (spec §8.6 verbatim).                                                              | Quizzes are small; single transaction is fine; no background-job infra needed; immediate result page; one less moving part.                                                                                                  |
-| D8  | **Quiz-only in Plan 3.** No timer, no `expires_at` plumbing, no auto-submit on expiry.                                         | Wave 3 (Jul 20) adds exam mode end-to-end. Plan 3 shipping for Wave 1 doesn't need any timer code; not adding scaffolding now keeps the surface minimal.                                                                     |
-| D9  | **Reveal-on-result is implicit** (no per-assessment toggle in Plan 3).                                                         | Matches D4. If the user wants per-assessment control later, it's a Plan 4 polish item — a new `assessments.settings.reveal_correct_answers` enum can be added without schema churn.                                          |
-| D10 | **Submit uses a PL/pgSQL helper (`submit_attempt`).** Multi-row atomicity for `UPDATE answers ... + UPDATE attempts ...`.       | Supabase JS client has no transaction primitive. A SECURITY DEFINER function is the only clean way to keep the submit atomic. Kept simple: takes a pre-computed grades JSONB, writes N answer rows + 1 attempt row.          |
-| D11 | **`AnswerSurface` components get a controlled mode** via optional `value` + `onChange` props. Uncontrolled fallback preserved. | Plan 2's preview keeps working unchanged; Plan 3 lifts state to the parent client component. Backwards-compatible refactor — 1 task of focused work.                                                                         |
-| D12 | **Extract `requireStudent()` / `requireInstructor()` auth helpers.**                                                           | Action count ≥ 4 across the codebase now; defense-in-depth on Server Actions (called out as a tech-gotcha after Plan 2). Plan 2's existing actions get a one-line refactor; new Plan 3 actions adopt from day one.            |
+| #   | Decision                                                                                                                                                                                    | Why                                                                                                                                                                                                                 |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D1  | **Plan 3 includes the full instructor gradebook UI.** Plan 4 only handles CSV export + Storage/images + ops/backups.                                                                        | Bold scope choice — instructor sees grades inside BodhiLite before the Jul 27 mid-term success criterion, no waiting on Plan 4. Gradebook table = ~3 tasks; small relative to total Plan 3 size.                    |
+| D2  | **Single-page-scroll attempt UI.** All questions on one route; snapshots captured eagerly in the start-attempt transaction.                                                                 | Cleanest state model; matches Canvas/Moodle quiz conventions; resume is trivial; doesn't preclude per-page navigation as a Wave 3 polish for exam mode.                                                             |
+| D3  | **Highest score counts; auto-resume in-progress.** At most one in-progress attempt per (student, assessment).                                                                               | LMS-standard. Simplest mental model for students. Avoids "which one do I count?" disputes.                                                                                                                          |
+| D4  | **Full reveal on result page.** Score + per-question right/wrong + correct answer extracted from the snapshot's scoring. Same view on revisit.                                              | Quizzes are formative (homework-style, 3 attempts); reveal supports the learning loop. Wave 3 exam mode will have a separate, reveal-locked result page.                                                            |
+| D5  | **Snapshot stores precomputed grading targets, not just materialized variables.** Numeric target value, regex source (post-substitution), correct choice IDs all baked in at snapshot time. | Grading becomes pure `compare(snapshot, response)`; no formula re-evaluation at grade time; faster + safer for dispute review; failure modes shrink to "is the response parseable" plus "does it match."            |
+| D6  | **All writes via Server Actions** (Shape A). `startAttemptAction`, `saveAnswerAction` (debounced ~500ms on client), `submitAttemptAction`.                                                  | Matches Plan 2 pattern; no Route Handler tier needed at Phase 1 volume (~25 students × ~10 questions/quiz); auth gating free via the `(student)` route group.                                                       |
+| D7  | **Auto-grade runs synchronously on submit** (spec §8.6 verbatim).                                                                                                                           | Quizzes are small; single transaction is fine; no background-job infra needed; immediate result page; one less moving part.                                                                                         |
+| D8  | **Quiz-only in Plan 3.** No timer, no `expires_at` plumbing, no auto-submit on expiry.                                                                                                      | Wave 3 (Jul 20) adds exam mode end-to-end. Plan 3 shipping for Wave 1 doesn't need any timer code; not adding scaffolding now keeps the surface minimal.                                                            |
+| D9  | **Reveal-on-result is implicit** (no per-assessment toggle in Plan 3).                                                                                                                      | Matches D4. If the user wants per-assessment control later, it's a Plan 4 polish item — a new `assessments.settings.reveal_correct_answers` enum can be added without schema churn.                                 |
+| D10 | **Submit uses a PL/pgSQL helper (`submit_attempt`).** Multi-row atomicity for `UPDATE answers ... + UPDATE attempts ...`.                                                                   | Supabase JS client has no transaction primitive. A SECURITY DEFINER function is the only clean way to keep the submit atomic. Kept simple: takes a pre-computed grades JSONB, writes N answer rows + 1 attempt row. |
+| D11 | **`AnswerSurface` components get a controlled mode** via optional `value` + `onChange` props. Uncontrolled fallback preserved.                                                              | Plan 2's preview keeps working unchanged; Plan 3 lifts state to the parent client component. Backwards-compatible refactor — 1 task of focused work.                                                                |
+| D12 | **Extract `requireStudent()` / `requireInstructor()` auth helpers.**                                                                                                                        | Action count ≥ 4 across the codebase now; defense-in-depth on Server Actions (called out as a tech-gotcha after Plan 2). Plan 2's existing actions get a one-line refactor; new Plan 3 actions adopt from day one.  |
 
 ---
 
@@ -95,16 +96,16 @@ app/
 
 Mirror Plan 2's layout-gate pattern.
 
-| Scenario                                                              | Behavior                                                              |
-| --------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| Unauthenticated → any of the above                                    | redirect to `/sign-in`                                                |
-| Student → `(student)` routes                                          | render                                                                |
-| Instructor → `(student)` routes                                       | render (instructor accounts can also take quizzes — useful for QA)    |
-| Student → `(instructor)` routes                                       | 404 (FERPA: don't reveal route shape)                                 |
-| Authenticated student → `/attempts/[aid]` they don't own              | 404 (don't reveal attempt IDs)                                        |
-| Authenticated student → submitted `/attempts/[aid]` (no `/result`)    | redirect to `/attempts/[aid]/result`                                  |
-| Authenticated student → in-progress `/attempts/[aid]/result`          | redirect to `/attempts/[aid]`                                         |
-| Instructor → `/assessments/[id]/attempts` they don't own              | 404 (RLS enforces — query returns no rows)                            |
+| Scenario                                                           | Behavior                                                           |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| Unauthenticated → any of the above                                 | redirect to `/sign-in`                                             |
+| Student → `(student)` routes                                       | render                                                             |
+| Instructor → `(student)` routes                                    | render (instructor accounts can also take quizzes — useful for QA) |
+| Student → `(instructor)` routes                                    | 404 (FERPA: don't reveal route shape)                              |
+| Authenticated student → `/attempts/[aid]` they don't own           | 404 (don't reveal attempt IDs)                                     |
+| Authenticated student → submitted `/attempts/[aid]` (no `/result`) | redirect to `/attempts/[aid]/result`                               |
+| Authenticated student → in-progress `/attempts/[aid]/result`       | redirect to `/attempts/[aid]`                                      |
+| Instructor → `/assessments/[id]/attempts` they don't own           | 404 (RLS enforces — query returns no rows)                         |
 
 ### 2.3 Home page extension
 
@@ -135,12 +136,14 @@ No global app header in Plan 3 (matching Plan 2). Per-page breadcrumbs:
 Server Component shell + Client Component form, single-page scroll.
 
 **Server Component responsibilities:**
+
 1. Auth gate via `requireStudent()` (or instructor — both can take quizzes).
 2. Load the attempt row; verify ownership; verify `status='in_progress'` (else redirect appropriately).
 3. Load all answer rows for this attempt (already exist from `startAttemptAction` — one per question, with snapshot populated, response possibly populated).
 4. Pass `{attempt, answers}` into the Client Component as initial state.
 
 **Client Component responsibilities:**
+
 - Render the scroll layout (top to bottom):
   1. **Header strip** — assessment title, "Attempt N of M", autosave indicator (`Saved` / `Saving…` / `Last saved 3s ago`), `[Submit attempt]` button.
   2. **Question stack** — one card per question in `questions.position` order. Each card:
@@ -162,10 +165,10 @@ The interface contract:
 
 ```ts
 type AnswerSurfaceProps<R extends Response> = {
-  body: QuestionBody;                     // unchanged — from snapshot.rendered
-  value?: R | null;                       // controlled: current value
-  onChange?: (next: R) => void;           // controlled: change handler
-  disabled?: boolean;                     // result page read-only
+  body: QuestionBody; // unchanged — from snapshot.rendered
+  value?: R | null; // controlled: current value
+  onChange?: (next: R) => void; // controlled: change handler
+  disabled?: boolean; // result page read-only
 };
 ```
 
@@ -179,11 +182,12 @@ function useAutosave(opts: {
   questionId: string;
   response: Response | null;
   onSave: (input: SaveInput) => Promise<SaveResult>;
-  debounceMs?: number;        // default 500
+  debounceMs?: number; // default 500
 }): { status: 'idle' | 'saving' | 'saved' | 'error'; lastSavedAt: Date | null; retry: () => void };
 ```
 
 Behavior:
+
 - On `response` change: set `dirty=true`, start a `debounceMs` debounce.
 - On debounce fire: call `onSave({attemptId, questionId, response})`. While in flight: status='saving'.
 - On resolve: status='saved'; record `lastSavedAt = new Date()`. Tick a relative-time string every 5 seconds.
@@ -201,6 +205,7 @@ Behavior:
 - If all answered: simple confirmation: "This will end your attempt and reveal correct answers. Continue?" Buttons: `[Submit]`, `[Cancel]`.
 
 On confirm:
+
 1. Wait for any in-flight autosaves across **all** question cards to settle (block submit while any card's `useAutosave` reports `status === 'saving'` or `dirty === true`). Force a synchronous flush of pending debounces first, then await all in-flight promises.
 2. Call `submitAttemptAction(attemptId)`.
 3. On success: redirect to `/attempts/[aid]/result`.
@@ -218,13 +223,13 @@ This is the keystone of the grading correctness contract. The snapshot is fully 
 type AnswerSnapshot = {
   // Provenance (debugging, dispute review — never used as grading input)
   question_id: string;
-  question_type: QuestionType;            // 'mc' | 'ma' | 'tf' | 'numeric' | 'short_answer' | 'fill_in'
-  seed: number;                           // attempt.seed (same for every question in the attempt)
-  rendered_at: string;                    // ISO timestamp
+  question_type: QuestionType; // 'mc' | 'ma' | 'tf' | 'numeric' | 'short_answer' | 'fill_in'
+  seed: number; // attempt.seed (same for every question in the attempt)
+  rendered_at: string; // ISO timestamp
 
   // Materialized state — what the student actually saw
-  materialized_values: MaterializedValues;          // { compound: 'NaCl', mass: 140, ... }
-  rendered: RenderOutput;                           // structured output from renderQuestion (Plan 2)
+  materialized_values: MaterializedValues; // { compound: 'NaCl', mass: 140, ... }
+  rendered: RenderOutput; // structured output from renderQuestion (Plan 2)
 
   // Precomputed, fully-resolved grading target
   scoring: SnapshotScoring;
@@ -232,7 +237,12 @@ type AnswerSnapshot = {
 
 type SnapshotScoring =
   | { type: 'mc'; correct_id: string; choices: Array<{ id: string; label: string }> }
-  | { type: 'ma'; correct_ids: string[]; partial_credit: boolean; choices: Array<{ id: string; label: string }> }
+  | {
+      type: 'ma';
+      correct_ids: string[];
+      partial_credit: boolean;
+      choices: Array<{ id: string; label: string }>;
+    }
   | { type: 'tf'; correct: boolean }
   | { type: 'numeric'; target: number; tolerance: number; unit: string | null }
   | { type: 'short_answer'; pattern: string; case_insensitive: boolean }
@@ -283,16 +293,16 @@ type GradeResult =
 
 `gradeAnswer` is pure, synchronous, **never throws** (top-level try/catch wraps unexpected errors into `auto_error`). Dispatches on `snapshot.question_type`. `auto_score` is always in `[0, 1]`.
 
-| Type           | Grade rule                                                                                                                                     | Score                     |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
-| **null/empty response** | If `response` is null or the type-specific "empty" check is true: `auto_score: 0`, `score_method: 'auto'`, no error. (Unanswered ≠ malformed.) | 0                         |
-| **mc**         | `response.choice_id === snapshot.scoring.correct_id`                                                                                           | 1 if match, else 0        |
-| **ma — strict**| If `!partial_credit`: 1.0 iff `Set(response.choice_ids) === Set(snapshot.scoring.correct_ids)`, else 0.                                        | 1 or 0                    |
-| **ma — partial** | `max(0, correct_picks / total_correct - wrong_picks / total_wrong)`. `total_wrong = total_choices - total_correct`.                          | fractional in [0, 1]      |
-| **tf**         | `response.value === snapshot.scoring.correct`                                                                                                  | 1 or 0                    |
-| **numeric**    | `parsed = Number(response.value.trim())`. If `!Number.isFinite(parsed)` → `auto_error: 'unparseable response'` (score 0). Else: `Math.abs(parsed - target) <= tolerance` → 1 or 0. | 1 or 0 (or error)        |
-| **short_answer** | `new RegExp(pattern, case_insensitive ? 'i' : '').test(response.value.trim())`. Empty trimmed response → 0 (no error). Invalid regex (defense — shouldn't happen post-Plan 2 validation) → `auto_error: 'invalid pattern'`. | 1 or 0 (or error)       |
-| **fill_in**    | Per-blank: case-insensitive (or case-sensitive) `===` match on `(response.blanks[id] ?? '').trim()` vs `target`. Missing/empty blanks score 0 (no error). Score = `correct_blanks / total_blanks`. Always partial credit. | fractional in [0, 1]      |
+| Type                    | Grade rule                                                                                                                                                                                                                  | Score                |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| **null/empty response** | If `response` is null or the type-specific "empty" check is true: `auto_score: 0`, `score_method: 'auto'`, no error. (Unanswered ≠ malformed.)                                                                              | 0                    |
+| **mc**                  | `response.choice_id === snapshot.scoring.correct_id`                                                                                                                                                                        | 1 if match, else 0   |
+| **ma — strict**         | If `!partial_credit`: 1.0 iff `Set(response.choice_ids) === Set(snapshot.scoring.correct_ids)`, else 0.                                                                                                                     | 1 or 0               |
+| **ma — partial**        | `max(0, correct_picks / total_correct - wrong_picks / total_wrong)`. `total_wrong = total_choices - total_correct`.                                                                                                         | fractional in [0, 1] |
+| **tf**                  | `response.value === snapshot.scoring.correct`                                                                                                                                                                               | 1 or 0               |
+| **numeric**             | `parsed = Number(response.value.trim())`. If `!Number.isFinite(parsed)` → `auto_error: 'unparseable response'` (score 0). Else: `Math.abs(parsed - target) <= tolerance` → 1 or 0.                                          | 1 or 0 (or error)    |
+| **short_answer**        | `new RegExp(pattern, case_insensitive ? 'i' : '').test(response.value.trim())`. Empty trimmed response → 0 (no error). Invalid regex (defense — shouldn't happen post-Plan 2 validation) → `auto_error: 'invalid pattern'`. | 1 or 0 (or error)    |
+| **fill_in**             | Per-blank: case-insensitive (or case-sensitive) `===` match on `(response.blanks[id] ?? '').trim()` vs `target`. Missing/empty blanks score 0 (no error). Score = `correct_blanks / total_blanks`. Always partial credit.   | fractional in [0, 1] |
 
 ### 4.4 Attempt-level summary
 
@@ -300,9 +310,9 @@ After all answers are graded, `submitAttemptAction` computes:
 
 ```ts
 type AttemptSummary = {
-  raw_score: number;     // sum of auto_scores
-  max_score: number;     // count of answers (each question worth 1)
-  percentage: number;    // raw_score / max_score, rounded to 2 decimals
+  raw_score: number; // sum of auto_scores
+  max_score: number; // count of answers (each question worth 1)
+  percentage: number; // raw_score / max_score, rounded to 2 decimals
 };
 ```
 
@@ -345,7 +355,9 @@ Algorithm:
 
 ```ts
 type SaveInput = { attemptId: string; questionId: string; response: Response };
-type SaveResult = { ok: true } | { ok: false; error: 'not_yours' | 'already_submitted' | 'invalid_response' | 'unknown' };
+type SaveResult =
+  | { ok: true }
+  | { ok: false; error: 'not_yours' | 'already_submitted' | 'invalid_response' | 'unknown' };
 ```
 
 1. `const { user } = await requireStudent()`.
@@ -396,6 +408,7 @@ Plan 2's existing Server Actions (`createAssessmentAction`, `updateSettingsActio
 ### 6.1 Result page (`/attempts/[aid]/result`)
 
 Server Component. Loads:
+
 - The attempt row (including `summary`).
 - All answer rows for the attempt (snapshot + response + auto_score + score_method + graded_at).
 - The student's best attempt for this assessment (`MAX(summary->>'raw_score')`) — used for the "highest so far" badge.
@@ -432,6 +445,7 @@ Renders:
 ### 6.3 Resume
 
 `/take/[id]` flow (Server Component):
+
 1. `requireStudent()`.
 2. Load assessment. If not published / closed / not within window → render an info page ("Not available").
 3. SELECT in-progress attempt for `(assessment, student)`. If found → `redirect('/attempts/[aid]')`.
@@ -439,6 +453,7 @@ Renders:
 5. Else → call `startAttemptAction(id)`; on success redirect to the new `/attempts/[aid]`. On failure render error page.
 
 `/attempts/[aid]` (Server Component):
+
 - Load attempt (RLS scopes to owner).
 - If `status='submitted'` → `redirect('/attempts/[aid]/result')`.
 - Else load all answer rows → pass into Client Component as initial state (`initialResponses: Map<questionId, Response | null>`). Client picks up where the student left off.
@@ -485,9 +500,9 @@ The page query: `SELECT * FROM gradebook_rows WHERE assessment_id = $1 ORDER BY 
 
 Columns rendered:
 
-| Student     | Attempts   | Best score | Best %   | Last submitted          | Actions                 |
-| ----------- | ---------- | ---------- | -------- | ----------------------- | ----------------------- |
-| jane@...    | 2 of 3     | 8 / 10     | 80%      | 2026-06-12 14:32        | [View best] [View all]  |
+| Student  | Attempts | Best score | Best % | Last submitted   | Actions                |
+| -------- | -------- | ---------- | ------ | ---------------- | ---------------------- |
+| jane@... | 2 of 3   | 8 / 10     | 80%    | 2026-06-12 14:32 | [View best] [View all] |
 
 - **[View best]** → `/assessments/[id]/attempts/[best_attempt_id]`.
 - **[View all]** → expands inline (or links to a filtered list — implementation detail of Plan 3 task). Shows all submitted attempts for this student, each linkable to the drill-down.
@@ -666,6 +681,7 @@ Plan 1's `0010` / `0011` / `0012` / `0013` already cover:
 - `answers` snapshot-immutable trigger (Plan 1 `0006`).
 
 Plan 3 adds:
+
 - `answers` UPDATE policy refined via `student_owns_in_progress_attempt` (only on in-progress attempts).
 - `attempts` UPDATE policy: students cannot UPDATE directly — only via `submit_attempt()` SECURITY DEFINER.
 
@@ -673,13 +689,13 @@ Plan 3 adds:
 
 ## 9. Testing strategy
 
-| Layer                        | Coverage                                                                                                                                                                                                                                                                                                                                                       |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Unit (vitest)**            | `lib/grading/grade.ts` — table-driven over (type, response, expected): all 6 types × {correct, incorrect, partial, empty, malformed}. ~40 cases. `lib/grading/snapshot-builder.ts` — fixtures for each type, asserting the snapshot shape including precomputed targets. `lib/auth/require.ts` — happy + reject paths via mocked Supabase. ~50 new tests.       |
-| **RLS (Playwright)**         | `tests/rls/attempts-isolation.spec.ts` — student A cannot SELECT/UPDATE student B's attempts; student A cannot insert with `student_user_id=B`; instructor cannot read attempts on non-owned assessments. `tests/rls/answers-isolation.spec.ts` — same matrix for answers. `tests/rls/snapshot-immutability-plan3.spec.ts` — attempt at UPDATE on snapshot column fails after `submit_attempt`. `tests/rls/submit-after-submit.spec.ts` — second submit is a no-op + clear error. |
-| **a11y (axe-core)**          | `tests/a11y/take-page.spec.ts` (seed in-progress attempt + nav), `tests/a11y/result-page.spec.ts` (seed submitted attempt), `tests/a11y/gradebook.spec.ts` (instructor table). 3 new specs, same pattern as Plan 2's 4 specs.                                                                                                                                  |
+| Layer                           | Coverage                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Unit (vitest)**               | `lib/grading/grade.ts` — table-driven over (type, response, expected): all 6 types × {correct, incorrect, partial, empty, malformed}. ~40 cases. `lib/grading/snapshot-builder.ts` — fixtures for each type, asserting the snapshot shape including precomputed targets. `lib/auth/require.ts` — happy + reject paths via mocked Supabase. ~50 new tests.                                                                                                                                                                                |
+| **RLS (Playwright)**            | `tests/rls/attempts-isolation.spec.ts` — student A cannot SELECT/UPDATE student B's attempts; student A cannot insert with `student_user_id=B`; instructor cannot read attempts on non-owned assessments. `tests/rls/answers-isolation.spec.ts` — same matrix for answers. `tests/rls/snapshot-immutability-plan3.spec.ts` — attempt at UPDATE on snapshot column fails after `submit_attempt`. `tests/rls/submit-after-submit.spec.ts` — second submit is a no-op + clear error.                                                        |
+| **a11y (axe-core)**             | `tests/a11y/take-page.spec.ts` (seed in-progress attempt + nav), `tests/a11y/result-page.spec.ts` (seed submitted attempt), `tests/a11y/gradebook.spec.ts` (instructor table). 3 new specs, same pattern as Plan 2's 4 specs.                                                                                                                                                                                                                                                                                                            |
 | **E2E happy path (Playwright)** | `tests/student/take-and-submit.spec.ts` — sign in as student, navigate `/take/[id]`, answer all 6 question types, submit, assert score on result. `tests/student/resume-attempt.spec.ts` — start, answer 2 of 5, close tab, reopen, assert state restored. `tests/student/retake-different-seed.spec.ts` — submit attempt 1, start attempt 2, assert materialized values differ. `tests/instructor/gradebook-shows-attempts.spec.ts` — seed 2 students with attempts, open gradebook, assert both rows + best scores + drill-down works. |
-| **NVDA runbook**             | Append "Plan 3 — Student attempt + result + gradebook critical path" section to `docs/runbooks/nvda-test-script.md`. ~10 steps: sign in as student, navigate `/take/[id]`, navigate by heading, answer 6 question types via keyboard, submit, hear score, navigate to result, hear correctness + reveal. Required manual pass before Plan 3 merge.            |
+| **NVDA runbook**                | Append "Plan 3 — Student attempt + result + gradebook critical path" section to `docs/runbooks/nvda-test-script.md`. ~10 steps: sign in as student, navigate `/take/[id]`, navigate by heading, answer 6 question types via keyboard, submit, hear score, navigate to result, hear correctness + reveal. Required manual pass before Plan 3 merge.                                                                                                                                                                                       |
 
 Tests-to-write estimate: ~50 vitest unit tests + 4 RLS specs + 3 axe specs + 4 E2E specs. Comparable to Plan 2's footprint.
 

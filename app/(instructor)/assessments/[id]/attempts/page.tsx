@@ -3,22 +3,14 @@ import type { Route } from 'next';
 import { notFound } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { requireInstructor } from '@/lib/auth/require';
-import {
-  GradebookTable,
-  type GradebookRow,
-} from '@/components/gradebook/GradebookTable';
+import { GradebookTable, type GradebookRow } from '@/components/gradebook/GradebookTable';
 
 type Props = {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ sort?: string; dir?: string }>;
 };
 
-const SORT_KEYS = [
-  'student_email',
-  'attempts_used',
-  'best_pct',
-  'last_submitted_at',
-] as const;
+const SORT_KEYS = ['student_email', 'attempts_used', 'best_pct', 'last_submitted_at'] as const;
 type SortKey = (typeof SORT_KEYS)[number];
 
 export default async function GradebookPage({ params, searchParams }: Props) {

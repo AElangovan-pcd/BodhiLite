@@ -24,22 +24,14 @@ describe('AnswerSurface — controlled', () => {
   it('reflects external value and calls onChange', () => {
     const onChange = vi.fn();
     const { rerender } = render(
-      <AnswerSurface
-        body={mcBody}
-        value={{ type: 'mc', choice_id: 'a' }}
-        onChange={onChange}
-      />,
+      <AnswerSurface body={mcBody} value={{ type: 'mc', choice_id: 'a' }} onChange={onChange} />,
     );
     expect((screen.getByLabelText('Alpha') as HTMLInputElement).checked).toBe(true);
     fireEvent.click(screen.getByLabelText('Beta'));
     expect(onChange).toHaveBeenCalledWith({ type: 'mc', choice_id: 'b' });
 
     rerender(
-      <AnswerSurface
-        body={mcBody}
-        value={{ type: 'mc', choice_id: 'b' }}
-        onChange={onChange}
-      />,
+      <AnswerSurface body={mcBody} value={{ type: 'mc', choice_id: 'b' }} onChange={onChange} />,
     );
     expect((screen.getByLabelText('Beta') as HTMLInputElement).checked).toBe(true);
   });

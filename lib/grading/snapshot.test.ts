@@ -36,9 +36,7 @@ describe('buildSnapshot', () => {
         type: 'numeric',
         body: { stem: 'Mass of x g?' },
         scoring: { formula: 'mass * 2', tolerance: 0.01 },
-        variables: [
-          { name: 'mass', type: 'randint', position: 1, spec: { min: 10, max: 10 } },
-        ],
+        variables: [{ name: 'mass', type: 'randint', position: 1, spec: { min: 10, max: 10 } }],
       },
       seed: 0,
     });
@@ -56,9 +54,7 @@ describe('buildSnapshot', () => {
         type: 'short_answer',
         body: { stem: 'Name the compound' },
         scoring: { pattern: '^{{compound}}$', case_insensitive: true },
-        variables: [
-          { name: 'compound', type: 'choice', position: 1, spec: { values: ['NaCl'] } },
-        ],
+        variables: [{ name: 'compound', type: 'choice', position: 1, spec: { values: ['NaCl'] } }],
       },
       seed: 0,
     });

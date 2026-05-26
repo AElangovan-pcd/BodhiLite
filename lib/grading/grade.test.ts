@@ -61,18 +61,14 @@ describe('gradeAnswer — mc', () => {
 });
 
 describe('gradeAnswer — ma strict', () => {
-  const s = snap(
-    { kind: 'ma', correct_ids: ['a', 'c'], partial_credit: false },
-    'ma',
-    {
-      kind: 'ma',
-      choices: [
-        { id: 'a', label_substituted: 'A' },
-        { id: 'b', label_substituted: 'B' },
-        { id: 'c', label_substituted: 'C' },
-      ],
-    },
-  );
+  const s = snap({ kind: 'ma', correct_ids: ['a', 'c'], partial_credit: false }, 'ma', {
+    kind: 'ma',
+    choices: [
+      { id: 'a', label_substituted: 'A' },
+      { id: 'b', label_substituted: 'B' },
+      { id: 'c', label_substituted: 'C' },
+    ],
+  });
   it('1 when set equals', () => {
     expect(gradeAnswer(s, { type: 'ma', choice_ids: ['a', 'c'] }).auto_score).toBe(1);
   });
@@ -88,18 +84,14 @@ describe('gradeAnswer — ma strict', () => {
 });
 
 describe('gradeAnswer — ma partial credit', () => {
-  const s = snap(
-    { kind: 'ma', correct_ids: ['a', 'c'], partial_credit: true },
-    'ma',
-    {
-      kind: 'ma',
-      choices: [
-        { id: 'a', label_substituted: 'A' },
-        { id: 'b', label_substituted: 'B' },
-        { id: 'c', label_substituted: 'C' },
-      ],
-    },
-  );
+  const s = snap({ kind: 'ma', correct_ids: ['a', 'c'], partial_credit: true }, 'ma', {
+    kind: 'ma',
+    choices: [
+      { id: 'a', label_substituted: 'A' },
+      { id: 'b', label_substituted: 'B' },
+      { id: 'c', label_substituted: 'C' },
+    ],
+  });
   it('1.0 when all correct picked, none wrong', () => {
     expect(gradeAnswer(s, { type: 'ma', choice_ids: ['a', 'c'] }).auto_score).toBe(1);
   });
@@ -202,9 +194,7 @@ describe('gradeAnswer — fill_in', () => {
     ).toBe(0.5);
   });
   it('0 when no blanks match', () => {
-    expect(
-      gradeAnswer(s, { type: 'fill_in', blanks: { b1: 'x', b2: 'y' } }).auto_score,
-    ).toBe(0);
+    expect(gradeAnswer(s, { type: 'fill_in', blanks: { b1: 'x', b2: 'y' } }).auto_score).toBe(0);
   });
   it('missing blank entry → 0 for that blank', () => {
     expect(gradeAnswer(s, { type: 'fill_in', blanks: { b1: 'NaCl' } }).auto_score).toBe(0.5);

@@ -46,8 +46,7 @@ export function CorrectAnswerReveal({
       );
     case 'numeric': {
       const out = `${target.value} ± ${target.tolerance}`;
-      const unparseable =
-        response?.type === 'numeric' && !Number.isFinite(Number(response.value));
+      const unparseable = response?.type === 'numeric' && !Number.isFinite(Number(response.value));
       return (
         <p className="text-sm">
           <strong>Expected:</strong> {out}
@@ -66,12 +65,11 @@ export function CorrectAnswerReveal({
       return (
         <ul className="text-sm">
           {target.targets.map((t) => {
-            const yours =
-              response?.type === 'fill_in' ? (response.blanks[t.id] ?? '') : '';
+            const yours = response?.type === 'fill_in' ? (response.blanks[t.id] ?? '') : '';
             return (
               <li key={t.id}>
-                <strong>Blank {t.id}:</strong> expected <code>{t.target}</code> — your
-                answer: <code>{yours || '(blank)'}</code>
+                <strong>Blank {t.id}:</strong> expected <code>{t.target}</code> — your answer:{' '}
+                <code>{yours || '(blank)'}</code>
               </li>
             );
           })}

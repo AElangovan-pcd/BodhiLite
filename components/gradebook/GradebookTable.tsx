@@ -74,23 +74,15 @@ export function GradebookTable({
             <TableCell>
               {r.attempts_used} of {maxAttempts}
             </TableCell>
+            <TableCell>{r.best_raw != null ? `${r.best_raw} / ${r.best_max}` : '—'}</TableCell>
+            <TableCell>{r.best_pct != null ? `${r.best_pct.toFixed(2)}%` : '—'}</TableCell>
             <TableCell>
-              {r.best_raw != null ? `${r.best_raw} / ${r.best_max}` : '—'}
-            </TableCell>
-            <TableCell>
-              {r.best_pct != null ? `${r.best_pct.toFixed(2)}%` : '—'}
-            </TableCell>
-            <TableCell>
-              {r.last_submitted_at
-                ? new Date(r.last_submitted_at).toLocaleString()
-                : '—'}
+              {r.last_submitted_at ? new Date(r.last_submitted_at).toLocaleString() : '—'}
             </TableCell>
             <TableCell>
               {r.best_attempt_id ? (
                 <Link
-                  href={
-                    `/assessments/${assessmentId}/attempts/${r.best_attempt_id}` as Route
-                  }
+                  href={`/assessments/${assessmentId}/attempts/${r.best_attempt_id}` as Route}
                   className="text-sm underline"
                 >
                   View best

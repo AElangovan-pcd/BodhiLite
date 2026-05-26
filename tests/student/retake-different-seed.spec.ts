@@ -8,10 +8,7 @@ test.describe('retake uses a different seed → different materialized values', 
     for (const id of cleanupIds) await deleteTestUser(id);
   });
 
-  test('attempt 2 materializes differently from attempt 1', async ({
-    page,
-    context,
-  }) => {
+  test('attempt 2 materializes differently from attempt 1', async ({ page, context }) => {
     const admin = adminClient();
     const stamp = Date.now();
     const inst = await createTestUserClient({

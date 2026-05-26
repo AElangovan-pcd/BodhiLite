@@ -30,11 +30,7 @@ export function QuestionCard({
       <div className="prose mb-3 max-w-none">
         <Markdown source={snapshot.render.rendered_stem} />
       </div>
-      <AnswerSurface
-        body={snapshot.render.rendered_body}
-        value={response}
-        onChange={onChange}
-      />
+      <AnswerSurface body={snapshot.render.rendered_body} value={response} onChange={onChange} />
     </Card>
   );
 }
