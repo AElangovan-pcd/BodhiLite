@@ -35,8 +35,8 @@ export function useAutosave(input: UseAutosaveInput) {
 
     if (timerRef.current) clearTimeout(timerRef.current);
 
-    setStatus('saving');
     timerRef.current = setTimeout(async () => {
+      setStatus('saving');
       const p = onSave({ attemptId, questionId, response });
       inflightRef.current = p;
       const result = await p;
