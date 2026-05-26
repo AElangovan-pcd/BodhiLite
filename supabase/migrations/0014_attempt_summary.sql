@@ -5,5 +5,5 @@ ALTER TABLE public.attempts
   ADD COLUMN summary JSONB;
 
 -- Index for gradebook ORDER BY (submitted_at DESC) and resume lookups.
-CREATE INDEX IF NOT EXISTS attempts_by_assessment_student
+CREATE INDEX IF NOT EXISTS idx_attempts_assessment_student
   ON public.attempts (assessment_id, student_user_id, submitted_at DESC);
