@@ -56,6 +56,9 @@ test.describe('student take + submit happy path', () => {
     await page.waitForURL(/\/attempts\//);
 
     await page.getByLabel('4').click();
+    // Wait for the per-card autosave (500ms debounce) to commit before submitting,
+    // otherwise submit races the save and grades the row as unanswered.
+    await page.waitForTimeout(1200);
 
     await page.getByRole('button', { name: /submit attempt/i }).click();
     await page.getByRole('button', { name: /^submit$/i }).click();

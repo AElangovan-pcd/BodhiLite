@@ -60,25 +60,17 @@ test.describe('retake uses a different seed → different materialized values', 
 
     await page.goto(`/take/${a.id}`);
     await page.waitForURL(/\/attempts\//);
-    const stem1 = await page
-      .locator('h2:has-text("Q1")')
-      .locator('xpath=following-sibling::div[1]')
-      .first()
-      .textContent();
+    const stem1 = await page.locator('.prose').first().textContent();
 
     await page.getByLabel('Numeric answer').fill('0');
     await page.waitForTimeout(1200);
     await page.getByRole('button', { name: /submit attempt/i }).click();
-    await page.getByRole('button', { name: /submit anyway/i }).click();
+    await page.getByRole('button', { name: /^submit( anyway)?$/i }).click();
     await page.waitForURL(/\/result$/);
 
     await page.goto(`/take/${a.id}`);
     await page.waitForURL(/\/attempts\//);
-    const stem2 = await page
-      .locator('h2:has-text("Q1")')
-      .locator('xpath=following-sibling::div[1]')
-      .first()
-      .textContent();
+    const stem2 = await page.locator('.prose').first().textContent();
 
     expect(stem2).not.toBe(stem1);
   });

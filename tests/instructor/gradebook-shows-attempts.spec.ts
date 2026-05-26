@@ -98,8 +98,8 @@ test.describe('instructor gradebook shows submitted attempts', () => {
 
     await expect(page.getByText(s1Email)).toBeVisible();
     await expect(page.getByText(s2Email)).toBeVisible();
-    await expect(page.getByText('100.00%')).toBeVisible();
-    await expect(page.getByText('0.00%')).toBeVisible();
+    await expect(page.getByRole('cell', { name: '100.00%', exact: true })).toBeVisible();
+    await expect(page.getByRole('cell', { name: '0.00%', exact: true })).toBeVisible();
 
     await page.getByRole('link', { name: 'View best' }).first().click();
     await page.waitForURL(/\/assessments\/.+\/attempts\/.+/);
