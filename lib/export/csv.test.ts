@@ -78,3 +78,41 @@ describe('buildCanvasCsv — data rows', () => {
     );
   });
 });
+
+describe('buildCanvasCsv — edge cases', () => {
+  it('quotes email containing a comma (unusual but RFC-correct)', () => {
+    const csv = buildCanvasCsv({
+      assessmentTitle: 'Q',
+      rows: [{ email: 'odd,address@b.com', score: 50 }],
+    });
+    expect(csv).toBe(
+      'Student,SIS User ID,SIS Login ID,Q\n' +
+        '"odd,address@b.com",,"odd,address@b.com",50.00\n',
+    );
+  });
+
+  it('quotes email containing a double-quote', () => {
+    const csv = buildCanvasCsv({
+      assessmentTitle: 'Q',
+      rows: [{ email: 'a"b@c.com', score: 50 }],
+    });
+    expect(csv).toBe(
+      'Student,SIS User ID,SIS Login ID,Q\n' +
+        '"a""b@c.com",,"a""b@c.com",50.00\n',
+    );
+  });
+
+  it('returns header-only output when rows is empty', () => {
+    const csv = buildCanvasCsv({ assessmentTitle: 'Q', rows: [] });
+    expect(csv).toBe('Student,SIS User ID,SIS Login ID,Q\n');
+    expect(csv.split('\n').filter((line) => line.length > 0)).toHaveLength(1);
+  });
+
+  it('ends with a newline after the last row', () => {
+    const csv = buildCanvasCsv({
+      assessmentTitle: 'Q',
+      rows: [{ email: 'a@b.com', score: 50 }],
+    });
+    expect(csv.endsWith('\n')).toBe(true);
+  });
+});
