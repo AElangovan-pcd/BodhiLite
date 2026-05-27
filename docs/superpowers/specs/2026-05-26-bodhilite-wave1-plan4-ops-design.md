@@ -63,7 +63,7 @@ app/(instructor)/assessments/[id]/attempts/page.tsx        (existing, Plan 3 —
 
 app/api/gradebook/[id]/csv/route.ts                        (NEW — Route Handler)
    └─ requireInstructor()                                  (existing lib/auth/require.ts)
-   └─ SELECT id, title FROM assessments WHERE id = $1 AND instructor_id = $caller
+   └─ SELECT id, title FROM assessments WHERE id = $1     (RLS scopes to owner; non-owner gets 0 rows → 404)
    └─ SELECT student_email, best_pct FROM gradebook_rows WHERE assessment_id = $1
    └─ buildCanvasCsv({ assessmentTitle, rows })            (NEW — pure)
    └─ Response(csvString, { headers: { ... } })
