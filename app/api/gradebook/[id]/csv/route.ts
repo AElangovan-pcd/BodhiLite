@@ -21,6 +21,7 @@ export async function GET(
     .from('assessments')
     .select('id, title')
     .eq('id', id)
+    .eq('owner_user_id', caller.user.id)
     .maybeSingle();
 
   if (!assessment) {
