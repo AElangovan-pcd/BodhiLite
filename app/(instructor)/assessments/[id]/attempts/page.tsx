@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { requireInstructor } from '@/lib/auth/require';
 import { GradebookTable, type GradebookRow } from '@/components/gradebook/GradebookTable';
+import { DownloadCsvButton } from '@/components/instructor/DownloadCsvButton';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -51,7 +52,10 @@ export default async function GradebookPage({ params, searchParams }: Props) {
             ← {assessment.title}
           </Link>
         </p>
-        <h1 className="mt-2 text-2xl font-semibold">Attempts</h1>
+        <div className="flex items-center justify-between gap-4">
+          <h1 className="mt-2 text-2xl font-semibold">Attempts</h1>
+          <DownloadCsvButton assessmentId={id} assessmentTitle={assessment.title} />
+        </div>
         {(inProgress ?? 0) > 0 && (
           <p className="text-muted-foreground mt-1 text-xs">{inProgress} in progress</p>
         )}
