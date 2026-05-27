@@ -5,12 +5,15 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
+    setupFiles: ['./vitest.setup.ts'],
     include: [
       'lib/**/*.test.ts',
       'lib/**/*.test.tsx',
       'components/**/*.test.ts',
       'components/**/*.test.tsx',
       'tests/**/*.test.ts',
+      'app/**/*.test.ts',
+      'app/**/*.test.tsx',
     ],
     coverage: {
       provider: 'v8',
