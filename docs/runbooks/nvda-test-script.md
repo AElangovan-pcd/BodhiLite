@@ -108,3 +108,29 @@ Before merging Plan 2 to `main`, run this script with NVDA on Windows. Target ti
 - Per-question correctness badges (Correct / Incorrect / Partial) are read inline with the heading.
 
 **Run before merging Plan 3.**
+
+## Plan 4 — CSV download button critical path
+
+Required before merging Plan 4 to main.
+
+### Setup
+
+1. Sign in as an instructor.
+2. Navigate to any published assessment's gradebook page (`/assessments/<id>/attempts`).
+
+### Test steps
+
+1. Press `Tab` until focus reaches the "Download CSV" button.
+   - **NVDA should announce:** "Download gradebook CSV for <assessment title>, button"
+2. Press `Space` (or `Enter`) to activate the button.
+   - **NVDA should announce:** the spinner status — "Preparing download…" via the
+     `aria-live="polite"` region.
+   - The browser's download notification fires; the file is saved.
+3. After the download completes:
+   - **NVDA should announce** the button label has returned (no longer spinner).
+
+### Pass criteria
+
+- All three NVDA announcements match the expectations above.
+- The download is triggered correctly.
+- No focus is lost during the operation.
