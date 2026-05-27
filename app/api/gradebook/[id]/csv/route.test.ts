@@ -38,7 +38,9 @@ function mockSupabase(impl: {
     }
     if (table === 'audit_log') {
       return {
-        insert: vi.fn().mockResolvedValue({ error: impl.auditOk === false ? new Error('audit fail') : null }),
+        insert: vi
+          .fn()
+          .mockResolvedValue({ error: impl.auditOk === false ? new Error('audit fail') : null }),
       };
     }
     throw new Error(`unexpected table: ${table}`);
@@ -69,7 +71,9 @@ describe('GET /api/gradebook/[id]/csv', () => {
 
     expect(res.status).toBe(200);
     expect(res.headers.get('Content-Type')).toBe('text/csv; charset=utf-8');
-    expect(res.headers.get('Content-Disposition')).toMatch(/attachment; filename="quiz-1-\d{4}-\d{2}-\d{2}\.csv"/);
+    expect(res.headers.get('Content-Disposition')).toMatch(
+      /attachment; filename="quiz-1-\d{4}-\d{2}-\d{2}\.csv"/,
+    );
     expect(res.headers.get('Cache-Control')).toBe('no-store');
 
     const body = await res.text();
@@ -87,11 +91,9 @@ describe('GET /api/gradebook/[id]/csv — edge cases', () => {
   });
 
   it('returns 404 when the assessment is not found or not owned by caller', async () => {
-    vi.mocked(requireInstructor).mockResolvedValue(
-      { user: { id: 'inst-1', email: 'i@p.edu', role: 'instructor' } } as unknown as Awaited<
-        ReturnType<typeof requireInstructor>
-      >,
-    );
+    vi.mocked(requireInstructor).mockResolvedValue({
+      user: { id: 'inst-1', email: 'i@p.edu', role: 'instructor' },
+    } as unknown as Awaited<ReturnType<typeof requireInstructor>>);
     vi.mocked(createServerSupabaseClient).mockResolvedValue(
       mockSupabase({ assessment: null, rows: [] }) as unknown as Awaited<
         ReturnType<typeof createServerSupabaseClient>
@@ -105,11 +107,9 @@ describe('GET /api/gradebook/[id]/csv — edge cases', () => {
   });
 
   it('returns header-only CSV when assessment exists but has no rows', async () => {
-    vi.mocked(requireInstructor).mockResolvedValue(
-      { user: { id: 'inst-1', email: 'i@p.edu', role: 'instructor' } } as unknown as Awaited<
-        ReturnType<typeof requireInstructor>
-      >,
-    );
+    vi.mocked(requireInstructor).mockResolvedValue({
+      user: { id: 'inst-1', email: 'i@p.edu', role: 'instructor' },
+    } as unknown as Awaited<ReturnType<typeof requireInstructor>>);
     vi.mocked(createServerSupabaseClient).mockResolvedValue(
       mockSupabase({
         assessment: { id: 'asmt-1', title: 'Empty Quiz' },
@@ -124,11 +124,9 @@ describe('GET /api/gradebook/[id]/csv — edge cases', () => {
   });
 
   it('returns 200 even when audit_log insert fails (best-effort)', async () => {
-    vi.mocked(requireInstructor).mockResolvedValue(
-      { user: { id: 'inst-1', email: 'i@p.edu', role: 'instructor' } } as unknown as Awaited<
-        ReturnType<typeof requireInstructor>
-      >,
-    );
+    vi.mocked(requireInstructor).mockResolvedValue({
+      user: { id: 'inst-1', email: 'i@p.edu', role: 'instructor' },
+    } as unknown as Awaited<ReturnType<typeof requireInstructor>>);
     vi.mocked(createServerSupabaseClient).mockResolvedValue(
       mockSupabase({
         assessment: { id: 'asmt-1', title: 'Quiz' },
@@ -144,8 +142,8 @@ describe('GET /api/gradebook/[id]/csv — edge cases', () => {
 
   it('propagates errors from requireInstructor by rethrowing (auth helper handles redirects)', async () => {
     vi.mocked(requireInstructor).mockRejectedValue(new Error('redirect'));
-    await expect(
-      GET(makeRequest(), { params: Promise.resolve({ id: 'asmt-1' }) }),
-    ).rejects.toThrow('redirect');
+    await expect(GET(makeRequest(), { params: Promise.resolve({ id: 'asmt-1' }) })).rejects.toThrow(
+      'redirect',
+    );
   });
 });

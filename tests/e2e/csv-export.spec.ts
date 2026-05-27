@@ -108,9 +108,7 @@ test.describe('CSV export', () => {
     await page.getByRole('button', { name: /download gradebook csv/i }).click();
     const download = await downloadPromise;
 
-    expect(download.suggestedFilename()).toMatch(
-      /^csv-export-test-quiz-\d{4}-\d{2}-\d{2}\.csv$/,
-    );
+    expect(download.suggestedFilename()).toMatch(/^csv-export-test-quiz-\d{4}-\d{2}-\d{2}\.csv$/);
 
     const path = await download.path();
     if (!path) throw new Error('download path missing');

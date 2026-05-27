@@ -4,7 +4,6 @@ import { scrubSentryEvent } from '@/lib/observability/scrub';
 const HMAC_KEY = process.env.SCRUB_HMAC_KEY ?? '';
 
 if (!HMAC_KEY && process.env.VERCEL_ENV === 'production') {
-  // eslint-disable-next-line no-console
   console.error('Sentry: SCRUB_HMAC_KEY is not set in production — user.id hashing is reversible');
 }
 
@@ -18,7 +17,6 @@ Sentry.init({
     try {
       return scrubSentryEvent(event, { hmacKey: HMAC_KEY }) as typeof event;
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.error('Sentry scrub failed; dropping event', err);
       return null;
     }

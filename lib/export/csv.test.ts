@@ -40,9 +40,7 @@ describe('buildCanvasCsv — data rows', () => {
       assessmentTitle: 'Quiz',
       rows: [{ email: 'a@b.com', score: null }],
     });
-    expect(csv).toBe(
-      'Student,SIS User ID,SIS Login ID,Quiz\n' + 'a@b.com,,a@b.com,\n',
-    );
+    expect(csv).toBe('Student,SIS User ID,SIS Login ID,Quiz\n' + 'a@b.com,,a@b.com,\n');
   });
 
   it('formats 0 as 0.00', () => {
@@ -86,8 +84,7 @@ describe('buildCanvasCsv — edge cases', () => {
       rows: [{ email: 'odd,address@b.com', score: 50 }],
     });
     expect(csv).toBe(
-      'Student,SIS User ID,SIS Login ID,Q\n' +
-        '"odd,address@b.com",,"odd,address@b.com",50.00\n',
+      'Student,SIS User ID,SIS Login ID,Q\n' + '"odd,address@b.com",,"odd,address@b.com",50.00\n',
     );
   });
 
@@ -96,10 +93,7 @@ describe('buildCanvasCsv — edge cases', () => {
       assessmentTitle: 'Q',
       rows: [{ email: 'a"b@c.com', score: 50 }],
     });
-    expect(csv).toBe(
-      'Student,SIS User ID,SIS Login ID,Q\n' +
-        '"a""b@c.com",,"a""b@c.com",50.00\n',
-    );
+    expect(csv).toBe('Student,SIS User ID,SIS Login ID,Q\n' + '"a""b@c.com",,"a""b@c.com",50.00\n');
   });
 
   it('returns header-only output when rows is empty', () => {

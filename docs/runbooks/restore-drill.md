@@ -57,6 +57,7 @@ Copy the returned `canary_id` UUID. This is the "known row" that the restore dri
 ### 3. Wait for the next scheduled backup OR trigger one manually
 
 Either:
+
 - Wait until the next 09:00 UTC scheduled run, OR
 - Manually trigger via GitHub Actions → "Daily backup" → Run workflow.
 
@@ -65,6 +66,7 @@ Confirm the new B2 object exists with `rclone lsf` (Step 1 query, expect a newer
 ### 4. Create a temp Supabase project
 
 In supabase.com:
+
 - New project → name: `bodhilite-restore-test-YYYYMMDD` (use today's date)
 - Region: same as production (US East)
 - Database password: random; store in 1Password temporarily ("BodhiLite restore drill — temp DB pwd, $(date)")
@@ -73,6 +75,7 @@ In supabase.com:
 ### 5. Restore the backup into the temp project
 
 Follow `docs/runbooks/restore-from-b2.md` steps 1–4 with:
+
 - `TS` = the timestamp of the backup uploaded in Step 3.
 - `TARGET_URL` = the temp project's postgres URI (Project Settings → Database → Connection string).
 
@@ -147,10 +150,10 @@ deviation as a runbook bug.
 
 ## Failure modes
 
-| Symptom | Action |
-|---|---|
-| Latest B2 backup is corrupted (decrypt fails) | Try the next-most-recent. If 3 in a row fail, ESCALATE before Wave 1 launch. |
-| Temp Supabase project hits free-tier quota | Use the paid scratch project for this drill ($0.25 prorated). |
-| RTO exceeds 30 min on first run | Document as a finding; not a launch blocker for Wave 1. |
-| `pg_restore` errors on schema-mismatch (large N) | Schema drift between prod and dump. Investigate before launch. |
-| Known-row assertion returns 0 | Restore is incomplete OR canary row was inserted AFTER backup. Re-check timing in Step 2 vs Step 3. |
+| Symptom                                          | Action                                                                                              |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| Latest B2 backup is corrupted (decrypt fails)    | Try the next-most-recent. If 3 in a row fail, ESCALATE before Wave 1 launch.                        |
+| Temp Supabase project hits free-tier quota       | Use the paid scratch project for this drill ($0.25 prorated).                                       |
+| RTO exceeds 30 min on first run                  | Document as a finding; not a launch blocker for Wave 1.                                             |
+| `pg_restore` errors on schema-mismatch (large N) | Schema drift between prod and dump. Investigate before launch.                                      |
+| Known-row assertion returns 0                    | Restore is incomplete OR canary row was inserted AFTER backup. Re-check timing in Step 2 vs Step 3. |

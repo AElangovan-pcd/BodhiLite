@@ -22,19 +22,23 @@ Called by the restore-drill runbook and used during real incidents.
 ## Steps
 
 1. **List recent backups:**
+
    ```bash
    rclone lsf "b2:bodhilite-backups-prod/" | sort | tail -n 5
    ```
+
    Pick the most recent timestamp directory (or a specific older one if doing a
    point-in-time restore).
 
 2. **Download the encrypted dump:**
+
    ```bash
    TS="2026-07-06T09-00-12Z"   # replace with the chosen timestamp
    rclone copy "b2:bodhilite-backups-prod/${TS}/dump.pgc.age" "./restore-${TS}/"
    ```
 
 3. **Decrypt with age:**
+
    ```bash
    age --decrypt --identity age-bodhilite.key \
      -o "./restore-${TS}/dump.pgc" \
@@ -42,6 +46,7 @@ Called by the restore-drill runbook and used during real incidents.
    ```
 
 4. **Restore into a target Postgres:**
+
    ```bash
    TARGET_URL="postgresql://postgres:<password>@db.<target>.supabase.co:5432/postgres"
    pg_restore --verbose --no-owner --no-acl \
@@ -53,6 +58,7 @@ Called by the restore-drill runbook and used during real incidents.
    - `--verbose` shows progress for ~thousands of objects.
 
 5. **Verify with smoke SQL:**
+
    ```sql
    SELECT 'users' AS table, count(*) FROM users
    UNION ALL SELECT 'assessments', count(*) FROM assessments

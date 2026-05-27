@@ -13,7 +13,6 @@ Sentry.init({
     try {
       return scrubSentryEvent(event, { hmacKey: HMAC_KEY }) as typeof event;
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.error('Sentry scrub failed; dropping event', err);
       return null;
     }
