@@ -22,3 +22,59 @@ describe('buildCanvasCsv — header row', () => {
     expect(csv).toBe('Student,SIS User ID,SIS Login ID,"Multi\nLine"\n');
   });
 });
+
+describe('buildCanvasCsv — data rows', () => {
+  it('writes student email in Student + SIS Login ID columns with score formatted to 2 decimals', () => {
+    const csv = buildCanvasCsv({
+      assessmentTitle: 'Quiz',
+      rows: [{ email: 'jdoe@piercecollege.edu', score: 87.5 }],
+    });
+    expect(csv).toBe(
+      'Student,SIS User ID,SIS Login ID,Quiz\n' +
+        'jdoe@piercecollege.edu,,jdoe@piercecollege.edu,87.50\n',
+    );
+  });
+
+  it('writes empty score cell for null', () => {
+    const csv = buildCanvasCsv({
+      assessmentTitle: 'Quiz',
+      rows: [{ email: 'a@b.com', score: null }],
+    });
+    expect(csv).toBe(
+      'Student,SIS User ID,SIS Login ID,Quiz\n' + 'a@b.com,,a@b.com,\n',
+    );
+  });
+
+  it('formats 0 as 0.00', () => {
+    const csv = buildCanvasCsv({
+      assessmentTitle: 'Q',
+      rows: [{ email: 'a@b.com', score: 0 }],
+    });
+    expect(csv).toBe('Student,SIS User ID,SIS Login ID,Q\na@b.com,,a@b.com,0.00\n');
+  });
+
+  it('formats 100 as 100.00', () => {
+    const csv = buildCanvasCsv({
+      assessmentTitle: 'Q',
+      rows: [{ email: 'a@b.com', score: 100 }],
+    });
+    expect(csv).toBe('Student,SIS User ID,SIS Login ID,Q\na@b.com,,a@b.com,100.00\n');
+  });
+
+  it('writes multiple rows in order', () => {
+    const csv = buildCanvasCsv({
+      assessmentTitle: 'Q',
+      rows: [
+        { email: 'a@b.com', score: 87.5 },
+        { email: 'c@d.com', score: null },
+        { email: 'e@f.com', score: 100 },
+      ],
+    });
+    expect(csv).toBe(
+      'Student,SIS User ID,SIS Login ID,Q\n' +
+        'a@b.com,,a@b.com,87.50\n' +
+        'c@d.com,,c@d.com,\n' +
+        'e@f.com,,e@f.com,100.00\n',
+    );
+  });
+});

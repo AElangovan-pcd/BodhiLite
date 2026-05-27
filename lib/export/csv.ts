@@ -15,5 +15,12 @@ function rfc4180(value: string): string {
 export function buildCanvasCsv(args: { assessmentTitle: string; rows: CsvRow[] }): string {
   const { assessmentTitle, rows } = args;
   const header = `Student,SIS User ID,SIS Login ID,${rfc4180(assessmentTitle)}\n`;
-  return header;
+  const body = rows
+    .map((row) => {
+      const email = rfc4180(row.email);
+      const scoreStr = row.score === null ? '' : row.score.toFixed(2);
+      return `${email},,${email},${scoreStr}\n`;
+    })
+    .join('');
+  return header + body;
 }
