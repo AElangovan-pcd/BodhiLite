@@ -80,3 +80,72 @@ describe('GET /api/gradebook/[id]/csv', () => {
     );
   });
 });
+
+describe('GET /api/gradebook/[id]/csv — edge cases', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns 404 when the assessment is not found or not owned by caller', async () => {
+    vi.mocked(requireInstructor).mockResolvedValue(
+      { user: { id: 'inst-1', email: 'i@p.edu', role: 'instructor' } } as unknown as Awaited<
+        ReturnType<typeof requireInstructor>
+      >,
+    );
+    vi.mocked(createServerSupabaseClient).mockResolvedValue(
+      mockSupabase({ assessment: null, rows: [] }) as unknown as Awaited<
+        ReturnType<typeof createServerSupabaseClient>
+      >,
+    );
+
+    const res = await GET(makeRequest(), { params: Promise.resolve({ id: 'asmt-missing' }) });
+
+    expect(res.status).toBe(404);
+    expect(await res.text()).toBe('Not found');
+  });
+
+  it('returns header-only CSV when assessment exists but has no rows', async () => {
+    vi.mocked(requireInstructor).mockResolvedValue(
+      { user: { id: 'inst-1', email: 'i@p.edu', role: 'instructor' } } as unknown as Awaited<
+        ReturnType<typeof requireInstructor>
+      >,
+    );
+    vi.mocked(createServerSupabaseClient).mockResolvedValue(
+      mockSupabase({
+        assessment: { id: 'asmt-1', title: 'Empty Quiz' },
+        rows: [],
+      }) as unknown as Awaited<ReturnType<typeof createServerSupabaseClient>>,
+    );
+
+    const res = await GET(makeRequest(), { params: Promise.resolve({ id: 'asmt-1' }) });
+
+    expect(res.status).toBe(200);
+    expect(await res.text()).toBe('Student,SIS User ID,SIS Login ID,Empty Quiz\n');
+  });
+
+  it('returns 200 even when audit_log insert fails (best-effort)', async () => {
+    vi.mocked(requireInstructor).mockResolvedValue(
+      { user: { id: 'inst-1', email: 'i@p.edu', role: 'instructor' } } as unknown as Awaited<
+        ReturnType<typeof requireInstructor>
+      >,
+    );
+    vi.mocked(createServerSupabaseClient).mockResolvedValue(
+      mockSupabase({
+        assessment: { id: 'asmt-1', title: 'Quiz' },
+        rows: [{ student_email: 'a@b.com', best_pct: 50 }],
+        auditOk: false,
+      }) as unknown as Awaited<ReturnType<typeof createServerSupabaseClient>>,
+    );
+
+    const res = await GET(makeRequest(), { params: Promise.resolve({ id: 'asmt-1' }) });
+
+    expect(res.status).toBe(200);
+  });
+
+  it('propagates errors from requireInstructor by rethrowing (auth helper handles redirects)', async () => {
+    vi.mocked(requireInstructor).mockRejectedValue(new Error('redirect'));
+    await expect(
+      GET(makeRequest(), { params: Promise.resolve({ id: 'asmt-1' }) }),
+    ).rejects.toThrow('redirect');
+  });
+});
