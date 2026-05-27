@@ -1,0 +1,55 @@
+name: Daily backup
+
+on:
+  schedule:
+    # 09:00 UTC daily = 02:00 PT (PST) / 01:00 PT (PDT). Cron has no DST awareness.
+    - cron: "0 9 * * *"
+  workflow_dispatch: {}
+
+concurrency:
+  group: backup-daily
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install age + rclone
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y age rclone
+
+      - name: Configure rclone for B2
+        env:
+          B2_ACCOUNT_ID: ${{ secrets.B2_ACCOUNT_ID }}
+          B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+        run: |
+          mkdir -p "${HOME}/.config/rclone"
+          cat > "${HOME}/.config/rclone/rclone.conf" <<EOF
+          [b2]
+          type = b2
+          account = ${B2_ACCOUNT_ID}
+          key = ${B2_APPLICATION_KEY}
+          EOF
+
+      - name: Dump + encrypt + upload (pipe-only, no plaintext on disk)
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          AGE_PUBKEY: ${{ secrets.AGE_PUBKEY }}
+          B2_BUCKET: ${{ secrets.B2_BUCKET }}
+        run: |
+          set -euo pipefail
+          ts="$(date -u +%Y-%m-%dT%H-%M-%SZ)"
+          pg_dump --format=custom "${SUPABASE_DB_URL}" \
+            | age -r "${AGE_PUBKEY}" \
+            | rclone rcat "b2:${B2_BUCKET}/${ts}/dump.pgc.age"
+          echo "Uploaded dump to b2:${B2_BUCKET}/${ts}/dump.pgc.age"
+
+      - name: Retention sweep (guarded)
+        env:
+          B2_BUCKET: ${{ secrets.B2_BUCKET }}
+        run: bash scripts/backup-retention-guard.sh
