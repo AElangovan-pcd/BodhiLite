@@ -1,8 +1,14 @@
+import { createHmac } from 'node:crypto';
 import { describe, it, expect } from 'vitest';
 import { scrubSentryEvent } from './scrub';
 import type { Event } from '@sentry/nextjs';
 
 const HMAC_KEY = 'test-hmac-key-do-not-use-in-prod';
+
+const hashUserId = (key: string) => (id: string) =>
+  createHmac('sha256', key).update(id).digest('hex').slice(0, 12);
+
+const defaultOpts = { hashUserId: hashUserId(HMAC_KEY) };
 
 function makeEvent(overrides: Record<string, unknown> = {}): Event {
   return {
@@ -15,7 +21,7 @@ function makeEvent(overrides: Record<string, unknown> = {}): Event {
 describe('scrubSentryEvent', () => {
   it('returns the event with no-op changes when there is no PII', () => {
     const e = makeEvent({ message: 'plain error' });
-    const out = scrubSentryEvent(e, { hmacKey: HMAC_KEY });
+    const out = scrubSentryEvent(e, defaultOpts);
     expect(out.message).toBe('plain error');
   });
 
@@ -23,7 +29,7 @@ describe('scrubSentryEvent', () => {
     const e = makeEvent({
       request: { data: 'answer=42&studentEmail=a@b.com' } as Event['request'],
     });
-    const out = scrubSentryEvent(e, { hmacKey: HMAC_KEY });
+    const out = scrubSentryEvent(e, defaultOpts);
     expect(out.request?.data).toBe('[scrubbed]');
   });
 
@@ -31,7 +37,7 @@ describe('scrubSentryEvent', () => {
     const e = makeEvent({
       request: { query_string: 'token=abc&email=a@b.com' } as Event['request'],
     });
-    const out = scrubSentryEvent(e, { hmacKey: HMAC_KEY });
+    const out = scrubSentryEvent(e, defaultOpts);
     expect(out.request?.query_string).toBe('[scrubbed]');
   });
 
@@ -39,7 +45,7 @@ describe('scrubSentryEvent', () => {
     const e = makeEvent({
       request: { cookies: { session: 'abc' } } as unknown as Event['request'],
     });
-    const out = scrubSentryEvent(e, { hmacKey: HMAC_KEY });
+    const out = scrubSentryEvent(e, defaultOpts);
     expect(out.request?.cookies).toBeUndefined();
   });
 
@@ -54,7 +60,7 @@ describe('scrubSentryEvent', () => {
         },
       } as Event['request'],
     });
-    const out = scrubSentryEvent(e, { hmacKey: HMAC_KEY });
+    const out = scrubSentryEvent(e, defaultOpts);
     const h = out.request?.headers as Record<string, string>;
     expect(h.authorization).toBe('[scrubbed]');
     expect(h.Cookie).toBe('[scrubbed]');
@@ -71,18 +77,16 @@ describe('scrubSentryEvent', () => {
         ip_address: '1.2.3.4',
       },
     });
-    const out = scrubSentryEvent(e, { hmacKey: HMAC_KEY });
+    const out = scrubSentryEvent(e, defaultOpts);
     expect(out.user?.email).toBeUndefined();
     expect(out.user?.username).toBeUndefined();
     expect(out.user?.ip_address).toBeUndefined();
   });
 
-  it('replaces user.id with a 12-char HMAC hash that is deterministic per key', () => {
+  it('replaces user.id with a 12-char hash that is deterministic per key (server config path)', () => {
     const e1 = makeEvent({ user: { id: 'user-uuid-1' } });
-    const out1 = scrubSentryEvent(e1, { hmacKey: HMAC_KEY });
-    const out2 = scrubSentryEvent(makeEvent({ user: { id: 'user-uuid-1' } }), {
-      hmacKey: HMAC_KEY,
-    });
+    const out1 = scrubSentryEvent(e1, defaultOpts);
+    const out2 = scrubSentryEvent(makeEvent({ user: { id: 'user-uuid-1' } }), defaultOpts);
     expect(out1.user?.id).toHaveLength(12);
     expect(out1.user?.id).not.toBe('user-uuid-1');
     expect(out1.user?.id).toBe(out2.user?.id);
@@ -90,9 +94,18 @@ describe('scrubSentryEvent', () => {
 
   it('produces different hashes for the same user.id with different keys', () => {
     const e = makeEvent({ user: { id: 'user-uuid-1' } });
-    const a = scrubSentryEvent(e, { hmacKey: 'key-a' });
-    const b = scrubSentryEvent(makeEvent({ user: { id: 'user-uuid-1' } }), { hmacKey: 'key-b' });
+    const a = scrubSentryEvent(e, { hashUserId: hashUserId('key-a') });
+    const b = scrubSentryEvent(makeEvent({ user: { id: 'user-uuid-1' } }), {
+      hashUserId: hashUserId('key-b'),
+    });
     expect(a.user?.id).not.toBe(b.user?.id);
+  });
+
+  it('collapses user.id to "[scrubbed]" when no hashUserId is injected (edge runtime path)', () => {
+    const e = makeEvent({ user: { id: 'user-uuid-1', email: 'a@b.com' } });
+    const out = scrubSentryEvent(e);
+    expect(out.user?.id).toBe('[scrubbed]');
+    expect(out.user?.email).toBeUndefined();
   });
 
   it('recursively scrubs emails from event.extra at depth 3', () => {
@@ -105,7 +118,7 @@ describe('scrubSentryEvent', () => {
         },
       },
     });
-    const out = scrubSentryEvent(e, { hmacKey: HMAC_KEY });
+    const out = scrubSentryEvent(e, defaultOpts);
     const extra = out.extra as Record<string, unknown>;
     const d1 = extra.depth1 as Record<string, unknown>;
     const d2 = d1.depth2 as Record<string, unknown>;
@@ -122,7 +135,7 @@ describe('scrubSentryEvent', () => {
         },
       ],
     });
-    const out = scrubSentryEvent(e, { hmacKey: HMAC_KEY });
+    const out = scrubSentryEvent(e, defaultOpts);
     const bc = out.breadcrumbs?.[0]?.data as Record<string, unknown>;
     expect(bc.body).toBe('[scrubbed]');
     expect(bc.requestBody).toBe('[scrubbed]');
@@ -133,14 +146,14 @@ describe('scrubSentryEvent', () => {
     const e = makeEvent({
       breadcrumbs: [{ category: 'fetch', data: { extraField: 'a@b.com' } }],
     });
-    const out = scrubSentryEvent(e, { hmacKey: HMAC_KEY });
+    const out = scrubSentryEvent(e, defaultOpts);
     const bc = out.breadcrumbs?.[0]?.data as Record<string, unknown>;
     expect(bc.extraField).toBe('[scrubbed-email]');
   });
 
   it('does not throw on a malformed event with non-object request', () => {
     const e = makeEvent({ request: 'not-an-object' as unknown as Event['request'] });
-    expect(() => scrubSentryEvent(e, { hmacKey: HMAC_KEY })).not.toThrow();
+    expect(() => scrubSentryEvent(e, defaultOpts)).not.toThrow();
   });
 
   it('property test: no email-regex match survives anywhere in output JSON', () => {
@@ -150,7 +163,7 @@ describe('scrubSentryEvent', () => {
       d: ['array', 'of', 'mixed', 'edge@case.com'],
     };
     const e = makeEvent({ extra: random });
-    const out = scrubSentryEvent(e, { hmacKey: HMAC_KEY });
+    const out = scrubSentryEvent(e, defaultOpts);
     const json = JSON.stringify(out);
     expect(json).not.toMatch(/[\w.+-]+@[\w-]+\.[\w.-]+/);
   });
@@ -159,12 +172,12 @@ describe('scrubSentryEvent', () => {
     const o: Record<string, unknown> = {};
     o['self'] = o;
     const e = makeEvent({ extra: o });
-    expect(() => scrubSentryEvent(e, { hmacKey: HMAC_KEY })).not.toThrow();
+    expect(() => scrubSentryEvent(e, defaultOpts)).not.toThrow();
   });
 
   it('handles user with no id (empty id branch)', () => {
     const e = makeEvent({ user: { email: 'a@b.com' } });
-    const out = scrubSentryEvent(e, { hmacKey: HMAC_KEY });
+    const out = scrubSentryEvent(e, defaultOpts);
     expect(out.user?.email).toBeUndefined();
     expect(out.user?.id).toBeUndefined();
   });
@@ -177,7 +190,7 @@ describe('scrubSentryEvent', () => {
         nothing: null,
       },
     });
-    const out = scrubSentryEvent(e, { hmacKey: HMAC_KEY });
+    const out = scrubSentryEvent(e, defaultOpts);
     const extra = out.extra as Record<string, unknown>;
     expect(extra.count).toBe(42);
     expect(extra.flag).toBe(false);
@@ -190,7 +203,7 @@ describe('scrubSentryEvent', () => {
         app: { app_name: 'BodhiLite', user_email: 'student@school.edu' } as Record<string, unknown>,
       },
     });
-    const out = scrubSentryEvent(e, { hmacKey: HMAC_KEY });
+    const out = scrubSentryEvent(e, defaultOpts);
     const ctx = out.contexts as Record<string, unknown>;
     const app = ctx.app as Record<string, unknown>;
     expect(app.user_email).toBe('[scrubbed-email]');
@@ -201,7 +214,7 @@ describe('scrubSentryEvent', () => {
     const arr: unknown[] = ['a@b.com'];
     arr.push(arr); // circular array
     const e = makeEvent({ extra: { items: arr } });
-    expect(() => scrubSentryEvent(e, { hmacKey: HMAC_KEY })).not.toThrow();
+    expect(() => scrubSentryEvent(e, defaultOpts)).not.toThrow();
   });
 
   it('handles non-object request.headers gracefully', () => {
@@ -210,7 +223,7 @@ describe('scrubSentryEvent', () => {
         headers: 'raw-header-string' as unknown as Record<string, string>,
       } as Event['request'],
     });
-    const out = scrubSentryEvent(e, { hmacKey: HMAC_KEY });
+    const out = scrubSentryEvent(e, defaultOpts);
     // non-object headers pass through unchanged
     expect(out.request?.headers).toBe('raw-header-string');
   });
@@ -221,7 +234,7 @@ describe('scrubSentryEvent', () => {
         { category: 'fetch', data: 'raw-string' as unknown as Record<string, unknown> },
       ],
     });
-    const out = scrubSentryEvent(e, { hmacKey: HMAC_KEY });
+    const out = scrubSentryEvent(e, defaultOpts);
     // non-object data passes through unchanged
     expect(out.breadcrumbs?.[0]?.data).toBe('raw-string');
   });
