@@ -1,8 +1,9 @@
-import crypto from 'node:crypto';
 import type { Event } from '@sentry/nextjs';
 
 export type ScrubOptions = {
-  hmacKey: string;
+  // Optional hash function for user.id. When omitted (e.g. edge runtime where
+  // node:crypto isn't available), user.id collapses to '[scrubbed]'.
+  hashUserId?: (id: string) => string;
 };
 
 const EMAIL_REGEX = /[\w.+-]+@[\w-]+\.[\w.-]+/;
@@ -11,10 +12,6 @@ const BODY_KEYS = new Set(['body', 'requestBody', 'responseBody']);
 
 function isPlainObject(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null && !Array.isArray(v);
-}
-
-function hmac12(value: string, key: string): string {
-  return crypto.createHmac('sha256', key).update(value).digest('hex').slice(0, 12);
 }
 
 function scrubRecursive(value: unknown, seen: WeakSet<object>): unknown {
@@ -60,7 +57,7 @@ function scrubBreadcrumbData(data: unknown, seen: WeakSet<object>): unknown {
   return out;
 }
 
-export function scrubSentryEvent(event: Event, opts: ScrubOptions): Event {
+export function scrubSentryEvent(event: Event, opts: ScrubOptions = {}): Event {
   const seen = new WeakSet<object>();
   // Use a plain object so exactOptionalPropertyTypes doesn't block field writes;
   // cast back to Event at return.
@@ -82,7 +79,7 @@ export function scrubSentryEvent(event: Event, opts: ScrubOptions): Event {
     delete u.username;
     delete u.ip_address;
     if (typeof u.id === 'string' && u.id.length > 0) {
-      u.id = hmac12(u.id, opts.hmacKey);
+      u.id = opts.hashUserId ? opts.hashUserId(u.id) : '[scrubbed]';
     }
     out.user = u;
   }
